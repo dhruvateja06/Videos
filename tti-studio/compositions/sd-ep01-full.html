@@ -124,7 +124,7 @@
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="sdep01full" data-start="0" data-duration="615" data-width="1920" data-height="1080">
+    <div id="root" data-composition-id="sdep01full" data-start="0" data-duration="670" data-width="1920" data-height="1080">
       <div id="bg">
         <div id="bggrid"></div><div id="bgfine"></div>
         <div class="glow" id="glow1"></div><div class="glow" id="glow2"></div>
@@ -299,22 +299,49 @@
         <div class="sub" id="s10s" style="font-size:32px; margin-top:36px; opacity:0; line-height:1.4;">Decide the parts, connect them, keep it <b style="color:#fff">fast</b> and <b style="color:#fff">standing</b> as you grow. That's the whole game.</div>
       </div>
 
-      <!-- 11. REAL WORLD (542–590) -->
-      <div class="scene clip" id="s11" data-start="542" data-duration="48" data-track-index="0">
-        <div class="kick" id="s11k">The same four steps — at real scale</div>
-        <h1 id="s11t" style="font-size:50px; font-weight:600;">Baby Instagram → Disney+ Hotstar. Same ideas, more boxes.</h1>
-        <div class="stats" style="grid-template-columns:1fr 1fr;">
-          <div class="stat hot" id="s11c1"><div class="big"><span id="s11num">59</span><span class="u">M</span></div><div class="nm">watching at once · 2023 WC final</div><div class="ds">up from 25M in 2019 — the same request/response, scaled out massively.</div></div>
-          <div class="stat" id="s11c2"><div class="big">4<span class="u"> steps</span></div><div class="nm">requirements → design → components → scale</div><div class="ds">the exact process you just used.</div></div>
+      <!-- 11. HLD vs LLD — two altitudes (542–594) -->
+      <div class="scene clip" id="s11" data-start="542" data-duration="52" data-track-index="0">
+        <div class="kick" id="s11k">One more altitude</div>
+        <h1 id="s11t" style="font-size:50px; font-weight:600;">We drew the <span class="cy">boxes</span>. There's a deeper view — <span class="cy">inside</span> one box.</h1>
+        <div class="two" style="max-width:1480px;">
+          <div class="npanel" id="s11p1">
+            <div class="nm">HLD · high-level design</div>
+            <div class="hd">The boxes &amp; arrows.</div>
+            <div class="ds">What parts exist and how they connect — <b style="color:#fff">everything we did today.</b></div>
+          </div>
+          <div class="npanel b" id="s11p2">
+            <div class="nm">LLD · low-level design</div>
+            <div class="hd">The code inside one box.</div>
+            <div class="ds">Open the "database" box and design exactly how one <b style="color:#fff">post</b> is built &amp; stored.</div>
+          </div>
         </div>
-        <div class="src" id="s11src" style="margin-top:22px; opacity:0;">Hotstar concurrency record: 59M (2023). Per engineering reports.</div>
+        <div class="callout" id="s11c" style="margin-top:32px; max-width:1480px;"><div class="t">Same craft, two zoom levels — <span class="cy">master the boxes first;</span> we go down to the code in a <span class="cy">later season.</span></div></div>
       </div>
 
-      <!-- 12. MAP + OUTRO (590–615) -->
-      <div class="scene clip" id="s12" data-start="590" data-duration="25" data-track-index="0">
-        <div class="kick">Next, we go deeper</div>
-        <h1 id="s12t" style="font-size:60px;">Every box becomes<br>its own episode.</h1>
-        <div class="sub mono" id="s12s" style="font-size:28px; margin-top:34px; letter-spacing:.02em; opacity:0;">Up next — <span class="cyb">Client &amp; server: what really happens when you open Swiggy.</span></div>
+      <!-- 12. REAL WORLD (594–638) -->
+      <div class="scene clip" id="s12" data-start="594" data-duration="44" data-track-index="0">
+        <div class="kick" id="s12k">The same four steps — at real scale</div>
+        <h1 id="s12t" style="font-size:50px; font-weight:600;">Baby Instagram → Disney+ Hotstar. Same ideas, more boxes.</h1>
+        <div class="stats" style="grid-template-columns:1fr 1fr;">
+          <div class="stat hot" id="s12c1"><div class="big"><span id="s12num">59</span><span class="u">M</span></div><div class="nm">watching at once · 2023 WC final</div><div class="ds">up from 25M in 2019 — the same request/response, scaled out massively.</div></div>
+          <div class="stat" id="s12c2"><div class="big">4<span class="u"> steps</span></div><div class="nm">requirements → design → components → scale</div><div class="ds">the exact process you just used.</div></div>
+        </div>
+        <div class="src" id="s12src" style="margin-top:22px; opacity:0;">Hotstar concurrency record: 59M (2023). Per engineering reports.</div>
+      </div>
+
+      <!-- 13. OUTRO (638–670) -->
+      <div class="scene clip" id="s13" data-start="638" data-duration="32" data-track-index="0">
+        <div class="kick" id="s13k">That's your first system design</div>
+        <h1 id="s13t" style="font-size:58px;">You can now see the <span class="cy">boxes</span><br>behind any app you open.</h1>
+        <div class="chips" id="s13chips" style="margin-top:28px;">
+          <div class="chip" id="s13a">load balancers</div>
+          <div class="chip" id="s13b">caching</div>
+          <div class="chip" id="s13c">databases</div>
+          <div class="chip" id="s13d">queues</div>
+          <div class="chip on" id="s13e">→ one box at a time</div>
+        </div>
+        <div class="sub" id="s13next" style="font-size:32px; margin-top:32px; opacity:0;">Next — <span class="cyb">Client &amp; server: what really happens when you open Swiggy.</span></div>
+        <div class="sub mono" id="s13cta" style="font-size:25px; margin-top:20px; color:#5F7287; opacity:0;">Subscribe, and we'll build the whole system — one box at a time.</div>
       </div>
     </div>
 
@@ -434,21 +461,32 @@
       pop("#s10r1", 501.5, 0.5); pop("#s10r2", 502.4, 0.5); pop("#s10r3", 503.3, 0.5); pop("#s10r4", 504.2, 0.5);
       rise("#s10s", 506.5, 16);
 
-      // 11. REAL WORLD
-      sweep(542); scene("#s11", 542, 48);
+      // 11. HLD vs LLD — two altitudes
+      sweep(542); scene("#s11", 542, 52);
       kick("#s11k", 543.0); head("#s11t", 543.6, 0.9);
-      pop("#s11c1", 547.5, 0.7); pop("#s11c2", 549.5, 0.7);
-      var hc = { v: 59 };
-      tl.set(hc, { v: 0 }, 548.2);
-      tl.to(hc, { v: 59, duration: 2.0, ease:"power1.out",
-        onUpdate:function(){ var e=document.getElementById('s11num'); if(e) e.textContent = Math.round(hc.v); } }, 548.4);
-      breathe("#s11c1", 554, 1.02, 2.0, 12);
-      rise("#s11src", 556.0, 14);
+      pop("#s11p1", 548.0, 0.7); pop("#s11p2", 550.0, 0.7);
+      tl.fromTo("#s11c", { opacity:0, x:-26 }, { opacity:1, x:0, duration:0.7, ease:"power3.out" }, 555.0);
+      breathe("#s11c", 559, 1.01, 2.0, 12);
 
-      // 12. MAP + OUTRO
-      sweep(590); scene("#s12", 590, 25);
-      kick("#s12 .kick", 591.0); head("#s12t", 591.6, 1.0);
-      rise("#s12s", 596.0, 16);
+      // 12. REAL WORLD
+      sweep(594); scene("#s12", 594, 44);
+      kick("#s12k", 595.0); head("#s12t", 595.6, 0.9);
+      pop("#s12c1", 599.5, 0.7); pop("#s12c2", 601.5, 0.7);
+      var hc = { v: 59 };
+      tl.set(hc, { v: 0 }, 600.2);
+      tl.to(hc, { v: 59, duration: 2.0, ease:"power1.out",
+        onUpdate:function(){ var e=document.getElementById('s12num'); if(e) e.textContent = Math.round(hc.v); } }, 600.4);
+      breathe("#s12c1", 606, 1.02, 2.0, 12);
+      rise("#s12src", 608.0, 14);
+
+      // 13. OUTRO (improved)
+      sweep(638); scene("#s13", 638, 32);
+      kick("#s13k", 639.0); head("#s13t", 639.6, 1.0);
+      tl.to("#s13t .cy", { opacity:0.7, duration:1.5, ease:"sine.inOut", repeat:6, yoyo:true }, 643.0);
+      pop("#s13a", 643.5, 0.5); pop("#s13b", 644.2, 0.5); pop("#s13c", 644.9, 0.5); pop("#s13d", 645.6, 0.5);
+      pop("#s13e", 646.6, 0.6); breathe("#s13e", 648.5, 1.04, 1.4, 12);
+      rise("#s13next", 650.0, 16);
+      rise("#s13cta", 654.0, 12);
 
       window.__timelines["sdep01full"] = tl;
     </script>
