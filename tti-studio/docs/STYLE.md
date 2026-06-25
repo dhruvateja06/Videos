@@ -65,3 +65,54 @@ for any new episode.
 - ❌ One-line-per-slide decks (can't hold attention for minutes).
 - ❌ On-screen animation descriptions in the teleprompter script (confuses the
   live read — keep the script clean; see `PIPELINE.md`).
+
+---
+
+## Per-season "skins" (same motion language, different look)
+
+The motion language above (living bg, wipes, kinetic type, breathing, diagrams
+that build, counters) is **shared by every season**. Each season gets its own
+**skin** — palette + typography + signature motif — so seasons don't blur
+together. The skin changes; the discipline doesn't.
+
+### Season 1 — AI · "warm editorial"
+Cream `--paper #FAF8F3`, brand orange `--o #FF6B2C`, **Fraunces** serif
+headlines + Inter, left orange spine bar, scatter-plot / best-fit-line motif.
+Reference: `compositions/ep01-full.html`.
+
+### Season 2 — System Design (HLD) · "dark systems-blueprint"
+Deliberately the **opposite** of S1's warm editorial look (a different season
+must not look like the last one). Reference: `compositions/sd-ep01-full.html`.
+
+| Token | Hex | Use |
+|---|---|---|
+| `--bg`    | `#0E1420` | deep navy canvas |
+| `--panel` | `#161E2E` | card / node fill |
+| `--node`  | `#16233A` | diagram node fill |
+| `--ink`   | `#E8EFF7` | primary text (cool near-white) |
+| `--soft`  | `#A7B8CC` | secondary text |
+| `--muted` | `#5F7287` | mono labels, captions |
+| `--hair`  | `rgba(125,170,210,.18)` | grid lines, borders, edges |
+| `--cyan`  | `#2DD4BF` | **primary accent** (the hero colour) |
+| `--cyanb` | `#5EEAD4` | bright cyan — glows, big numbers |
+| `--o`     | `#FF6B2C` | brand orange kept as the **secondary "hot"** accent (the DB, the danger, the one critical highlight) |
+
+- **Typography:** **Inter** for headlines (700, tight) and body — **no serif**
+  (that's S1's signature). **JetBrains Mono** for eyebrows (`// LIKE THIS`),
+  node labels, captions, and big count-up numbers (monospace digits read techy).
+- **Signature frame (replaces the orange spine):** a top HUD bar
+  (`THE TECH INTERN // SYSTEM DESIGN … S2 · E01`) over a hairline, plus blueprint
+  **corner brackets**. Section cuts use a **cyan scan-sweep** (not the orange wipe).
+- **Signature motif = boxes & arrows** (because that *is* HLD): blueprint
+  micro-grid background, nodes that pop in, edges that **draw on**
+  (`stroke-dashoffset`), and **packets** (small cyan dots) flowing along edges.
+- **Orange discipline:** still one or two hot accents per scene — now it marks
+  the *thing that matters* (the database of record, an overloaded/failing box),
+  against the cool cyan field.
+
+> Brand DNA preserved: orange is still present, the typography is still
+> disciplined, and the "no frozen frame / no cut to blank" rule still governs —
+> so it's unmistakably *The Tech Intern*, just a different season.
+
+### Season 3 — LLD · skin TBD
+Will need its own skin (code is on screen) — decide when S3 production starts.
