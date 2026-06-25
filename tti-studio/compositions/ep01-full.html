@@ -18,8 +18,25 @@
       html,body{ width:1920px; height:1080px; overflow:hidden; }
       body{ font-family:"Inter",sans-serif; background:var(--paper); }
       #root{ position:relative; width:1920px; height:1080px; background:var(--paper); }
-      .spine{ position:absolute; left:0; top:0; bottom:0; width:22px; background:var(--o); z-index:5; }
-      .scene{ position:absolute; inset:0; opacity:0; padding:110px 150px 110px 200px; display:flex; flex-direction:column; justify-content:center; }
+      .spine{ position:absolute; left:0; top:0; bottom:0; width:22px; background:var(--o); z-index:6; }
+
+      /* living background — never gated, spans whole composition */
+      #bg{ position:absolute; inset:0; overflow:hidden; z-index:0; pointer-events:none; }
+      #bgdots{ position:absolute; left:-200px; top:-200px; width:2400px; height:1560px;
+        background-image:radial-gradient(circle, rgba(22,24,29,.055) 2px, transparent 2.6px);
+        background-size:62px 62px; }
+      .blob{ position:absolute; border-radius:50%; filter:blur(60px); }
+      #blob1{ width:680px; height:680px; left:1080px; top:-180px;
+        background:radial-gradient(circle, rgba(255,107,44,.20), rgba(255,107,44,0) 70%); }
+      #blob2{ width:620px; height:620px; left:-180px; top:560px;
+        background:radial-gradient(circle, rgba(255,107,44,.13), rgba(255,107,44,0) 70%); }
+
+      /* section-cut wipe bar */
+      #wipe{ position:absolute; top:-60px; bottom:-60px; left:0; width:420px; opacity:0; z-index:20; pointer-events:none;
+        background:linear-gradient(90deg, rgba(255,107,44,0) 0%, var(--o) 32%, #ff8a55 50%, var(--o) 68%, rgba(255,107,44,0) 100%);
+        transform:skewX(-11deg); }
+
+      .scene{ position:absolute; inset:0; opacity:0; z-index:2; padding:110px 150px 110px 200px; display:flex; flex-direction:column; justify-content:center; }
       .kick{ font-size:24px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--o); margin-bottom:28px; }
       h1{ font-family:"Fraunces",serif; font-weight:600; color:var(--ink); line-height:1.0; letter-spacing:-.015em; }
       .sub{ font-family:"Fraunces",serif; font-style:italic; color:var(--soft); }
@@ -106,7 +123,13 @@
   </head>
   <body>
     <div id="root" data-composition-id="ep01full" data-start="0" data-duration="660" data-width="1920" data-height="1080">
+      <div id="bg">
+        <div id="bgdots"></div>
+        <div class="blob" id="blob1"></div>
+        <div class="blob" id="blob2"></div>
+      </div>
       <div class="spine" id="spine"></div>
+      <div id="wipe"></div>
 
       <!-- 1. TITLE (0–30) -->
       <div class="scene clip" id="s1" data-start="0" data-duration="30" data-track-index="0">
@@ -122,7 +145,7 @@
             <div class="screen">
               <div class="swiggy">swiggy</div>
               <div class="arrive">Arriving in</div>
-              <div class="mins">32 min</div>
+              <div class="mins" id="s2mins">32 min</div>
             </div>
           </div>
           <div class="col">
@@ -356,145 +379,188 @@
       window.__timelines = window.__timelines || {};
       const tl = gsap.timeline({ paused: true });
 
-      // spine in
-      tl.from("#spine", { scaleY:0, transformOrigin:"top", duration:0.7, ease:"power2.out" }, 0);
+      // ---------- persistent living background (never gated) ----------
+      tl.from("#spine", { scaleY:0, transformOrigin:"top", duration:0.8, ease:"power2.out" }, 0);
+      tl.to("#spine",  { opacity:0.72, duration:2.4, ease:"sine.inOut", repeat:300, yoyo:true }, 0.9);
+      tl.to("#bgdots", { x:-70,  y:-46, duration:80, ease:"sine.inOut", repeat:10, yoyo:true }, 0);
+      tl.to("#blob1",  { x:-180, y:130, scale:1.18, duration:68, ease:"sine.inOut", repeat:12, yoyo:true }, 0);
+      tl.to("#blob2",  { x:150,  y:-120, scale:1.22, duration:84, ease:"sine.inOut", repeat:10, yoyo:true }, 0);
 
-      // helpers
+      // ---------- motion helpers ----------
+      // scene: kinetic enter (rise + slight push-in), motion exit, hard kill
       function scene(sel, t, dur){
-        tl.fromTo(sel, { opacity:0 }, { opacity:1, duration:0.6, ease:"power1.out" }, t);
-        tl.to(sel,    { opacity:0, duration:0.6, ease:"power1.in"  }, t+dur-0.6);
-        tl.set(sel,   { opacity:0 }, t+dur);
+        tl.fromTo(sel, { opacity:0, y:36, scale:0.99 },
+                       { opacity:1, y:0, scale:1, duration:0.9, ease:"power3.out" }, t);
+        tl.to(sel,     { opacity:0, y:-42, scale:0.99, duration:0.7, ease:"power2.in" }, t+dur-0.7);
+        tl.set(sel,    { opacity:0 }, t+dur);
       }
-      function rev(sel, t, props){ tl.from(sel, Object.assign({ duration:0.6, ease:"power2.out" }, props), t); }
-      function show(sel, t, props){ tl.to(sel, Object.assign({ opacity:1, duration:0.6, ease:"power2.out" }, props||{}), t); }
+      // big headline — overshoot
+      function head(sel, t, d){ tl.fromTo(sel, { opacity:0, y:62, scale:0.95 },
+                       { opacity:1, y:0, scale:1, duration:(d||1.0), ease:"back.out(1.3)" }, t); }
+      // eyebrow / kick — slide from left
+      function kick(sel, t){ tl.fromTo(sel, { opacity:0, x:-26 }, { opacity:1, x:0, duration:0.6, ease:"power2.out" }, t); }
+      // generic rise (bullets, callouts, rows)
+      function rise(sel, t, dy, d){ tl.fromTo(sel, { opacity:0, y:(dy==null?24:dy) },
+                       { opacity:1, y:0, duration:(d||0.6), ease:"power3.out" }, t); }
+      // pop (cards, stages, boxes) — playful overshoot
+      function pop(sel, t, d){ tl.fromTo(sel, { opacity:0, y:22, scale:0.9 },
+                       { opacity:1, y:0, scale:1, duration:(d||0.55), ease:"back.out(1.5)", transformOrigin:"center" }, t); }
+      // directional table cells
+      function cellL(sel, t){ tl.fromTo(sel, { opacity:0, x:-28 }, { opacity:1, x:0, duration:0.5, ease:"power2.out" }, t); }
+      function cellR(sel, t){ tl.fromTo(sel, { opacity:0, x:28 },  { opacity:1, x:0, duration:0.5, ease:"power2.out" }, t); }
+      // breathing loop on a held hero element
+      function breathe(sel, t, to, dur, n){ tl.to(sel, { scale:to, duration:dur, ease:"sine.inOut", repeat:n, yoyo:true, transformOrigin:"center" }, t); }
+      // gentle float
+      function floaty(sel, t, dy, dur, n){ tl.to(sel, { y:dy, duration:dur, ease:"sine.inOut", repeat:n, yoyo:true }, t); }
+      // orange wipe bar sweeping across a section cut (masks the swap)
+      function wipe(t){
+        tl.set("#wipe", { opacity:1 }, t-0.42);
+        tl.fromTo("#wipe", { x:-720 }, { x:2240, duration:0.78, ease:"power2.inOut" }, t-0.42);
+        tl.set("#wipe", { opacity:0 }, t+0.42);
+      }
+
+      // ===================== SCENES =====================
 
       // 1. TITLE (0–30)
       scene("#s1", 0, 30);
-      rev("#s1k", 0.7, { opacity:0, y:-18 });
-      rev("#s1t", 1.2, { opacity:0, y:40, duration:0.8 });
+      kick("#s1k", 0.7);
+      head("#s1t", 1.1, 1.1);
       tl.from("#s1t .o", { color:"#16181D", duration:0.6 }, 2.0);
-      rev("#s1s", 2.4, { opacity:0, y:14 });
+      tl.to("#s1t .o", { opacity:0.74, duration:1.6, ease:"sine.inOut", repeat:13, yoyo:true }, 6.0); // accent breathes
+      rise("#s1s", 2.6, 16);
+      floaty("#s1t", 5.0, -10, 3.2, 6); // headline drifts
 
       // 2. HOOK (30–85)
+      wipe(30);
       scene("#s2", 30, 55);
-      show("#s2phone", 31.0, { x:0, duration:0.7 });
-      tl.from("#s2phone", { x:-30, duration:0.7, ease:"power2.out" }, 31.0);
-      rev("#s2t", 31.8, { opacity:0, y:30, duration:0.7 });
-      show("#s2b1", 35.0, { y:0 }); tl.from("#s2b1", { y:14, duration:0.5 }, 35.0);
-      show("#s2b2", 41.0, { y:0 }); tl.from("#s2b2", { y:14, duration:0.5 }, 41.0);
-      show("#s2b3", 49.0, { y:0 }); tl.from("#s2b3", { y:14, duration:0.5 }, 49.0);
+      pop("#s2phone", 31.0, 0.7);
+      floaty("#s2phone", 33.4, -16, 2.8, 12);            // phone hovers
+      head("#s2t", 31.9, 0.8);
+      // Swiggy timer counts up (8 → 32), safe static fallback already in DOM
+      var mc = { v: 32 };
+      tl.set(mc, { v: 8 }, 33.0);
+      tl.to(mc, { v: 32, duration: 1.8, ease:"power1.out",
+        onUpdate:function(){ var e=document.getElementById('s2mins'); if(e) e.textContent = Math.round(mc.v)+' min'; } }, 33.2);
+      tl.fromTo("#s2mins", { scale:1.25 }, { scale:1, duration:0.5, ease:"back.out(2)", transformOrigin:"center" }, 35.0);
+      rise("#s2b1", 35.4, 18); rise("#s2b2", 41.0, 18); rise("#s2b3", 49.0, 18);
 
       // 3. OLD WAY (85–130)
+      wipe(85);
       scene("#s3", 85, 45);
-      rev("#s3t", 85.8, { opacity:0, y:20 });
-      show("#s3code", 88.5, { y:0 }); tl.from("#s3code", { y:20, duration:0.7 }, 88.5);
-      show("#s3s", 116, {});
+      head("#s3t", 85.9, 0.9);
+      tl.fromTo("#s3code", { opacity:0, y:26, scale:0.98 }, { opacity:1, y:0, scale:1, duration:0.7, ease:"power3.out" }, 88.5);
+      // rules type in line-by-line feel via clip — pulse the code block edges
+      breathe("#s3code", 96, 1.012, 1.8, 10);
+      rise("#s3s", 116, 14);
 
       // 4. RULES COLLAPSE (130–180)
       scene("#s4", 130, 50);
-      rev("#s4t", 130.8, { opacity:0, y:20 });
-      show("#s4b1", 135.0, { y:0 }); tl.from("#s4b1", { y:14, duration:0.5 }, 135.0);
-      show("#s4b2", 144.0, { y:0 }); tl.from("#s4b2", { y:14, duration:0.5 }, 144.0);
-      show("#s4b3", 154.0, { y:0 }); tl.from("#s4b3", { y:14, duration:0.5 }, 154.0);
-      show("#s4c", 165.0, { y:0 }); tl.from("#s4c", { y:14, duration:0.5 }, 165.0);
+      head("#s4t", 130.9, 0.9);
+      rise("#s4b1", 135.0, 18); rise("#s4b2", 144.0, 18); rise("#s4b3", 154.0, 18);
+      tl.fromTo("#s4c", { opacity:0, y:24, scale:0.97 }, { opacity:1, y:0, scale:1, duration:0.7, ease:"back.out(1.4)" }, 165.0);
 
       // 5. SHIFT (180–235)
+      wipe(180);
       scene("#s5", 180, 55);
-      rev("#s5t", 180.8, { opacity:0, y:20 });
-      show("#s5l1", 187, {}); show("#s5r1", 187.4, {});
-      show("#s5l2", 197, {}); show("#s5r2", 197.4, {});
-      show("#s5l3", 207, {}); show("#s5r3", 207.4, {});
-      show("#s5c", 220, { y:0 }); tl.from("#s5c", { y:14, duration:0.5 }, 220);
+      head("#s5t", 180.9, 0.9);
+      cellL("#s5l1", 187.0); cellR("#s5r1", 187.4);
+      cellL("#s5l2", 197.0); cellR("#s5r2", 197.4);
+      cellL("#s5l3", 207.0); cellR("#s5r3", 207.4);
+      tl.fromTo("#s5c", { opacity:0, y:22, scale:0.97 }, { opacity:1, y:0, scale:1, duration:0.7, ease:"back.out(1.4)" }, 220);
 
       // 6. CORE PROCESS (235–275)
+      wipe(235);
       scene("#s6", 235, 40);
-      rev("#s6t", 235.8, { opacity:0, y:20 });
-      show("#s6a", 244, { y:0 }); tl.from("#s6a", { y:14, duration:0.5 }, 244);
-      show("#s6ar1", 248, {});
-      show("#s6b", 252, { y:0 }); tl.from("#s6b", { y:14, duration:0.5 }, 252);
-      show("#s6ar2", 256, {});
-      show("#s6c", 260, { y:0 }); tl.from("#s6c", { y:14, duration:0.5 }, 260);
-      show("#s6s", 267, {});
+      head("#s6t", 235.9, 0.9);
+      pop("#s6a", 244, 0.5);
+      tl.fromTo("#s6ar1", { opacity:0, scale:0.4, x:-10 }, { opacity:1, scale:1, x:0, duration:0.4, ease:"back.out(2)", transformOrigin:"center" }, 248);
+      pop("#s6b", 252, 0.5);
+      tl.fromTo("#s6ar2", { opacity:0, scale:0.4, x:-10 }, { opacity:1, scale:1, x:0, duration:0.4, ease:"back.out(2)", transformOrigin:"center" }, 256);
+      pop("#s6c", 260, 0.5);
+      breathe("#s6b .box", 254, 1.05, 1.5, 8);           // the 'model' box pulses
+      tl.to("#s6ar1", { x:12, duration:1.1, ease:"sine.inOut", repeat:10, yoyo:true }, 258);
+      tl.to("#s6ar2", { x:12, duration:1.1, ease:"sine.inOut", repeat:10, yoyo:true }, 259);
+      rise("#s6s", 267, 12);
 
       // 7. DATA (275–325)
+      wipe(275);
       scene("#s7", 275, 50);
-      rev("#s7t", 275.8, { opacity:0, y:20 });
-      show("#s7r1", 282, { y:0 }); tl.from("#s7r1", { y:10, duration:0.4 }, 282);
-      show("#s7r2", 290, { y:0 }); tl.from("#s7r2", { y:10, duration:0.4 }, 290);
-      show("#s7r3", 298, { y:0 }); tl.from("#s7r3", { y:10, duration:0.4 }, 298);
-      show("#s7r4", 306, { y:0 }); tl.from("#s7r4", { y:10, duration:0.4 }, 306);
-      show("#s7c", 315, { y:0 }); tl.from("#s7c", { y:14, duration:0.5 }, 315);
+      head("#s7t", 275.9, 0.9);
+      cellL("#s7r1", 282); cellL("#s7r2", 290); cellL("#s7r3", 298); cellL("#s7r4", 306);
+      tl.fromTo("#s7c", { opacity:0, y:22, scale:0.97 }, { opacity:1, y:0, scale:1, duration:0.7, ease:"back.out(1.4)" }, 315);
 
       // 8. SCATTER (325–385)
       scene("#s8", 325, 60);
-      rev("#s8t", 325.8, { opacity:0, y:20 });
-      show("#s8b1", 330, { y:0 }); tl.from("#s8b1", { y:14, duration:0.5 }, 330);
-      // dots reveal
-      tl.fromTo("#s8svg .dot", { opacity:0, scale:0 }, { opacity:1, scale:1, transformOrigin:"center", ease:"back.out(1.7)", duration:0.4, stagger:0.08 }, 338);
-      show("#s8b2", 344, { y:0 }); tl.from("#s8b2", { y:14, duration:0.5 }, 344);
-      // line draws via dash offset
-      const s8fit = "#s8fit";
-      tl.set(s8fit, { attr: { "stroke-dasharray": 650, "stroke-dashoffset": 650 } }, 354.9);
-      tl.to(s8fit, { attr: { "stroke-dashoffset": 0 }, duration: 1.0, ease:"power2.inOut" }, 355);
-      show("#s8b3", 357, { y:0 }); tl.from("#s8b3", { y:14, duration:0.5 }, 357);
-      show("#s8c", 370, { y:0 }); tl.from("#s8c", { y:14, duration:0.5 }, 370);
+      head("#s8t", 325.9, 0.9);
+      rise("#s8b1", 330, 16);
+      // dots drop in
+      tl.fromTo("#s8svg .dot", { opacity:0, scale:0, y:-16 },
+        { opacity:1, scale:1, y:0, transformOrigin:"center", ease:"back.out(1.7)", duration:0.45, stagger:0.07 }, 338);
+      rise("#s8b2", 344, 16);
+      // best-fit line draws on
+      var s8fit = "#s8fit";
+      tl.set(s8fit, { attr:{ "stroke-dasharray":650, "stroke-dashoffset":650 } }, 354.9);
+      tl.to(s8fit,  { attr:{ "stroke-dashoffset":0 }, duration:1.1, ease:"power2.inOut" }, 355);
+      rise("#s8b3", 357, 16);
+      tl.fromTo("#s8c", { opacity:0, y:22, scale:0.97 }, { opacity:1, y:0, scale:1, duration:0.7, ease:"back.out(1.4)" }, 370);
 
       // 9. PREDICT (385–425)
+      wipe(385);
       scene("#s9", 385, 40);
-      rev("#s9t", 385.8, { opacity:0, y:20 });
-      // vertical guide
-      tl.set("#s9vg", { attr: { "stroke-dasharray": 200, "stroke-dashoffset": 200 } }, 391);
-      tl.set("#s9vg", { opacity:1 }, 391);
-      tl.to("#s9vg", { attr: { "stroke-dashoffset": 0 }, duration:0.7, ease:"power2.out" }, 391);
-      tl.to("#s9pt", { opacity:1, duration:0.3 }, 392);
-      // horizontal guide
-      tl.set("#s9hg", { attr: { "stroke-dasharray": 380, "stroke-dashoffset": 380 } }, 398);
-      tl.set("#s9hg", { opacity:1 }, 398);
-      tl.to("#s9hg", { attr: { "stroke-dashoffset": 0 }, duration:0.7, ease:"power2.out" }, 398);
-      tl.to("#s9lbl", { opacity:1, duration:0.4 }, 399);
-      show("#s9c", 410, { y:0 }); tl.from("#s9c", { y:14, duration:0.5 }, 410);
+      head("#s9t", 385.9, 0.9);
+      // vertical guide rises from the axis
+      tl.set("#s9vg", { attr:{ "stroke-dasharray":200, "stroke-dashoffset":200 }, opacity:1 }, 391);
+      tl.to("#s9vg",  { attr:{ "stroke-dashoffset":0 }, duration:0.7, ease:"power2.out" }, 391);
+      tl.fromTo("#s9pt", { opacity:0, scale:0 }, { opacity:1, scale:1, duration:0.4, ease:"back.out(2.2)", transformOrigin:"center" }, 392.4);
+      breathe("#s9pt", 393, 1.35, 0.9, 14);              // landing dot pulses
+      // horizontal guide slides to the time axis
+      tl.set("#s9hg", { attr:{ "stroke-dasharray":380, "stroke-dashoffset":380 }, opacity:1 }, 398);
+      tl.to("#s9hg",  { attr:{ "stroke-dashoffset":0 }, duration:0.7, ease:"power2.out" }, 398);
+      tl.fromTo("#s9lbl", { opacity:0, x:-18 }, { opacity:1, x:0, duration:0.5, ease:"power3.out" }, 399);
+      tl.fromTo("#s9c", { opacity:0, y:22, scale:0.97 }, { opacity:1, y:0, scale:1, duration:0.7, ease:"back.out(1.4)" }, 410);
 
       // 10. DEFINITION (425–475)
+      wipe(425);
       scene("#s10", 425, 50);
-      rev("#s10k", 425.8, { opacity:0, y:-14 });
-      rev("#s10t", 427, { opacity:0, y:30, duration:0.9 });
-      show("#s10a1", 446, { y:0 }); tl.from("#s10a1", { y:18, duration:0.5 }, 446);
-      show("#s10a2", 454, { y:0 }); tl.from("#s10a2", { y:18, duration:0.5 }, 454);
-      show("#s10a3", 462, { y:0 }); tl.from("#s10a3", { y:18, duration:0.5 }, 462);
+      kick("#s10k", 425.9);
+      head("#s10t", 427, 1.0);
+      pop("#s10a1", 446); pop("#s10a2", 454); pop("#s10a3", 462);
 
       // 11. NORMAL vs AI (475–515)
       scene("#s11", 475, 40);
-      rev("#s11t", 475.8, { opacity:0, y:20 });
-      show("#s11l", 481, { y:0 }); tl.from("#s11l", { y:14, duration:0.5 }, 481);
-      show("#s11r", 492, { y:0 }); tl.from("#s11r", { y:14, duration:0.5 }, 492);
-      show("#s11s", 505, {});
+      head("#s11t", 475.9, 0.9);
+      tl.fromTo("#s11l", { opacity:0, x:-32, scale:0.96 }, { opacity:1, x:0, scale:1, duration:0.6, ease:"power3.out" }, 481);
+      tl.fromTo("#s11r", { opacity:0, x:32,  scale:0.96 }, { opacity:1, x:0, scale:1, duration:0.6, ease:"power3.out" }, 492);
+      breathe("#s11r", 494, 1.018, 1.8, 8);
+      rise("#s11s", 505, 12);
 
       // 12. MENTAL MODEL (515–565)
+      wipe(515);
       scene("#s12", 515, 50);
-      rev("#s12h", 515.8, { opacity:0, y:20 });
-      rev("#s12r", 518, { opacity:0, y:30 });
-      rev("#s12v", 519.5, { opacity:0, scale:0.6, transformOrigin:"center" });
-      rev("#s12p", 521, { opacity:0, y:30 });
-      show("#s12b1", 533, { y:0 }); tl.from("#s12b1", { y:14, duration:0.5 }, 533);
-      show("#s12b2", 543, { y:0 }); tl.from("#s12b2", { y:14, duration:0.5 }, 543);
-      show("#s12b3", 553, { y:0 }); tl.from("#s12b3", { y:14, duration:0.5 }, 553);
+      head("#s12h", 515.9, 0.9);
+      tl.fromTo("#s12r", { opacity:0, y:34 }, { opacity:1, y:0, duration:0.6, ease:"power3.out" }, 518);
+      tl.fromTo("#s12v", { opacity:0, scale:0.5 }, { opacity:1, scale:1, duration:0.5, ease:"back.out(2)", transformOrigin:"center" }, 519.5);
+      tl.fromTo("#s12p", { opacity:0, y:34 }, { opacity:1, y:0, duration:0.6, ease:"power3.out" }, 521);
+      breathe("#s12p", 524, 1.035, 1.9, 12);             // PATTERNS breathes
+      rise("#s12b1", 533, 16); rise("#s12b2", 543, 16); rise("#s12b3", 553, 16);
 
       // 13. EXAMPLES (565–610)
+      wipe(565);
       scene("#s13", 565, 45);
-      rev("#s13t", 565.8, { opacity:0, y:20 });
-      const ex = ["#s13c1","#s13c2","#s13c3","#s13c4","#s13c5","#s13c6"];
-      ex.forEach((s,i)=>{ const t = 571 + i*5; show(s, t, { y:0 }); tl.from(s, { y:18, duration:0.5 }, t); });
+      head("#s13t", 565.9, 0.9);
+      ["#s13c1","#s13c2","#s13c3","#s13c4","#s13c5","#s13c6"].forEach(function(s,i){ pop(s, 571 + i*5, 0.5); });
 
       // 14. RECAP (610–640)
       scene("#s14", 610, 30);
-      rev("#s14t", 610.8, { opacity:0, y:20 });
-      ["#s14b1","#s14b2","#s14b3","#s14b4"].forEach((s,i)=>{ const t = 615 + i*5; show(s, t, { y:0 }); tl.from(s, { y:14, duration:0.5 }, t); });
+      head("#s14t", 610.9, 0.9);
+      ["#s14b1","#s14b2","#s14b3","#s14b4"].forEach(function(s,i){ rise(s, 615 + i*5, 16); });
 
       // 15. DEEPER QUESTION (640–660)
       scene("#s15", 640, 20);
-      rev("#s15a", 640.8, { opacity:0, y:20 });
-      rev("#s15b", 646, { opacity:0, scale:0.85, transformOrigin:"center", ease:"back.out(1.6)", duration:0.7 });
-      show("#s15s", 654, {});
+      head("#s15a", 640.9, 0.9);
+      tl.fromTo("#s15b", { opacity:0, scale:0.82 }, { opacity:1, scale:1, duration:0.8, ease:"back.out(1.7)", transformOrigin:"center" }, 646);
+      breathe("#s15b", 648, 1.04, 1.6, 6);               // 'how?' pulses
+      rise("#s15s", 654, 14);
 
       window.__timelines["ep01full"] = tl;
     </script>
