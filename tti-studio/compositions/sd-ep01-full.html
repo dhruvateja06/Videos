@@ -13,21 +13,16 @@
       :root{
         --bg:#0E1420; --panel:#161E2E; --panel2:#1B2740; --node:#16233A;
         --ink:#E8EFF7; --soft:#A7B8CC; --muted:#5F7287; --hair:rgba(125,170,210,.18);
-        --cyan:#2DD4BF; --cyanb:#5EEAD4; --o:#FF6B2C; --osoft:rgba(255,107,44,.12);
-        --danger:#FF5C5C;
+        --cyan:#2DD4BF; --cyanb:#5EEAD4; --o:#FF6B2C; --osoft:rgba(255,107,44,.12); --danger:#FF5C5C;
       }
       *{ margin:0; padding:0; box-sizing:border-box; }
       html,body{ width:1920px; height:1080px; overflow:hidden; }
       body{ font-family:"Inter",sans-serif; background:var(--bg); }
       #root{ position:relative; width:1920px; height:1080px; background:var(--bg); color:var(--ink); }
 
-      /* ---------- persistent frame ---------- */
       #bg{ position:absolute; inset:0; overflow:hidden; z-index:0; pointer-events:none; }
       #bggrid{ position:absolute; left:-120px; top:-120px; width:2300px; height:1460px;
-        background-image:
-          linear-gradient(rgba(125,170,210,.06) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(125,170,210,.06) 1px, transparent 1px);
-        background-size:64px 64px; }
+        background-image:linear-gradient(rgba(125,170,210,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(125,170,210,.06) 1px, transparent 1px); background-size:64px 64px; }
       #bgfine{ position:absolute; inset:0; background-image:radial-gradient(circle, rgba(125,170,210,.05) 1px, transparent 1.4px); background-size:32px 32px; }
       .glow{ position:absolute; border-radius:50%; filter:blur(46px); }
       #glow1{ width:760px; height:760px; left:1060px; top:-200px; background:radial-gradient(circle, rgba(45,212,191,.16), rgba(45,212,191,0) 70%); }
@@ -35,17 +30,13 @@
 
       .hud{ position:absolute; left:64px; right:64px; top:42px; display:flex; justify-content:space-between; align-items:center; z-index:7;
         font-family:"JetBrains Mono",monospace; font-size:18px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); }
-      .hud .l span{ color:var(--cyan); }
-      .hud .r{ color:var(--soft); }
+      .hud .l span{ color:var(--cyan); } .hud .r{ color:var(--soft); }
       #hudline{ position:absolute; left:64px; right:64px; top:80px; height:1px; background:var(--hair); z-index:7; transform-origin:left; }
       .corner{ position:absolute; width:34px; height:34px; z-index:7; border:2px solid var(--hair); }
-      .corner.tl{ left:46px; top:96px; border-right:0; border-bottom:0; }
-      .corner.tr{ right:46px; top:96px; border-left:0; border-bottom:0; }
-      .corner.bl{ left:46px; bottom:46px; border-right:0; border-top:0; }
-      .corner.br{ right:46px; bottom:46px; border-left:0; border-top:0; }
+      .corner.tl{ left:46px; top:96px; border-right:0; border-bottom:0; } .corner.tr{ right:46px; top:96px; border-left:0; border-bottom:0; }
+      .corner.bl{ left:46px; bottom:46px; border-right:0; border-top:0; } .corner.br{ right:46px; bottom:46px; border-left:0; border-top:0; }
       #sweep{ position:absolute; top:-60px; bottom:-60px; left:0; width:360px; opacity:0; z-index:20; pointer-events:none;
-        background:linear-gradient(90deg, rgba(45,212,191,0) 0%, rgba(45,212,191,.16) 40%, rgba(94,234,212,.55) 50%, rgba(45,212,191,.16) 60%, rgba(45,212,191,0) 100%);
-        transform:skewX(-10deg); }
+        background:linear-gradient(90deg, rgba(45,212,191,0) 0%, rgba(45,212,191,.16) 40%, rgba(94,234,212,.55) 50%, rgba(45,212,191,.16) 60%, rgba(45,212,191,0) 100%); transform:skewX(-10deg); }
 
       .scene{ position:absolute; inset:0; opacity:0; z-index:2; padding:150px 130px 120px 130px; display:flex; flex-direction:column; justify-content:center; }
       .kick{ font-family:"JetBrains Mono",monospace; font-size:23px; letter-spacing:.22em; text-transform:uppercase; color:var(--cyan); margin-bottom:28px; }
@@ -55,7 +46,6 @@
       .cy{ color:var(--cyan); } .cyb{ color:var(--cyanb); } .or{ color:var(--o); }
       .mono{ font-family:"JetBrains Mono",monospace; }
       .src{ font-family:"JetBrains Mono",monospace; font-size:17px; color:var(--muted); letter-spacing:.04em; }
-      /* recurring project tag */
       .ptag{ display:inline-block; font-family:"JetBrains Mono",monospace; font-size:18px; letter-spacing:.1em; color:var(--cyanb);
         border:1px solid var(--hair); border-radius:30px; padding:9px 22px; margin-bottom:26px; opacity:0; }
       .ptag b{ color:#fff; font-weight:400; }
@@ -63,8 +53,7 @@
       ul.bullets{ list-style:none; display:flex; flex-direction:column; gap:24px; margin-top:30px; }
       ul.bullets li{ display:flex; gap:22px; align-items:flex-start; opacity:0; }
       ul.bullets li .mk{ flex:none; width:13px; height:13px; border-radius:3px; background:var(--cyan); margin-top:14px; box-shadow:0 0 14px rgba(45,212,191,.6); transform:rotate(45deg); }
-      ul.bullets li .tx{ font-size:36px; color:var(--ink); line-height:1.3; }
-      ul.bullets li .tx b{ font-weight:600; color:#fff; }
+      ul.bullets li .tx{ font-size:36px; color:var(--ink); line-height:1.3; } ul.bullets li .tx b{ font-weight:600; color:#fff; }
 
       .callout{ background:var(--panel); border:1px solid var(--hair); border-left:5px solid var(--cyan); padding:28px 38px; border-radius:0 14px 14px 0; opacity:0; }
       .callout.hot{ border-left-color:var(--o); }
@@ -79,33 +68,25 @@
       .npanel .hd{ font-family:"Inter"; font-weight:700; font-size:38px; color:var(--ink); margin-top:14px; line-height:1.12; }
       .npanel .ds{ font-size:23px; color:var(--soft); margin-top:14px; line-height:1.4; }
 
-      .row{ display:flex; align-items:center; gap:80px; }
-      .col{ flex:1; }
-
-      /* phone (baby instagram) */
+      .row{ display:flex; align-items:center; gap:80px; } .col{ flex:1; }
       .phone{ width:300px; height:600px; background:#05080E; border:2px solid var(--hair); border-radius:40px; padding:14px; opacity:0; box-shadow:0 0 60px rgba(45,212,191,.10); }
       .screen{ width:100%; height:100%; background:#0B1422; border-radius:28px; display:flex; flex-direction:column; align-items:stretch; padding:20px 16px; gap:12px; }
       .ptop{ font-family:"JetBrains Mono"; font-size:15px; color:var(--soft); letter-spacing:.06em; display:flex; justify-content:space-between; }
       .pphoto{ flex:1; border-radius:14px; background:linear-gradient(135deg, rgba(45,212,191,.5), rgba(255,107,44,.4)); }
       .pcap{ font-size:17px; color:var(--soft); } .pheart{ color:var(--o); font-size:22px; }
 
-      /* big contrast (requirements: scale) */
       .contrast{ display:flex; align-items:center; gap:60px; margin-top:30px; }
-      .cnum{ font-family:"JetBrains Mono"; font-weight:400; opacity:0; }
-      .cnum .n{ font-size:96px; color:var(--ink); line-height:1; }
-      .cnum.big .n{ color:var(--cyanb); }
+      .cnum{ font-family:"JetBrains Mono"; opacity:0; }
+      .cnum .n{ font-size:96px; color:var(--ink); line-height:1; } .cnum.big .n{ color:var(--cyanb); }
       .cnum .l{ font-size:24px; color:var(--muted); margin-top:14px; letter-spacing:.04em; }
       .cvs{ font-family:"Inter"; font-style:italic; font-size:44px; color:var(--muted); opacity:0; }
 
-      /* recap step chips */
       .rsteps{ display:flex; flex-wrap:wrap; gap:18px; margin-top:30px; }
-      .rstep{ font-family:"JetBrains Mono"; font-size:24px; color:var(--cyanb); background:var(--panel); border:1px solid var(--hair); border-radius:12px; padding:16px 26px; opacity:0; }
-      .rstep b{ color:var(--muted); }
+      .rstep{ font-family:"JetBrains Mono"; font-size:24px; color:var(--cyanb); background:var(--panel); border:1px solid var(--hair); border-radius:12px; padding:16px 26px; opacity:0; } .rstep b{ color:var(--muted); }
 
       .stats{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:34px; margin-top:30px; }
       .stat{ background:var(--panel); border:1px solid var(--hair); border-radius:18px; padding:34px 30px; opacity:0; }
-      .stat .big{ font-family:"JetBrains Mono"; font-size:70px; line-height:1; color:var(--cyanb); }
-      .stat .big .u{ font-size:36px; color:var(--cyan); }
+      .stat .big{ font-family:"JetBrains Mono"; font-size:70px; line-height:1; color:var(--cyanb); } .stat .big .u{ font-size:36px; color:var(--cyan); }
       .stat.hot .big{ color:#fff; } .stat.hot{ border-color:var(--o); }
       .stat .nm{ font-family:"JetBrains Mono"; font-size:17px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:18px; }
       .stat .ds{ font-size:22px; color:var(--soft); margin-top:10px; line-height:1.35; }
@@ -124,44 +105,47 @@
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="sdep01full" data-start="0" data-duration="670" data-width="1920" data-height="1080">
-      <div id="bg">
-        <div id="bggrid"></div><div id="bgfine"></div>
-        <div class="glow" id="glow1"></div><div class="glow" id="glow2"></div>
-      </div>
+    <div id="root" data-composition-id="sdep01full" data-start="0" data-duration="457" data-width="1920" data-height="1080">
+      <!-- reusable monoline icons -->
+      <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+        <symbol id="ic-phone" viewBox="0 0 100 100"><rect x="33" y="14" width="34" height="72" rx="8" fill="none" stroke="#5EEAD4" stroke-width="4.5"/><line x1="45" y1="76" x2="55" y2="76" stroke="#5EEAD4" stroke-width="4.5"/></symbol>
+        <symbol id="ic-server" viewBox="0 0 100 100"><rect x="20" y="24" width="60" height="22" rx="5" fill="none" stroke="#5EEAD4" stroke-width="4.5"/><rect x="20" y="54" width="60" height="22" rx="5" fill="none" stroke="#5EEAD4" stroke-width="4.5"/><circle cx="32" cy="35" r="3" fill="#5EEAD4"/><circle cx="32" cy="65" r="3" fill="#5EEAD4"/></symbol>
+        <symbol id="ic-db" viewBox="0 0 100 100"><ellipse cx="50" cy="24" rx="26" ry="9" fill="none" stroke="#5EEAD4" stroke-width="4.5"/><path d="M24 24 V76 a26 9 0 0 0 52 0 V24" fill="none" stroke="#5EEAD4" stroke-width="4.5"/><path d="M24 50 a26 9 0 0 0 52 0" fill="none" stroke="#5EEAD4" stroke-width="4.5"/></symbol>
+        <symbol id="ic-photo" viewBox="0 0 100 100"><rect x="18" y="26" width="64" height="50" rx="7" fill="none" stroke="#5EEAD4" stroke-width="4.5"/><circle cx="37" cy="44" r="6.5" fill="#5EEAD4"/><path d="M24 70 L44 50 L58 62 L70 52 L78 70" fill="none" stroke="#5EEAD4" stroke-width="4.5" stroke-linejoin="round"/></symbol>
+        <symbol id="ic-cache" viewBox="0 0 100 100"><path d="M55 14 L29 56 H47 L43 86 L73 40 H53 Z" fill="none" stroke="#FF8A55" stroke-width="4.5" stroke-linejoin="round"/></symbol>
+      </defs></svg>
+      <div id="bg"><div id="bggrid"></div><div id="bgfine"></div><div class="glow" id="glow1"></div><div class="glow" id="glow2"></div></div>
       <div class="hud"><div class="l">THE TECH INTERN <span>// SYSTEM DESIGN</span></div><div class="r">S2 · E01</div></div>
       <div id="hudline"></div>
       <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
       <div id="sweep"></div>
 
-      <!-- 1. TITLE (0–22) -->
-      <div class="scene clip" id="s1" data-start="0" data-duration="22" data-track-index="0">
+      <!-- 1. TITLE (0–18) -->
+      <div class="scene clip" id="s1" data-start="0" data-duration="18" data-track-index="0">
         <div class="kick" id="s1k">System Design · Lesson 01</div>
         <h1 id="s1t" style="font-size:118px;">Introduction to<br><span class="cy">System Design</span></h1>
-        <div class="sub mono" id="s1s" style="font-size:34px; margin-top:40px; letter-spacing:.02em;">Let's learn it the only way that sticks — by designing an app, together.</div>
+        <div class="sub mono" id="s1s" style="font-size:34px; margin-top:40px; letter-spacing:.02em;">Let's learn it the only way that sticks — by building an app, together.</div>
       </div>
 
-      <!-- 2. HOOK + example (22–84) -->
-      <div class="scene clip" id="s2" data-start="22" data-duration="62" data-track-index="0">
+      <!-- 2. HOOK (18–64) -->
+      <div class="scene clip" id="s2" data-start="18" data-duration="46" data-track-index="0">
         <div class="row">
-          <div class="phone" id="s2phone">
-            <div class="screen">
-              <div class="ptop"><span>baby_insta</span><span class="pheart">♥</span></div>
-              <div class="pphoto"></div>
-              <div class="pcap"><b style="color:#fff">your friend</b> posted a photo</div>
-            </div>
-          </div>
+          <div class="phone" id="s2phone"><div class="screen">
+            <div class="ptop"><span>baby_insta</span><span class="pheart">♥</span></div>
+            <div class="pphoto"></div>
+            <div class="pcap"><b style="color:#fff">your friend</b> posted a photo</div>
+          </div></div>
           <div class="col">
             <div class="kick">The big question</div>
             <h1 id="s2t" style="font-size:66px;">How does one app<br>serve <span class="cy">millions</span> —<br>and never fall over?</h1>
-            <div class="sub" id="s2s" style="font-size:30px; margin-top:30px; opacity:0; line-height:1.45;">The best way to understand it is to <b style="color:#fff">build one ourselves.</b><br>Meet today's project: a tiny app — <span class="cyb">post a photo, friends see it.</span></div>
-            <div class="ptag" id="s2tag" style="margin-top:30px; opacity:0;">PROJECT · <b>baby Instagram</b></div>
+            <div class="sub" id="s2s" style="font-size:30px; margin-top:30px; opacity:0; line-height:1.45;">There's no genius in a control room. It's <b style="color:#fff">design.</b><br>So let's build a tiny one — <span class="cyb">post a photo, friends see it.</span></div>
+            <div class="ptag" id="s2tag" style="margin-top:30px;">PROJECT · <b>baby Instagram</b></div>
           </div>
         </div>
       </div>
 
-      <!-- 3. WHAT SD IS (84–140) -->
-      <div class="scene clip" id="s3" data-start="84" data-duration="56" data-track-index="0">
+      <!-- 3. WHAT SD IS (64–97) -->
+      <div class="scene clip" id="s3" data-start="64" data-duration="33" data-track-index="0">
         <div class="kick">So, what is system design?</div>
         <h1 id="s3t" style="font-size:54px; font-weight:600; max-width:1480px;">It's <span class="cy">planning an app's parts</span> — and how they connect — <span class="cy">before</span> you build, so it stays fast and standing as it grows.</h1>
         <div class="two" style="max-width:1480px;">
@@ -170,42 +154,40 @@
         </div>
       </div>
 
-      <!-- 4. MENTAL MODEL (140–202) -->
-      <div class="scene clip" id="s4" data-start="140" data-duration="62" data-track-index="0">
+      <!-- 4. MENTAL MODEL (97–139) -->
+      <div class="scene clip" id="s4" data-start="97" data-duration="42" data-track-index="0">
         <div class="kick" id="s4k">The one mental model</div>
-        <h1 id="s4t" style="font-size:48px; font-weight:600; margin-bottom:8px;">Under the hood, every app is just three things.</h1>
-        <svg id="s4svg" width="1500" height="250" viewBox="0 0 1500 250" style="overflow:visible;">
-          <path class="edge live" id="m_e1" d="M340 125 H600" />
-          <path class="edge" id="m_e2" d="M900 125 H1160" />
-          <circle class="pkt" id="m_p1" r="8" fill="#5EEAD4" cx="340" cy="125" />
-          <circle class="pkt" id="m_p2" r="8" fill="#A7B8CC" cx="900" cy="125" />
-          <text x="470" y="105" font-size="18" text-anchor="middle" fill="#5EEAD4">request →</text>
-          <text x="1030" y="105" font-size="18" text-anchor="middle" fill="#A7B8CC">save</text>
-          <g id="m_cli"><rect x="40" y="60" width="300" height="130" rx="16" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/>
-            <text class="ncode" x="190" y="115" font-size="15" text-anchor="middle" letter-spacing="2">CLIENT</text><text class="nlabel" x="190" y="155" font-size="28" text-anchor="middle">your phone</text></g>
-          <g id="m_srv"><rect x="600" y="60" width="300" height="130" rx="16" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/>
-            <text class="ncode" x="750" y="115" font-size="15" text-anchor="middle" letter-spacing="2">SERVER</text><text class="nlabel" x="750" y="155" font-size="28" text-anchor="middle">the app</text></g>
-          <g id="m_db"><rect x="1160" y="60" width="300" height="130" rx="16" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/>
-            <text class="ncode" x="1310" y="115" font-size="15" text-anchor="middle" letter-spacing="2">DATABASE</text><text class="nlabel" x="1310" y="155" font-size="28" text-anchor="middle">where it's saved</text></g>
+        <h1 id="s4t" style="font-size:48px; font-weight:600; margin-bottom:6px;">Under the hood, every app is just three things.</h1>
+        <svg id="s4svg" width="1500" height="270" viewBox="0 0 1500 270" style="overflow:visible;">
+          <path class="edge live" id="m_e1" d="M345 135 H600" />
+          <path class="edge" id="m_e2" d="M900 135 H1155" />
+          <circle class="pkt" id="m_p1" r="8" fill="#5EEAD4" cx="345" cy="135" />
+          <circle class="pkt" id="m_p2" r="8" fill="#A7B8CC" cx="900" cy="135" />
+          <text x="472" y="115" font-size="18" text-anchor="middle" fill="#5EEAD4">request →</text>
+          <text x="1027" y="115" font-size="18" text-anchor="middle" fill="#A7B8CC">save</text>
+          <g id="m_cli"><rect x="45" y="40" width="300" height="190" rx="16" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/>
+            <use href="#ic-phone" x="173" y="62" width="44" height="44"/><text class="ncode" x="195" y="150" font-size="14" text-anchor="middle" letter-spacing="2">CLIENT</text><text class="nlabel" x="195" y="190" font-size="27" text-anchor="middle">your phone</text></g>
+          <g id="m_srv"><rect x="600" y="40" width="300" height="190" rx="16" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/>
+            <use href="#ic-server" x="728" y="62" width="44" height="44"/><text class="ncode" x="750" y="150" font-size="14" text-anchor="middle" letter-spacing="2">SERVER</text><text class="nlabel" x="750" y="190" font-size="27" text-anchor="middle">the app</text></g>
+          <g id="m_db"><rect x="1155" y="40" width="300" height="190" rx="16" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/>
+            <use href="#ic-db" x="1283" y="62" width="44" height="44"/><text class="ncode" x="1305" y="150" font-size="14" text-anchor="middle" letter-spacing="2">DATABASE</text><text class="nlabel" x="1305" y="190" font-size="27" text-anchor="middle">where it's saved</text></g>
         </svg>
-        <div class="sub" id="s4s" style="font-size:28px; margin-top:26px; opacity:0;">Your phone <b style="color:#fff">asks</b>, the app <b style="color:#fff">answers</b> — that's a <span class="cy">request</span> and a <span class="cy">response</span>.</div>
+        <div class="sub" id="s4s" style="font-size:28px; margin-top:24px; opacity:0;">You <b style="color:#fff">ask</b>, the app <b style="color:#fff">answers</b> — that's a <span class="cy">request</span> and a <span class="cy">response</span>.</div>
       </div>
 
-      <!-- 5. THE 4 STEPS (202–250) -->
-      <div class="scene clip" id="s5" data-start="202" data-duration="48" data-track-index="0">
+      <!-- 5. THE 4 STEPS (139–170) -->
+      <div class="scene clip" id="s5" data-start="139" data-duration="31" data-track-index="0">
         <div class="kick">How designers actually work</div>
         <h1 id="s5t" style="font-size:50px; font-weight:600;">Every design follows the <span class="cy">same four steps</span>. We'll run all four on baby Instagram.</h1>
         <div class="chips" id="s5chips">
-          <div class="chip" id="s5c1">1 · Requirements</div>
-          <div class="chip" id="s5c2">2 · High-level design</div>
-          <div class="chip" id="s5c3">3 · Core components</div>
-          <div class="chip" id="s5c4">4 · Scale it</div>
+          <div class="chip" id="s5c1">1 · Requirements</div><div class="chip" id="s5c2">2 · High-level design</div>
+          <div class="chip" id="s5c3">3 · Core components</div><div class="chip" id="s5c4">4 · Scale it</div>
         </div>
         <div class="src" id="s5src" style="margin-top:34px; opacity:0;">This loop is the "system design life cycle." — framework per the System Design Primer</div>
       </div>
 
-      <!-- 6. STEP 1 — REQUIREMENTS (250–308) -->
-      <div class="scene clip" id="s6" data-start="250" data-duration="58" data-track-index="0">
+      <!-- 6. STEP 1 — REQUIREMENTS (170–205) -->
+      <div class="scene clip" id="s6" data-start="170" data-duration="35" data-track-index="0">
         <div class="ptag" id="s6tag">STEP 1 OF 4 · <b>requirements</b></div>
         <h1 id="s6t" style="font-size:52px; font-weight:600;">First: what must it do — and <span class="cy">for how many?</span></h1>
         <ul class="bullets" style="margin-top:26px;">
@@ -220,106 +202,95 @@
         <div class="sub" id="s6s" style="font-size:28px; margin-top:30px; opacity:0;">"How many" isn't a detail — it <b style="color:#fff">changes the whole design.</b></div>
       </div>
 
-      <!-- 7. STEP 2 — HIGH-LEVEL DESIGN (308–368) -->
-      <div class="scene clip" id="s7" data-start="308" data-duration="60" data-track-index="0">
+      <!-- 7. STEP 2 — HIGH-LEVEL DESIGN (205–236) -->
+      <div class="scene clip" id="s7" data-start="205" data-duration="31" data-track-index="0">
         <div class="ptag" id="s7tag">STEP 2 OF 4 · <b>high-level design</b></div>
         <h1 id="s7t" style="font-size:50px; font-weight:600; margin-bottom:18px;">Now sketch the boxes — and the arrows between them.</h1>
         <svg id="s7svg" width="1500" height="330" viewBox="0 0 1500 330" style="overflow:visible;">
-          <path class="edge" id="h_e1" d="M280 165 H560" />
-          <path class="edge" id="h_e2" d="M820 140 C 940 140, 1000 80, 1120 80" />
-          <path class="edge" id="h_e3" d="M820 190 C 940 190, 1000 250, 1120 250" />
-          <circle class="pkt" id="h_p1" r="8" fill="#5EEAD4" cx="280" cy="165" />
-          <g id="h_ph"><rect x="40" y="105" width="240" height="120" rx="14" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/>
-            <text class="ncode" x="160" y="155" font-size="14" text-anchor="middle" letter-spacing="2">CLIENT</text><text class="nlabel" x="160" y="190" font-size="24" text-anchor="middle">your phone</text></g>
-          <g id="h_srv"><rect x="560" y="105" width="260" height="120" rx="14" fill="#16233A" stroke="#2DD4BF" stroke-width="1.5"/>
-            <text class="ncode" x="690" y="155" font-size="14" text-anchor="middle" letter-spacing="2">SERVER</text><text class="nlabel" x="690" y="190" font-size="24" text-anchor="middle">the app</text></g>
-          <g id="h_db"><rect x="1120" y="30" width="320" height="100" rx="14" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/>
-            <text class="ncode" x="1280" y="72" font-size="14" text-anchor="middle" letter-spacing="2">DATABASE</text><text class="nlabel" x="1280" y="106" font-size="22" text-anchor="middle">posts &amp; captions</text></g>
-          <g id="h_ph2"><rect x="1120" y="200" width="320" height="100" rx="14" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/>
-            <text class="ncode" x="1280" y="242" font-size="14" text-anchor="middle" letter-spacing="2">PHOTO STORAGE</text><text class="nlabel" x="1280" y="276" font-size="22" text-anchor="middle">the images</text></g>
+          <path class="edge" id="h_e1" d="M300 165 H560" />
+          <path class="edge" id="h_e2" d="M830 140 C 950 140, 1010 80, 1130 80" />
+          <path class="edge" id="h_e3" d="M830 190 C 950 190, 1010 250, 1130 250" />
+          <circle class="pkt" id="h_p1" r="8" fill="#5EEAD4" cx="300" cy="165" />
+          <g id="h_ph"><rect x="40" y="95" width="260" height="140" rx="14" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/>
+            <use href="#ic-phone" x="148" y="112" width="40" height="40"/><text class="nlabel" x="170" y="195" font-size="24" text-anchor="middle">your phone</text></g>
+          <g id="h_srv"><rect x="560" y="95" width="270" height="140" rx="14" fill="#16233A" stroke="#2DD4BF" stroke-width="1.5"/>
+            <use href="#ic-server" x="675" y="112" width="40" height="40"/><text class="nlabel" x="695" y="195" font-size="24" text-anchor="middle">the app</text></g>
+          <g id="h_db"><rect x="1130" y="30" width="330" height="100" rx="14" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/>
+            <use href="#ic-db" x="1158" y="52" width="38" height="38"/><text class="nlabel" x="1310" y="88" font-size="23" text-anchor="middle">posts &amp; captions</text></g>
+          <g id="h_ph2"><rect x="1130" y="200" width="330" height="100" rx="14" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/>
+            <use href="#ic-photo" x="1158" y="222" width="38" height="38"/><text class="nlabel" x="1315" y="258" font-size="23" text-anchor="middle">the photo files</text></g>
         </svg>
-        <div class="src" id="s7src" style="margin-top:18px; opacity:0;">This boxes-and-arrows view has a name: the "high-level design."</div>
+        <div class="src" id="s7src" style="margin-top:16px; opacity:0;">This boxes-and-arrows view has a name: the "high-level design."</div>
       </div>
 
-      <!-- 8. STEP 3 — CORE COMPONENTS (368–426) -->
-      <div class="scene clip" id="s8" data-start="368" data-duration="58" data-track-index="0">
+      <!-- 8. STEP 3 — CORE COMPONENTS (236–276) -->
+      <div class="scene clip" id="s8" data-start="236" data-duration="40" data-track-index="0">
         <div class="ptag" id="s8tag">STEP 3 OF 4 · <b>core components</b></div>
         <h1 id="s8t" style="font-size:50px; font-weight:600; margin-bottom:14px;">Zoom into one box — the <span class="cy">feed</span>.</h1>
-        <svg id="s8svg" width="1500" height="210" viewBox="0 0 1500 210" style="overflow:visible;">
-          <path class="edge live" id="f_etop" d="M320 70 H1180" />
-          <path class="edge" id="f_ebot" d="M1180 140 H320" />
-          <circle class="pkt" id="f_p1" r="8" fill="#5EEAD4" cx="320" cy="70" />
-          <circle class="pkt" id="f_p2" r="8" fill="#A7B8CC" cx="1180" cy="140" />
-          <text x="750" y="52" font-size="19" text-anchor="middle" fill="#5EEAD4">"give me recent photos" →</text>
-          <text x="750" y="178" font-size="19" text-anchor="middle" fill="#A7B8CC">← here are 12 photos</text>
-          <g id="f_ph"><rect x="40" y="50" width="280" height="110" rx="14" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/>
-            <text class="nlabel" x="180" y="115" font-size="26" text-anchor="middle">your phone</text></g>
-          <g id="f_srv"><rect x="1180" y="50" width="280" height="110" rx="14" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/>
-            <text class="nlabel" x="1320" y="115" font-size="26" text-anchor="middle">the app</text></g>
+        <svg id="s8svg" width="1500" height="240" viewBox="0 0 1500 240" style="overflow:visible;">
+          <path class="edge live" id="f_etop" d="M340 80 H1160" />
+          <path class="edge" id="f_ebot" d="M1160 160 H340" />
+          <circle class="pkt" id="f_p1" r="8" fill="#5EEAD4" cx="340" cy="80" />
+          <circle class="pkt" id="f_p2" r="8" fill="#A7B8CC" cx="1160" cy="160" />
+          <text x="750" y="62" font-size="19" text-anchor="middle" fill="#5EEAD4">"give me recent photos" →</text>
+          <text x="750" y="196" font-size="19" text-anchor="middle" fill="#A7B8CC">← here are 12 photos</text>
+          <g id="f_ph"><rect x="40" y="55" width="300" height="130" rx="14" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/>
+            <use href="#ic-phone" x="170" y="72" width="40" height="40"/><text class="nlabel" x="190" y="158" font-size="25" text-anchor="middle">your phone</text></g>
+          <g id="f_srv"><rect x="1160" y="55" width="300" height="130" rx="14" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/>
+            <use href="#ic-server" x="1290" y="72" width="40" height="40"/><text class="nlabel" x="1310" y="158" font-size="25" text-anchor="middle">the app</text></g>
         </svg>
-        <div class="callout" id="s8c" style="margin-top:26px; max-width:1480px;"><div class="t">The wait between <span class="cy">"ask"</span> and <span class="cy">"answer"</span>? That's <span class="cy">latency</span> — the lag you feel.</div></div>
+        <div class="callout" id="s8c" style="margin-top:24px; max-width:1480px;"><div class="t">The wait between <span class="cy">"ask"</span> and <span class="cy">"answer"</span>? That's <span class="cy">latency</span> — the lag you feel.</div></div>
       </div>
 
-      <!-- 9. STEP 4 — SCALE IT (426–496) -->
-      <div class="scene clip" id="s9" data-start="426" data-duration="70" data-track-index="0">
+      <!-- 9. STEP 4 — SCALE IT (276–326) -->
+      <div class="scene clip" id="s9" data-start="276" data-duration="50" data-track-index="0">
         <div class="ptag" id="s9tag">STEP 4 OF 4 · <b>scale it</b></div>
         <h1 id="s9t" style="font-size:48px; font-weight:600; margin-bottom:12px;">Now <span class="or">10 million</span> friends open it at 9pm. One server can't cope.</h1>
         <svg id="s9svg" width="1500" height="320" viewBox="0 0 1500 320" style="overflow:visible;">
           <g id="sc_cl">
             <circle cx="60" cy="70" r="9" fill="#2DD4BF"/><circle cx="60" cy="130" r="9" fill="#2DD4BF"/><circle cx="60" cy="190" r="9" fill="#2DD4BF"/><circle cx="60" cy="250" r="9" fill="#2DD4BF"/>
             <circle cx="120" cy="100" r="9" fill="#2DD4BF"/><circle cx="120" cy="160" r="9" fill="#2DD4BF"/><circle cx="120" cy="220" r="9" fill="#2DD4BF"/>
-            <text x="90" y="300" font-size="17" text-anchor="middle" fill="#5F7287">10,000,000 phones</text>
-          </g>
+            <text x="90" y="300" font-size="17" text-anchor="middle" fill="#5F7287">10,000,000 phones</text></g>
           <path class="edge live" id="sc_e1" d="M170 160 C 320 160, 380 70, 540 70" />
           <path class="edge live" id="sc_e2" d="M170 160 H540" />
           <path class="edge live" id="sc_e3" d="M170 160 C 320 160, 380 250, 540 250" />
-          <g id="sc_s1"><rect x="540" y="30" width="230" height="80" rx="12" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/><text class="nlabel" x="655" y="78" font-size="22" text-anchor="middle">server</text></g>
-          <g id="sc_s2"><rect x="540" y="120" width="230" height="80" rx="12" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/><text class="nlabel" x="655" y="168" font-size="22" text-anchor="middle">server</text></g>
-          <g id="sc_s3"><rect x="540" y="210" width="230" height="80" rx="12" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/><text class="nlabel" x="655" y="258" font-size="22" text-anchor="middle">server</text></g>
-          <path class="edge" id="sc_e4" d="M770 160 H980" />
-          <g id="sc_cache"><rect x="980" y="110" width="260" height="100" rx="14" fill="#16233A" stroke="#FF6B2C" stroke-width="1.5"/>
-            <text class="ncode" x="1110" y="152" font-size="14" text-anchor="middle" letter-spacing="2" fill="#FF6B2C">CACHE / CDN</text><text class="nlabel" x="1110" y="186" font-size="19" text-anchor="middle">popular photos, kept near</text></g>
+          <g id="sc_s1"><rect x="540" y="34" width="240" height="76" rx="12" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/><use href="#ic-server" x="556" y="50" width="34" height="34"/><text class="nlabel" x="680" y="80" font-size="22" text-anchor="middle">server</text></g>
+          <g id="sc_s2"><rect x="540" y="122" width="240" height="76" rx="12" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/><use href="#ic-server" x="556" y="138" width="34" height="34"/><text class="nlabel" x="680" y="168" font-size="22" text-anchor="middle">server</text></g>
+          <g id="sc_s3"><rect x="540" y="210" width="240" height="76" rx="12" fill="#16233A" stroke="rgba(125,170,210,.18)" stroke-width="1.5"/><use href="#ic-server" x="556" y="226" width="34" height="34"/><text class="nlabel" x="680" y="256" font-size="22" text-anchor="middle">server</text></g>
+          <path class="edge" id="sc_e4" d="M780 160 H1000" />
+          <g id="sc_cache"><rect x="1000" y="110" width="270" height="100" rx="14" fill="#16233A" stroke="#FF6B2C" stroke-width="1.5"/>
+            <use href="#ic-cache" x="1024" y="132" width="40" height="40"/><text class="ncode" x="1150" y="152" font-size="14" text-anchor="middle" letter-spacing="2" fill="#FF6B2C">CACHE / CDN</text><text class="nlabel" x="1150" y="184" font-size="20" text-anchor="middle">popular photos, near</text></g>
         </svg>
-        <div class="two" style="max-width:1480px; margin-top:8px;">
+        <div class="two" style="max-width:1480px; margin-top:6px;">
           <div class="npanel" id="s9p1"><div class="nm">Scale out</div><div class="hd">Add more servers.</div></div>
           <div class="npanel b" id="s9p2"><div class="nm">Throughput</div><div class="hd">How many you serve per second.</div></div>
         </div>
       </div>
 
-      <!-- 10. RECAP (496–542) -->
-      <div class="scene clip" id="s10" data-start="496" data-duration="46" data-track-index="0">
+      <!-- 10. RECAP (326–351) -->
+      <div class="scene clip" id="s10" data-start="326" data-duration="25" data-track-index="0">
         <div class="kick">Step back</div>
         <h1 id="s10t" style="font-size:60px;">You just did <span class="cy">system design.</span></h1>
         <div class="rsteps">
-          <div class="rstep" id="s10r1"><b>1</b> requirements</div>
-          <div class="rstep" id="s10r2"><b>2</b> high-level design</div>
-          <div class="rstep" id="s10r3"><b>3</b> components</div>
-          <div class="rstep" id="s10r4"><b>4</b> scale</div>
+          <div class="rstep" id="s10r1"><b>1</b> requirements</div><div class="rstep" id="s10r2"><b>2</b> high-level design</div>
+          <div class="rstep" id="s10r3"><b>3</b> components</div><div class="rstep" id="s10r4"><b>4</b> scale</div>
         </div>
         <div class="sub" id="s10s" style="font-size:32px; margin-top:36px; opacity:0; line-height:1.4;">Decide the parts, connect them, keep it <b style="color:#fff">fast</b> and <b style="color:#fff">standing</b> as you grow. That's the whole game.</div>
       </div>
 
-      <!-- 11. HLD vs LLD — two altitudes (542–594) -->
-      <div class="scene clip" id="s11" data-start="542" data-duration="52" data-track-index="0">
+      <!-- 11. HLD vs LLD (351–391) -->
+      <div class="scene clip" id="s11" data-start="351" data-duration="40" data-track-index="0">
         <div class="kick" id="s11k">One more altitude</div>
         <h1 id="s11t" style="font-size:50px; font-weight:600;">We drew the <span class="cy">boxes</span>. There's a deeper view — <span class="cy">inside</span> one box.</h1>
         <div class="two" style="max-width:1480px;">
-          <div class="npanel" id="s11p1">
-            <div class="nm">HLD · high-level design</div>
-            <div class="hd">The boxes &amp; arrows.</div>
-            <div class="ds">What parts exist and how they connect — <b style="color:#fff">everything we did today.</b></div>
-          </div>
-          <div class="npanel b" id="s11p2">
-            <div class="nm">LLD · low-level design</div>
-            <div class="hd">The code inside one box.</div>
-            <div class="ds">Open the "database" box and design exactly how one <b style="color:#fff">post</b> is built &amp; stored.</div>
-          </div>
+          <div class="npanel" id="s11p1"><div class="nm">HLD · high-level design</div><div class="hd">The boxes &amp; arrows.</div><div class="ds">What parts exist and how they connect — <b style="color:#fff">everything we did today.</b></div></div>
+          <div class="npanel b" id="s11p2"><div class="nm">LLD · low-level design</div><div class="hd">The code inside one box.</div><div class="ds">Open the "database" box and design exactly how one <b style="color:#fff">post</b> is built &amp; stored.</div></div>
         </div>
         <div class="callout" id="s11c" style="margin-top:32px; max-width:1480px;"><div class="t">Same craft, two zoom levels — <span class="cy">master the boxes first;</span> we go down to the code in a <span class="cy">later season.</span></div></div>
       </div>
 
-      <!-- 12. REAL WORLD (594–638) -->
-      <div class="scene clip" id="s12" data-start="594" data-duration="44" data-track-index="0">
+      <!-- 12. REAL WORLD (391–422) -->
+      <div class="scene clip" id="s12" data-start="391" data-duration="31" data-track-index="0">
         <div class="kick" id="s12k">The same four steps — at real scale</div>
         <h1 id="s12t" style="font-size:50px; font-weight:600;">Baby Instagram → Disney+ Hotstar. Same ideas, more boxes.</h1>
         <div class="stats" style="grid-template-columns:1fr 1fr;">
@@ -329,16 +300,13 @@
         <div class="src" id="s12src" style="margin-top:22px; opacity:0;">Hotstar concurrency record: 59M (2023). Per engineering reports.</div>
       </div>
 
-      <!-- 13. OUTRO (638–670) -->
-      <div class="scene clip" id="s13" data-start="638" data-duration="32" data-track-index="0">
+      <!-- 13. OUTRO (422–457) -->
+      <div class="scene clip" id="s13" data-start="422" data-duration="35" data-track-index="0">
         <div class="kick" id="s13k">That's your first system design</div>
         <h1 id="s13t" style="font-size:58px;">You can now see the <span class="cy">boxes</span><br>behind any app you open.</h1>
         <div class="chips" id="s13chips" style="margin-top:28px;">
-          <div class="chip" id="s13a">load balancers</div>
-          <div class="chip" id="s13b">caching</div>
-          <div class="chip" id="s13c">databases</div>
-          <div class="chip" id="s13d">queues</div>
-          <div class="chip on" id="s13e">→ one box at a time</div>
+          <div class="chip" id="s13a">load balancers</div><div class="chip" id="s13b">caching</div><div class="chip" id="s13c">databases</div>
+          <div class="chip" id="s13d">queues</div><div class="chip on" id="s13e">→ one box at a time</div>
         </div>
         <div class="sub" id="s13next" style="font-size:32px; margin-top:32px; opacity:0;">Next — <span class="cyb">Client &amp; server: what really happens when you open Swiggy.</span></div>
         <div class="sub mono" id="s13cta" style="font-size:25px; margin-top:20px; color:#5F7287; opacity:0;">Subscribe, and we'll build the whole system — one box at a time.</div>
@@ -368,6 +336,8 @@
       function pop(sel, t, d){ tl.fromTo(sel, { opacity:0, y:20, scale:0.9 }, { opacity:1, y:0, scale:1, duration:(d||0.55), ease:"back.out(1.5)", transformOrigin:"center" }, t); }
       function breathe(sel, t, to, dur, n){ tl.to(sel, { scale:to, duration:dur, ease:"sine.inOut", repeat:n, yoyo:true, transformOrigin:"center" }, t); }
       function floaty(sel, t, dy, dur, n){ tl.to(sel, { y:dy, duration:dur, ease:"sine.inOut", repeat:n, yoyo:true }, t); }
+      // slow cinematic push-in on a held diagram
+      function pushin(sel, t, to, dur){ tl.fromTo(sel, { scale:1, transformOrigin:"center" }, { scale:(to||1.05), duration:(dur||10), ease:"sine.inOut" }, t); }
       function draw(sel, len, t, d){
         tl.set(sel, { opacity:1, attr:{ "stroke-dasharray":len, "stroke-dashoffset":len } }, t);
         tl.to(sel, { attr:{ "stroke-dashoffset":0 }, duration:(d||0.7), ease:"power2.inOut" }, t);
@@ -383,110 +353,107 @@
         tl.set("#sweep", { opacity:0 }, t+0.42);
       }
 
-      // 1. TITLE
-      scene("#s1", 0, 22);
+      // 1. TITLE (0–18) — narration ~16s
+      scene("#s1", 0, 18);
       kick("#s1k", 0.7); head("#s1t", 1.1, 1.1);
       tl.from("#s1t .cy", { color:"#E8EFF7", duration:0.7 }, 2.0);
-      tl.to("#s1t .cy", { opacity:0.7, duration:1.7, ease:"sine.inOut", repeat:5, yoyo:true }, 5.0);
+      tl.to("#s1t .cy", { opacity:0.7, duration:1.7, ease:"sine.inOut", repeat:4, yoyo:true }, 5.0);
       rise("#s1s", 2.7, 16); floaty("#s1t", 4.8, -9, 3.2, 4);
 
-      // 2. HOOK + example
-      sweep(22); scene("#s2", 22, 62);
-      pop("#s2phone", 23.2, 0.7); floaty("#s2phone", 25.6, -14, 2.8, 16);
-      kick("#s2 .kick", 23.6); head("#s2t", 24.2, 0.9);
-      rise("#s2s", 28.5, 18); pop("#s2tag", 33.0, 0.6);
-      breathe("#s2tag", 36, 1.04, 1.6, 14);
+      // 2. HOOK (18–64) — ~42s
+      sweep(18); scene("#s2", 18, 46);
+      pop("#s2phone", 19.2, 0.7); floaty("#s2phone", 21.6, -14, 2.8, 14);
+      kick("#s2 .kick", 19.6); head("#s2t", 20.2, 0.9);
+      rise("#s2s", 26.0, 18); pop("#s2tag", 33.0, 0.6); breathe("#s2tag", 36, 1.04, 1.6, 10);
 
-      // 3. WHAT SD IS
-      sweep(84); scene("#s3", 84, 56);
-      kick("#s3 .kick", 85.0); head("#s3t", 85.6, 0.9);
-      pop("#s3p1", 91.0, 0.7); pop("#s3p2", 93.0, 0.7);
-      breathe("#s3p2", 98, 1.012, 2.2, 14);
+      // 3. WHAT SD IS (64–97) — ~30s
+      sweep(64); scene("#s3", 64, 33);
+      kick("#s3 .kick", 65.0); head("#s3t", 65.6, 0.9);
+      pop("#s3p1", 73.0, 0.7); pop("#s3p2", 75.0, 0.7); breathe("#s3p2", 80, 1.012, 2.2, 8);
 
-      // 4. MENTAL MODEL
-      sweep(140); scene("#s4", 140, 62);
-      kick("#s4k", 141.0); head("#s4t", 141.6, 0.9);
-      pop("#m_cli", 144.0); pop("#m_srv", 145.6); pop("#m_db", 147.2);
-      draw("#m_e1", 280, 145.0, 0.6); draw("#m_e2", 280, 146.6, 0.6);
-      packet("#m_p1", 340, 125, 600, 125, 148.5, 1.4, 22);
-      packet("#m_p2", 900, 125, 1160, 125, 149.5, 1.4, 22);
-      rise("#s4s", 152.0, 16);
+      // 4. MENTAL MODEL (97–139) — ~38s
+      sweep(97); scene("#s4", 97, 42);
+      kick("#s4k", 98.0); head("#s4t", 98.6, 0.9);
+      pop("#m_cli", 102.0); pop("#m_srv", 105.0); pop("#m_db", 108.0);
+      draw("#m_e1", 280, 104.0, 0.6); draw("#m_e2", 280, 107.0, 0.6);
+      packet("#m_p1", 345, 135, 600, 135, 110.0, 1.4, 16);
+      packet("#m_p2", 900, 135, 1155, 135, 111.0, 1.4, 16);
+      rise("#s4s", 114.0, 16); pushin("#s4svg", 116, 1.04, 20);
 
-      // 5. THE 4 STEPS
-      sweep(202); scene("#s5", 202, 48);
-      kick("#s5 .kick", 203.0); head("#s5t", 203.6, 0.9);
-      pop("#s5c1", 208.0, 0.6); pop("#s5c2", 209.2, 0.6); pop("#s5c3", 210.4, 0.6); pop("#s5c4", 211.6, 0.6);
-      rise("#s5src", 214.0, 14);
+      // 5. THE 4 STEPS (139–170) — ~28s
+      sweep(139); scene("#s5", 139, 31);
+      kick("#s5 .kick", 140.0); head("#s5t", 140.6, 0.9);
+      pop("#s5c1", 145.0, 0.6); pop("#s5c2", 146.3, 0.6); pop("#s5c3", 147.6, 0.6); pop("#s5c4", 148.9, 0.6);
+      rise("#s5src", 152.0, 14);
 
-      // 6. STEP 1 — REQUIREMENTS
-      sweep(250); scene("#s6", 250, 58);
-      pop("#s6tag", 251.0, 0.6); head("#s6t", 251.8, 0.9);
-      rise("#s6b1", 255.5, 16); rise("#s6b2", 257.5, 16);
-      pop("#s6n1", 260.5, 0.6); pop("#s6vs", 262.0, 0.5); pop("#s6n2", 263.0, 0.7);
-      tl.to("#s6n2", { scale:1.04, duration:1.4, ease:"sine.inOut", repeat:14, yoyo:true, transformOrigin:"left center" }, 265);
-      rise("#s6s", 266.0, 14);
+      // 6. STEP 1 — REQUIREMENTS (170–205) — ~32s
+      sweep(170); scene("#s6", 170, 35);
+      pop("#s6tag", 171.0, 0.6); head("#s6t", 171.8, 0.9);
+      rise("#s6b1", 176.0, 16); rise("#s6b2", 178.0, 16);
+      pop("#s6n1", 182.0, 0.6); pop("#s6vs", 184.0, 0.5); pop("#s6n2", 185.0, 0.7);
+      tl.to("#s6n2", { scale:1.04, duration:1.4, ease:"sine.inOut", repeat:10, yoyo:true, transformOrigin:"left center" }, 187);
+      rise("#s6s", 189.0, 14);
 
-      // 7. STEP 2 — HIGH-LEVEL DESIGN
-      sweep(308); scene("#s7", 308, 60);
-      pop("#s7tag", 309.0, 0.6); head("#s7t", 309.8, 0.9);
-      pop("#h_ph", 313.0); draw("#h_e1", 300, 314.2, 0.5); pop("#h_srv", 315.0);
-      draw("#h_e2", 220, 316.6, 0.5); draw("#h_e3", 220, 317.0, 0.5);
-      pop("#h_db", 317.6); pop("#h_ph2", 318.4);
-      packet("#h_p1", 280, 165, 560, 165, 320.0, 1.0, 26);
-      rise("#s7src", 323.0, 14);
+      // 7. STEP 2 — HIGH-LEVEL DESIGN (205–236) — ~28s
+      sweep(205); scene("#s7", 205, 31);
+      pop("#s7tag", 206.0, 0.6); head("#s7t", 206.8, 0.9);
+      pop("#h_ph", 210.5); draw("#h_e1", 300, 211.7, 0.5); pop("#h_srv", 212.5);
+      draw("#h_e2", 220, 214.0, 0.5); draw("#h_e3", 220, 214.4, 0.5);
+      pop("#h_db", 215.0); pop("#h_ph2", 215.8);
+      packet("#h_p1", 300, 165, 560, 165, 217.0, 1.0, 16);
+      rise("#s7src", 220.0, 14);
 
-      // 8. STEP 3 — CORE COMPONENTS
-      sweep(368); scene("#s8", 368, 58);
-      pop("#s8tag", 369.0, 0.6); head("#s8t", 369.8, 0.9);
-      pop("#f_ph", 373.0); pop("#f_srv", 374.0);
-      draw("#f_etop", 880, 375.2, 0.7); draw("#f_ebot", 880, 376.2, 0.7);
-      packet("#f_p1", 320, 70, 1180, 70, 377.4, 1.5, 16);
-      packet("#f_p2", 1180, 140, 320, 140, 378.4, 1.5, 16);
-      tl.fromTo("#s8c", { opacity:0, x:-26 }, { opacity:1, x:0, duration:0.7, ease:"power3.out" }, 382.0);
-      breathe("#s8c", 386, 1.01, 2.0, 12);
+      // 8. STEP 3 — CORE COMPONENTS (236–276) — ~36s
+      sweep(236); scene("#s8", 236, 40);
+      pop("#s8tag", 237.0, 0.6); head("#s8t", 237.8, 0.9);
+      pop("#f_ph", 242.0); pop("#f_srv", 243.0);
+      draw("#f_etop", 840, 244.2, 0.7); draw("#f_ebot", 840, 245.2, 0.7);
+      packet("#f_p1", 340, 80, 1160, 80, 246.4, 1.5, 16);
+      packet("#f_p2", 1160, 160, 340, 160, 247.4, 1.5, 16);
+      tl.fromTo("#s8c", { opacity:0, x:-26 }, { opacity:1, x:0, duration:0.7, ease:"power3.out" }, 253.0);
+      breathe("#s8c", 257, 1.01, 2.0, 8);
 
-      // 9. STEP 4 — SCALE IT
-      sweep(426); scene("#s9", 426, 70);
-      pop("#s9tag", 427.0, 0.6); head("#s9t", 427.8, 0.9);
-      pop("#sc_cl", 431.0);
-      draw("#sc_e1", 560, 432.0, 0.6); draw("#sc_e2", 420, 432.3, 0.6); draw("#sc_e3", 560, 432.6, 0.6);
-      pop("#sc_s1", 433.4); pop("#sc_s2", 434.0); pop("#sc_s3", 434.6);
-      draw("#sc_e4", 230, 436.0, 0.5); pop("#sc_cache", 436.6);
-      pop("#s9p1", 440.0, 0.7); pop("#s9p2", 442.0, 0.7);
-      breathe("#sc_cache", 445, 1.03, 2.2, 14);
+      // 9. STEP 4 — SCALE IT (276–326) — ~46s
+      sweep(276); scene("#s9", 276, 50);
+      pop("#s9tag", 277.0, 0.6); head("#s9t", 277.8, 0.9);
+      pop("#sc_cl", 282.0);
+      draw("#sc_e1", 560, 283.0, 0.6); draw("#sc_e2", 420, 283.3, 0.6); draw("#sc_e3", 560, 283.6, 0.6);
+      pop("#sc_s1", 284.4); pop("#sc_s2", 285.0); pop("#sc_s3", 285.6);
+      draw("#sc_e4", 240, 287.0, 0.5); pop("#sc_cache", 287.6);
+      pop("#s9p1", 291.0, 0.7); pop("#s9p2", 293.0, 0.7);
+      breathe("#sc_cache", 296, 1.03, 2.2, 12);
 
-      // 10. RECAP
-      sweep(496); scene("#s10", 496, 46);
-      kick("#s10 .kick", 497.0); head("#s10t", 497.6, 1.0);
-      pop("#s10r1", 501.5, 0.5); pop("#s10r2", 502.4, 0.5); pop("#s10r3", 503.3, 0.5); pop("#s10r4", 504.2, 0.5);
-      rise("#s10s", 506.5, 16);
+      // 10. RECAP (326–351) — ~22s
+      sweep(326); scene("#s10", 326, 25);
+      kick("#s10 .kick", 327.0); head("#s10t", 327.6, 1.0);
+      pop("#s10r1", 331.0, 0.5); pop("#s10r2", 331.9, 0.5); pop("#s10r3", 332.8, 0.5); pop("#s10r4", 333.7, 0.5);
+      rise("#s10s", 336.0, 16);
 
-      // 11. HLD vs LLD — two altitudes
-      sweep(542); scene("#s11", 542, 52);
-      kick("#s11k", 543.0); head("#s11t", 543.6, 0.9);
-      pop("#s11p1", 548.0, 0.7); pop("#s11p2", 550.0, 0.7);
-      tl.fromTo("#s11c", { opacity:0, x:-26 }, { opacity:1, x:0, duration:0.7, ease:"power3.out" }, 555.0);
-      breathe("#s11c", 559, 1.01, 2.0, 12);
+      // 11. HLD vs LLD (351–391) — ~36s
+      sweep(351); scene("#s11", 351, 40);
+      kick("#s11k", 352.0); head("#s11t", 352.6, 0.9);
+      pop("#s11p1", 357.0, 0.7); pop("#s11p2", 359.0, 0.7);
+      tl.fromTo("#s11c", { opacity:0, x:-26 }, { opacity:1, x:0, duration:0.7, ease:"power3.out" }, 365.0);
+      breathe("#s11c", 369, 1.01, 2.0, 8);
 
-      // 12. REAL WORLD
-      sweep(594); scene("#s12", 594, 44);
-      kick("#s12k", 595.0); head("#s12t", 595.6, 0.9);
-      pop("#s12c1", 599.5, 0.7); pop("#s12c2", 601.5, 0.7);
+      // 12. REAL WORLD (391–422) — ~28s
+      sweep(391); scene("#s12", 391, 31);
+      kick("#s12k", 392.0); head("#s12t", 392.6, 0.9);
+      pop("#s12c1", 396.5, 0.7); pop("#s12c2", 398.5, 0.7);
       var hc = { v: 59 };
-      tl.set(hc, { v: 0 }, 600.2);
+      tl.set(hc, { v: 0 }, 397.2);
       tl.to(hc, { v: 59, duration: 2.0, ease:"power1.out",
-        onUpdate:function(){ var e=document.getElementById('s12num'); if(e) e.textContent = Math.round(hc.v); } }, 600.4);
-      breathe("#s12c1", 606, 1.02, 2.0, 12);
-      rise("#s12src", 608.0, 14);
+        onUpdate:function(){ var e=document.getElementById('s12num'); if(e) e.textContent = Math.round(hc.v); } }, 397.4);
+      breathe("#s12c1", 403, 1.02, 2.0, 8);
+      rise("#s12src", 405.0, 14);
 
-      // 13. OUTRO (improved)
-      sweep(638); scene("#s13", 638, 32);
-      kick("#s13k", 639.0); head("#s13t", 639.6, 1.0);
-      tl.to("#s13t .cy", { opacity:0.7, duration:1.5, ease:"sine.inOut", repeat:6, yoyo:true }, 643.0);
-      pop("#s13a", 643.5, 0.5); pop("#s13b", 644.2, 0.5); pop("#s13c", 644.9, 0.5); pop("#s13d", 645.6, 0.5);
-      pop("#s13e", 646.6, 0.6); breathe("#s13e", 648.5, 1.04, 1.4, 12);
-      rise("#s13next", 650.0, 16);
-      rise("#s13cta", 654.0, 12);
+      // 13. OUTRO (422–457) — ~32s
+      sweep(422); scene("#s13", 422, 35);
+      kick("#s13k", 423.0); head("#s13t", 423.6, 1.0);
+      tl.to("#s13t .cy", { opacity:0.7, duration:1.5, ease:"sine.inOut", repeat:6, yoyo:true }, 427.0);
+      pop("#s13a", 427.5, 0.5); pop("#s13b", 428.2, 0.5); pop("#s13c", 428.9, 0.5); pop("#s13d", 429.6, 0.5);
+      pop("#s13e", 430.6, 0.6); breathe("#s13e", 432.5, 1.04, 1.4, 12);
+      rise("#s13next", 434.0, 16); rise("#s13cta", 438.0, 12);
 
       window.__timelines["sdep01full"] = tl;
     </script>
