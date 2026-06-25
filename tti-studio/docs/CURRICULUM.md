@@ -329,7 +329,7 @@ creator asked for.
 
 | Ep | Dossier | State |
 |---|---|---|
-| 1 | `docs/research/sd-ep01-what-is-system-design.md` | ⬜ not started |
+| 1 | `docs/research/sd-ep01-introduction-to-system-design.md` | ✅ researched & written |
 | 2–30 | — | ⬜ queued (one at a time, on pick) |
 
 ---
