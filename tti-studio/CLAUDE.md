@@ -1,3 +1,26 @@
+# The Tech Intern — Video Studio
+
+> **New session? Read `docs/` first — it's the channel brain.** These four files
+> carry everything decided about this channel across sessions, so you don't have
+> to re-explain the brand, style, or workflow each time:
+>
+> - **`docs/BRAND.md`** — who the channel is for, voice/tone, exact palette & fonts.
+> - **`docs/STYLE.md`** — the motion-graphics style (living bg, wipes, breathing,
+>   building diagrams, counters). The rule that keeps videos from looking like slides.
+> - **`docs/PIPELINE.md`** — HyperFrames render workflow, gotchas, commands,
+>   and how to compress + deliver the MP4 to the creator via GitHub.
+> - **`docs/CURRICULUM.md`** — the 30-episode AI Season 1 plan + future seasons
+>   (system design, DevOps, security) + the teaching discipline.
+>
+> **TL;DR of the channel:** *The Tech Intern* — faceless, beginner-first tech
+> explainers. We render **silent** motion-graphics episodes with HyperFrames
+> (HTML/CSS + GSAP → MP4); the creator adds **voiceover later**. Brand orange
+> `#FF6B2C` on cream `#FAF8F3`. Infographic/motion-graphics style, **never**
+> slideshow, **never** cinematic AI b-roll. Reference episode:
+> `compositions/ep01-full.html`.
+
+---
+
 # HyperFrames Composition Project
 
 ## Skills — USE THESE FIRST
