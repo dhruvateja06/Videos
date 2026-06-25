@@ -1,8 +1,9 @@
 # The Tech Intern — Curriculum
 
 > The channel covers tech broadly (AI, system design, DevOps, security, …).
-> **Season 1 is AI** (30 episodes, fully sequenced below). Later seasons —
-> system design, DevOps, security — reuse the same format, style, and pipeline.
+> **Season 1 is AI** and **Season 2 is System Design** — both fully sequenced
+> below (30 episodes each). Later seasons — DevOps, security — reuse the same
+> format, style, and pipeline.
 
 ## Season 1 — AI (30 episodes)
 
@@ -111,9 +112,124 @@ Introduce a metaphor once, then *invoke* it later (never re-explain):
 - [ ] A "verify on your phone right now" moment
 - [ ] Concrete cliffhanger to the next episode
 
+---
+
+## Season 2 — System Design (30 episodes)
+
+> Same channel, same format, same pipeline. Where Season 1 answered *"what is
+> the machine thinking?"*, Season 2 answers *"what happens after you tap the
+> button — and how does it still work when a million people tap at once?"*
+> Worked examples are **Indian product teardowns** (Swiggy, UPI, Hotstar, IRCTC,
+> Flipkart, WhatsApp, Ola) — the apps the viewer already has open.
+
+**Promise:** Zero to designing real systems. From "what is a server" to "how
+Hotstar streams the IPL final to 50 million people" — no CS degree, no jargon,
+no skipped steps.
+**Pace:** 2 long-form/week (Mon + Thu) → 15 weeks. 10–12 min each + 3–5 shorts.
+**Output:** 30 long-form + ~120 shorts.
+
+### Modules
+
+| # | Module | Eps | Locks in |
+|---|---|---|---|
+| M1 | What a system even is | 1–6 | Client/server, the request, latency, the API, where data lives. |
+| M2 | Scaling the basics | 7–12 | More users than one box can serve. Load balancers, caching, CDN. |
+| M3 | Data at scale | 13–18 | SQL vs NoSQL, indexes, replication, sharding, CAP, consistency. |
+| M4 | Talking & staying up | 19–24 | Queues, async, rate limits, idempotency, retries, micro vs mono. |
+| M5 | Designing real systems | 25–30 | The whiteboard interview classics, end-to-end, the Indian way. |
+
+### Episode map
+
+| Ep | Title | Diff | Code | Status |
+|---|---|---|---|---|
+| 1 | What is system design, really? (one user → one million) | 🟢 | – | |
+| 2 | Client & server: what actually happens when you open Swiggy | 🟢 | – | |
+| 3 | The request's journey: DNS → server → screen, in plain English | 🟢 | – | |
+| 4 | Latency vs throughput: the two numbers that decide everything | 🟢 | – | |
+| 5 | The API: how apps talk to each other (the waiter analogy) | 🟢 | – | |
+| 6 | Where data lives: databases for absolute beginners | 🟢 | – | |
+| 7 | Vertical vs horizontal scaling: bigger box vs more boxes | 🟢 | – | |
+| 8 | Load balancers: the traffic cop in front of your servers | 🟡 | – | |
+| 9 | Stateless vs stateful: the rule that makes scaling possible | 🟡 | – | |
+| 10 | Caching: why your feed loads before you blink | 🟡 | – | |
+| 11 | Cache invalidation: the "two hard problems" one, made simple | 🟡 | – | |
+| 12 | CDN: how Hotstar streams the IPL to 50 million phones | 🟡 | – | |
+| 13 | SQL vs NoSQL: picking the right database (no holy war) | 🟡 | – | |
+| 14 | Indexing: how a query finds one row out of a billion | 🟡 | – | |
+| 15 | Replication: copies that keep you online when a server dies | 🟡 | – | |
+| 16 | Sharding: splitting one giant database across many machines | 🔴 | – | |
+| 17 | The CAP theorem: consistency vs availability, finally clear | 🔴 | – | |
+| 18 | Eventual consistency: why your like-count lags for a second | 🟡 | – | |
+| 19 | Message queues: how an app says "I'll handle this later" | 🟡 | – | |
+| 20 | Sync vs async: why your order confirms instantly but ships later | 🟡 | – | |
+| 21 | Rate limiting: stopping abuse and the thundering herd | 🟡 | – | |
+| 22 | Idempotency: why double-tapping "Pay" doesn't pay twice | 🔴 | – | |
+| 23 | Retries, timeouts & circuit breakers: failing gracefully | 🔴 | – | |
+| 24 | Monolith vs microservices: one big app or many small ones | 🟡 | – | |
+| 25 | Design a URL shortener (the classic first interview question) | 🟡 | – | |
+| 26 | Design a news feed (Instagram / X): fan-out explained | 🔴 | – | |
+| 27 | Design a chat app (WhatsApp): delivered, then those blue ticks | 🔴 | – | |
+| 28 | Design a ride-hailing match (Ola / Uber): finding the nearest cab | 🔴 | – | |
+| 29 | Design a payment system (UPI): money must never be wrong | 🔴 | – | |
+| 30 | Putting it together: how Swiggy survives New Year's Eve | 🟡 | – | |
+
+## The 4-beat teaching pattern (still every episode)
+
+Same discipline as Season 1 — only the worked examples change:
+
+```
+1. HOOK with something they already do   → "It's 8pm. You and a lakh others open Swiggy..."
+2. SURFACE the question                   → "How does ONE app not just fall over?"
+3. EXPLAIN in 8th-grade language          → 1 visual analogy + 1 simple sentence
+4. CONNECT BACK                           → "That's the load balancer you never saw."
+```
+
+## Recurring mental models (the Season-2 moat)
+
+Introduce a metaphor once, then *invoke* it later (never re-explain):
+
+| Metaphor | Introduced | Reused in | Explains |
+|---|---|---|---|
+| **The busy restaurant** (host, waiters, kitchen) | Ep 2 | 5, 7, 8, 30 | Client/server, APIs, scaling, load balancing |
+| **Express checkout lane** | Ep 10 | 11, 12 | Caching & CDN (keep the popular thing nearby) |
+| **The library catalogue** | Ep 14 | 16 | Indexing (don't read every book to find one) |
+| **Photocopies of the ledger** | Ep 15 | 17, 18 | Replication & consistency |
+| **Splitting the guest list A–M / N–Z** | Ep 16 | 28, 29 | Sharding & partitioning |
+| **The courier / post office** | Ep 19 | 20, 21 | Queues & async ("drop it, I'll process later") |
+| **The fuse box** (trips to protect the house) | Ep 23 | 30 | Circuit breakers & graceful failure |
+
+## Indian product teardown matrix (use ≥2 per episode)
+
+| Product | First in | Concept it anchors |
+|---|---|---|
+| Swiggy / Zomato dinner rush | Ep 1 | Load, scaling, the whole-system finale |
+| UPI payment | Ep 5 | APIs, idempotency, strong consistency |
+| Hotstar IPL live stream | Ep 12 | CDN, read-heavy fan-out, surge |
+| IRCTC Tatkal 10am rush | Ep 21 | Rate limiting, concurrency, locking |
+| Flipkart Big Billion Days | Ep 10 | Caching, queues, horizontal scaling |
+| WhatsApp message delivery | Ep 27 | Queues, delivery guarantees, ticks |
+| Ola / Uber cab matching | Ep 28 | Geo-sharding, nearest-neighbour, real-time |
+
+## Shorts derivation (3–5 per long-form)
+
+Same five shapes as Season 1 — sourced from each system-design episode:
+
+| Type | Source | Hook |
+|---|---|---|
+| Definition | the 30s "what it is" opener | "Load balancers in 60 seconds — finally clear" |
+| Teardown | the Indian product segment | "How Hotstar streams the IPL without crashing" |
+| Visual | the build-up diagram | "The simplest way to picture sharding" |
+| Cliffhanger | the end-of-episode tease | "Caching is easy. Cache *invalidation* isn't…" |
+| Hot take | one contrarian moment | "You probably don't need microservices" |
+
+> **Status:** Season 2 is fully sequenced (this table). No episodes built yet —
+> Ep 1 (`compositions/sd-ep01-full.html`) is the next production target. Reuse
+> the EP01 motion kit and tokens; only the content changes.
+
 ## Future seasons (placeholders)
 
-- **Season 2 — System Design** (how real apps scale: load balancers, caches,
-  queues, databases, CAP, sharding…). Same format; Indian product teardowns
-  (how Swiggy/UPI/Hotstar scale) as the worked examples.
-- **Season 3 — DevOps**, **Season 4 — Security** — TBD.
+- **Season 3 — DevOps** (CI/CD, containers, Kubernetes, observability, infra-as-code).
+- **Season 4 — Security** (auth, encryption, OWASP, the UPI-fraud thread from S1).
+
+Both reuse the same format, style, and pipeline; teardowns of Indian product/infra
+teams as the worked examples.
