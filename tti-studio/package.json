@@ -1,0 +1,18 @@
+{
+  "name": "tti-studio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes hyperframes@0.7.5 preview",
+    "check": "npx --yes hyperframes@0.7.5 lint && npx --yes hyperframes@0.7.5 validate && npx --yes hyperframes@0.7.5 inspect",
+    "render": "npx --yes hyperframes@0.7.5 render",
+    "publish": "npx --yes hyperframes@0.7.5 publish"
+  },
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@ffprobe-installer/ffprobe": "^2.1.2",
+    "@fontsource/fraunces": "^5.2.9",
+    "@fontsource/inter": "^5.2.8",
+    "gsap": "^3.15.0"
+  }
+}

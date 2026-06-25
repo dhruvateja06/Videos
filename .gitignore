@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Throwaway CLI install dir
+tech-intern-videos/
+
+# HyperFrames render output + caches
+tti-studio/renders/
+.cache/
+*.log
