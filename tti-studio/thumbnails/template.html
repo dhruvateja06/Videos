@@ -1,0 +1,89 @@
+<!doctype html>
+<!--
+  THE TECH INTERN — System Design series · thumbnail template (1280×720, render @2x)
+  CONSTANT (never change — this is the series identity): "SYSTEM DESIGN" title,
+  the client→server→database diagram, the brand tag, the colours.
+  PER-EPISODE (the only things you change): the {{PLACEHOLDERS}} below.
+    {{EP_BADGE}}   e.g. "EPISODE 01 · START HERE"
+    {{TOPIC_LEAD}} small word before the topic, e.g. "The"   (can be empty)
+    {{TOPIC_MAIN}} the episode topic, bold, e.g. "Fundamentals"
+    {{MICRO}}      one-line hook, e.g. "the building blocks behind every app"
+  Render: node thumbnails/render.mjs --ep "01 · START HERE" --lead "The" \
+            --main "Fundamentals" --micro "the building blocks behind every app" \
+            --out assets/thumbnails/sd-ep01.png
+-->
+<html><head><meta charset="UTF-8"/>
+<style>
+  @font-face { font-family:"Inter"; font-weight:700; src:url("../assets/fonts/inter-latin-700-normal.woff2") format("woff2"); }
+  @font-face { font-family:"Inter"; font-weight:600; src:url("../assets/fonts/inter-latin-600-normal.woff2") format("woff2"); }
+  @font-face { font-family:"Inter"; font-weight:400; src:url("../assets/fonts/inter-latin-400-normal.woff2") format("woff2"); }
+  @font-face { font-family:"JetBrains Mono"; font-weight:400; src:url("../assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  :root{ --bg:#0E1420; --ink:#E8EFF7; --soft:#A7B8CC; --muted:#6981A0; --hair:rgba(125,170,210,.22); --cyan:#2DD4BF; --cyanb:#5EEAD4; --o:#FF6B2C; }
+  body{ margin:0; }
+  #tb{ position:relative; width:1280px; height:720px; background:radial-gradient(120% 120% at 18% 12%, #14203A 0%, #0E1420 55%, #080C14 100%); overflow:hidden; font-family:"Inter",sans-serif; }
+  #grid{ position:absolute; inset:-40px; background-image:linear-gradient(rgba(125,170,210,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(125,170,210,.07) 1px, transparent 1px); background-size:48px 48px; }
+  .glow{ position:absolute; border-radius:50%; filter:blur(70px); }
+  #gc{ width:620px; height:620px; right:-120px; top:-180px; background:radial-gradient(circle, rgba(45,212,191,.32), rgba(45,212,191,0) 70%); }
+  #go{ width:460px; height:460px; left:-160px; bottom:-200px; background:radial-gradient(circle, rgba(255,107,44,.22), rgba(255,107,44,0) 70%); }
+  #big01{ position:absolute; right:18px; bottom:-90px; font-family:"Inter"; font-weight:700; font-size:560px; line-height:1; color:rgba(94,234,212,.06); letter-spacing:-.04em; }
+  .corner{ position:absolute; width:42px; height:42px; border:3px solid var(--hair); }
+  .tl{ left:34px; top:34px; border-right:0; border-bottom:0; } .tr{ right:34px; top:34px; border-left:0; border-bottom:0; }
+  .bl{ left:34px; bottom:34px; border-right:0; border-top:0; } .br{ right:34px; bottom:34px; border-left:0; border-top:0; }
+
+  .left{ position:absolute; left:74px; top:0; height:720px; width:720px; display:flex; flex-direction:column; justify-content:center; }
+  .ep{ display:inline-block; align-self:flex-start; background:var(--o); color:#fff; font-family:"JetBrains Mono"; font-size:25px; letter-spacing:.22em; padding:11px 24px; border-radius:8px; box-shadow:0 6px 30px rgba(255,107,44,.45); }
+  h1{ font-family:"Inter"; font-weight:700; font-size:128px; line-height:.92; letter-spacing:-.03em; color:#fff; margin-top:22px; text-shadow:0 4px 40px rgba(0,0,0,.5); }
+  h1 .cy{ color:var(--cyanb); text-shadow:0 0 44px rgba(45,212,191,.55); }
+  .topic{ display:flex; align-items:center; gap:18px; margin-top:30px; font-family:"Inter"; font-weight:600; font-size:48px; color:var(--soft); letter-spacing:-.01em; }
+  .topic b{ color:#fff; font-weight:700; }
+  .topic .bar{ width:10px; height:48px; background:var(--o); border-radius:4px; box-shadow:0 0 18px rgba(255,107,44,.6); }
+  .micro{ font-family:"JetBrains Mono"; font-size:24px; color:var(--muted); margin-top:18px; letter-spacing:.02em; }
+
+  .diagram{ position:absolute; right:78px; top:50%; transform:translateY(-50%); width:300px; height:470px; }
+  .node{ position:absolute; width:300px; height:120px; background:linear-gradient(180deg, #1A2940, #131E33); border:2px solid var(--hair); border-radius:20px; display:flex; align-items:center; gap:22px; padding:0 26px; box-shadow:0 10px 40px rgba(0,0,0,.45); }
+  .node.cyan{ border-color:rgba(45,212,191,.6); box-shadow:0 0 50px rgba(45,212,191,.25), 0 10px 40px rgba(0,0,0,.45); }
+  .node.orange{ border-color:rgba(255,107,44,.6); box-shadow:0 0 50px rgba(255,107,44,.22), 0 10px 40px rgba(0,0,0,.45); }
+  .node .ic{ width:60px; height:60px; flex:none; }
+  .node .tx .t{ font-family:"JetBrains Mono"; font-size:16px; letter-spacing:.12em; color:var(--cyan); text-transform:uppercase; }
+  .node.orange .tx .t{ color:var(--o); }
+  .node .tx .n{ font-family:"Inter"; font-weight:700; font-size:30px; color:#fff; margin-top:4px; }
+  #n1{ top:0; } #n2{ top:175px; } #n3{ top:350px; }
+  .wire{ position:absolute; left:148px; width:4px; background:linear-gradient(180deg, var(--cyan), rgba(45,212,191,.35)); border-radius:3px; box-shadow:0 0 16px rgba(45,212,191,.6); }
+  #w1{ top:120px; height:55px; } #w2{ top:295px; height:55px; }
+  .dot{ position:absolute; left:142px; width:16px; height:16px; border-radius:50%; background:var(--cyanb); box-shadow:0 0 18px var(--cyanb); }
+  #d1{ top:142px; } #d2{ top:317px; }
+  .brandtag{ position:absolute; left:74px; bottom:54px; font-family:"JetBrains Mono"; font-size:24px; letter-spacing:.2em; color:var(--muted); text-transform:uppercase; }
+  .brandtag span{ color:var(--cyan); }
+</style></head>
+<body>
+  <svg width="0" height="0" style="position:absolute"><defs>
+    <symbol id="ic-phone" viewBox="0 0 100 100"><rect x="33" y="14" width="34" height="72" rx="9" fill="none" stroke="#5EEAD4" stroke-width="5"/><line x1="45" y1="76" x2="55" y2="76" stroke="#5EEAD4" stroke-width="5"/></symbol>
+    <symbol id="ic-server" viewBox="0 0 100 100"><rect x="20" y="24" width="60" height="22" rx="5" fill="none" stroke="#5EEAD4" stroke-width="5"/><rect x="20" y="54" width="60" height="22" rx="5" fill="none" stroke="#5EEAD4" stroke-width="5"/><circle cx="32" cy="35" r="3.4" fill="#5EEAD4"/><circle cx="32" cy="65" r="3.4" fill="#5EEAD4"/></symbol>
+    <symbol id="ic-db" viewBox="0 0 100 100"><ellipse cx="50" cy="24" rx="26" ry="9" fill="none" stroke="#FF8A55" stroke-width="5"/><path d="M24 24 V76 a26 9 0 0 0 52 0 V24" fill="none" stroke="#FF8A55" stroke-width="5"/><path d="M24 50 a26 9 0 0 0 52 0" fill="none" stroke="#FF8A55" stroke-width="5"/></symbol>
+  </defs></svg>
+
+  <div id="tb">
+    <div id="grid"></div>
+    <div class="glow" id="gc"></div><div class="glow" id="go"></div>
+    <div id="big01">01</div>
+    <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+
+    <div class="left">
+      <span class="ep">{{EP_BADGE}}</span>
+      <h1>SYSTEM<br><span class="cy">DESIGN</span></h1>
+      <div class="topic"><span class="bar"></span>{{TOPIC_LEAD}} <b>{{TOPIC_MAIN}}</b></div>
+      <div class="micro">{{MICRO}}</div>
+    </div>
+
+    <div class="diagram">
+      <div class="node cyan" id="n1"><svg class="ic"><use href="#ic-phone"/></svg><div class="tx"><div class="t">Client</div><div class="n">Your phone</div></div></div>
+      <div class="wire" id="w1"></div><div class="dot" id="d1"></div>
+      <div class="node cyan" id="n2"><svg class="ic"><use href="#ic-server"/></svg><div class="tx"><div class="t">Server</div><div class="n">The app</div></div></div>
+      <div class="wire" id="w2"></div><div class="dot" id="d2"></div>
+      <div class="node orange" id="n3"><svg class="ic"><use href="#ic-db"/></svg><div class="tx"><div class="t">Database</div><div class="n">The data</div></div></div>
+    </div>
+
+    <div class="brandtag">THE TECH INTERN <span>// SYSTEM DESIGN</span></div>
+  </div>
+</body></html>

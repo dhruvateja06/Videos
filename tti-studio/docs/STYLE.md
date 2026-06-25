@@ -116,3 +116,21 @@ must not look like the last one). Reference: `compositions/sd-ep01-full.html`.
 
 ### Season 3 — LLD · skin TBD
 Will need its own skin (code is on screen) — decide when S3 production starts.
+
+---
+
+## Thumbnails (series system)
+
+Thumbnails are a **template**, not a one-off, so the whole series is recognizable
+on the channel page. System in `thumbnails/` (template + `render.mjs`); rendered
+PNGs in `assets/thumbnails/`.
+
+- **Constant across every episode** (series identity): the big **SYSTEM DESIGN**
+  title, the client→server→database diagram, the `THE TECH INTERN // SYSTEM
+  DESIGN` tag, and the dark navy + cyan + orange palette.
+- **Per-episode (only these change):** the episode number and the **topic line**
+  (Ep 1 = "The Fundamentals", Ep 2 = "Client & Server", …) + a one-line hook.
+- **Format:** 1280×720 rendered @2x (2560×1440), built in the Season-2
+  dark-blueprint skin so the thumbnail matches the video frame-for-frame.
+- New episode = one command (`node thumbnails/render.mjs --ep … --main … --micro …`);
+  see `thumbnails/README.md`.
