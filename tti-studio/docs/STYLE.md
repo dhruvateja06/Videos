@@ -1,136 +1,99 @@
-# The Tech Intern — Motion-Graphics Style
+# The Tech Intern — System Design · Motion-Graphics Style
 
 > The look that separates our videos from a slideshow. Every episode must feel
 > like an **animated infographic explainer**, NOT slides exported to video, and
 > NOT cinematic AI b-roll. The *information* is the visual; motion keeps the eye
-> glued for retention.
+> glued for retention. This vertical uses the **Engineer's Terminal** palette
+> (see `BRAND.md`): deep navy, cobalt hero, mono annotations.
 
 ## The core rule
 
-**No frame is ever frozen, and no cut is ever to a blank screen.** A static
-deck loses viewers. If you ever catch the composition doing "fade in → show
-bullets → fade to blank → next slide," stop — that's the failure mode we fixed.
+**No frame is ever frozen, and no cut is ever to a blank screen.** A static deck
+loses viewers. If you ever catch the composition doing "fade in → show bullets →
+fade to blank → next slide," stop — that's the failure mode.
 
 ## The motion language (use all of these)
 
 1. **Living background (always moving), spans the whole composition.**
-   A drifting dot-grid + two slow, soft **orange light-blooms** that drift and
-   scale on long loops. It is NOT a clip (not gated) — it runs 0→end so it bridges
-   every scene cut and nothing is ever still.
+   A drifting **blueprint dot/line grid** + two slow, soft **cobalt light-blooms**
+   that drift and scale on long loops, over the deep-navy paper. It is NOT a clip
+   (not gated) — it runs 0→end so it bridges every scene cut and nothing is ever
+   still.
 
-2. **Wipe transitions at major section cuts.**
-   An orange bar sweeps across the screen *over* the scene swap, masking the cut
-   instead of cutting to blank cream. Use at section boundaries, not every scene.
+2. **Scan-sweep transitions at major section cuts.**
+   A thin **cobalt scan line** sweeps across *over* the scene swap, masking the
+   cut (a monitoring-console wipe, not the AI vertical's orange bar). Use at
+   section boundaries, not every scene.
 
 3. **Kinetic headline reveals.**
-   Headlines rise in with an overshoot ease (`back.out`) + a slight push-in
-   (scale 0.95→1), not a plain opacity fade. Scenes **exit with motion** too
-   (rise up + slight scale), never a flat fade-to-nothing.
+   Headlines (Fraunces 600) rise in with an overshoot ease (`back.out`) + a slight
+   push-in (scale 0.95→1), not a plain opacity fade. Scenes **exit with motion**
+   too (rise + slight scale), never a flat fade-to-nothing. Hard-kill each clip's
+   exit (`tl.set(sel,{opacity:0}, end)`) so seeking stays clean.
 
 4. **Breathing / float on hero elements during long holds.**
-   A 40–55s narration hold must not freeze. Hero elements get slow perpetual
-   loops: the phone hovers, the "model" box and the **PATTERNS** word pulse, the
-   prediction dot throbs, the title accent glows. Subtle (scale ±3–4%, y ±10–16px).
+   A 30–50s narration hold must not freeze. Hero elements get slow perpetual loops
+   (scale ±2–4%, y ±10–16px): the request packet pulses, a node glows, a counter
+   ticks. Subtle.
 
-5. **Diagrams that BUILD, not appear.**
-   - Scatter dots **drop in** with stagger.
-   - The best-fit line **draws on** (animate `stroke-dashoffset`).
-   - Table rows **slide in directionally** (old-way from left, AI from right).
-   - Prediction crosshair **traces** up to the line and across to the axis.
+5. **Diagrams that BUILD, not appear** — the heart of this vertical:
+   - **Boxes pop in** with stagger; **edges draw on** (`stroke-dashoffset`).
+   - The **request packet travels** the path (animate `cx/cy` along the wire).
+   - Latency numbers **pop in on the beat** as the packet crosses each hop.
+   - Sparklines **draw on** flat→spiky; before/after panels **slide in** L/R.
 
 6. **Animated number counters.**
-   Count-ups (e.g. the Swiggy timer 8 → 32 min) via a GSAP `onUpdate` that writes
-   `textContent`. This **is** seek-safe in HyperFrames (verified). Always set the
-   DOM's initial text to the **final** value as a fallback, so a missed update
-   still shows the correct number.
+   Count-ups (qps, concurrent users, `ms`) via a GSAP `onUpdate` writing
+   `textContent` — seek-safe in HyperFrames. **Always set the DOM's initial text
+   to the final value** as a fallback, so a missed update still shows correct.
 
-## Pacing (for narration-ready silent renders)
+## Standard diagram primitives (build a small kit, reuse every episode)
 
-- Each scene is **held long enough to talk over** (the creator adds voiceover after).
-- Element reveals inside a scene are spaced to match a calm read (~one new idea
-  every 5–8 seconds), so the visual lands just before/with the spoken point.
-- Episode 1 = 660s (11:00) across 16 scenes. Use that as the density baseline.
+These are this vertical's vocabulary — standardize them so episodes compound:
 
-## Reference implementation
+- **Request packet** — a small `--accent-bright` dot/pill travelling a path
+  between components, with a `stroke-dasharray` trail. The signature motion.
+- **Hop box** — rounded rect (`--panel` fill, `--hair` border, mono label like
+  `LOAD BALANCER`), with a monoline **icon** (client / CDN / LB / cache / server /
+  database cylinder). Border lights cobalt when "active".
+- **Latency annotation** — mono `+NN ms` that pops above a hop as the packet
+  crosses; a running total assembles at the end.
+- **Load-spike sparkline** — a small line chart, flat then spiking, drawn in
+  `--spike` red; pair with a count-up.
+- **Architecture box-and-arrow** — the staple; arrows draw on, one idea per arrow.
+- **Before/after split** — left vs right (monolith/microservices, 1 server/fleet);
+  the "bad" side dims, the "good" side glows cobalt.
+- **Live dashboard counter** — qps / users ticking up, `--ok` green while healthy,
+  flicking `--spike` red when it crosses a threshold (then the fix is shown).
+- **HUD frame** — thin top bar (`THE TECH INTERN // SYSTEM DESIGN … S· E0N`) +
+  corner brackets. The console feel; replaces the AI vertical's left spine.
 
-`compositions/ep01-full.html` is the canonical example of all of the above
-(background, wipes, kinetic type, breathing, building diagrams, the count-up).
-Copy its `<style>` tokens and the GSAP helper functions
-(`scene/head/kick/rise/pop/cellL/cellR/breathe/floaty/wipe`) as the starting kit
-for any new episode.
+## Teaching shape (per episode)
+
+- **One running example threaded through** the whole episode (don't dump
+  definitions). Each concept attaches to that example as it comes up.
+- **One idea per scene**; reveal ~one new element every 5–8s to match a calm read.
+- Each scene **held long enough to narrate over** (silent render; VO added later).
+- Plain language, no jargon, Indian examples first (see `BRAND.md`).
 
 ## What we are NOT doing
 
 - ❌ Cinematic / AI-generated b-roll footage (wrong format, expensive, imprecise).
 - ❌ One-line-per-slide decks (can't hold attention for minutes).
-- ❌ On-screen animation descriptions in the teleprompter script (confuses the
-  live read — keep the script clean; see `PIPELINE.md`).
-
----
-
-## Per-season "skins" (same motion language, different look)
-
-The motion language above (living bg, wipes, kinetic type, breathing, diagrams
-that build, counters) is **shared by every season**. Each season gets its own
-**skin** — palette + typography + signature motif — so seasons don't blur
-together. The skin changes; the discipline doesn't.
-
-### Season 1 — AI · "warm editorial"
-Cream `--paper #FAF8F3`, brand orange `--o #FF6B2C`, **Fraunces** serif
-headlines + Inter, left orange spine bar, scatter-plot / best-fit-line motif.
-Reference: `compositions/ep01-full.html`.
-
-### Season 2 — System Design (HLD) · "dark systems-blueprint"
-Deliberately the **opposite** of S1's warm editorial look (a different season
-must not look like the last one). Reference: `compositions/sd-ep01-full.html`.
-
-| Token | Hex | Use |
-|---|---|---|
-| `--bg`    | `#0E1420` | deep navy canvas |
-| `--panel` | `#161E2E` | card / node fill |
-| `--node`  | `#16233A` | diagram node fill |
-| `--ink`   | `#E8EFF7` | primary text (cool near-white) |
-| `--soft`  | `#A7B8CC` | secondary text |
-| `--muted` | `#5F7287` | mono labels, captions |
-| `--hair`  | `rgba(125,170,210,.18)` | grid lines, borders, edges |
-| `--cyan`  | `#2DD4BF` | **primary accent** (the hero colour) |
-| `--cyanb` | `#5EEAD4` | bright cyan — glows, big numbers |
-| `--o`     | `#FF6B2C` | brand orange kept as the **secondary "hot"** accent (the DB, the danger, the one critical highlight) |
-
-- **Typography:** **Inter** for headlines (700, tight) and body — **no serif**
-  (that's S1's signature). **JetBrains Mono** for eyebrows (`// LIKE THIS`),
-  node labels, captions, and big count-up numbers (monospace digits read techy).
-- **Signature frame (replaces the orange spine):** a top HUD bar
-  (`THE TECH INTERN // SYSTEM DESIGN … S2 · E01`) over a hairline, plus blueprint
-  **corner brackets**. Section cuts use a **cyan scan-sweep** (not the orange wipe).
-- **Signature motif = boxes & arrows** (because that *is* HLD): blueprint
-  micro-grid background, nodes that pop in, edges that **draw on**
-  (`stroke-dashoffset`), and **packets** (small cyan dots) flowing along edges.
-- **Orange discipline:** still one or two hot accents per scene — now it marks
-  the *thing that matters* (the database of record, an overloaded/failing box),
-  against the cool cyan field.
-
-> Brand DNA preserved: orange is still present, the typography is still
-> disciplined, and the "no frozen frame / no cut to blank" rule still governs —
-> so it's unmistakably *The Tech Intern*, just a different season.
-
-### Season 3 — LLD · skin TBD
-Will need its own skin (code is on screen) — decide when S3 production starts.
-
----
+- ❌ Headlines longer than ~7 words; bullets are fragments, not sentences.
+- ❌ On-screen animation directions in the teleprompter script (keep the read
+  clean; see `PIPELINE.md` / `WORKFLOW.md`).
 
 ## Thumbnails (series system)
 
-Thumbnails are a **template**, not a one-off, so the whole series is recognizable
-on the channel page. System in `thumbnails/` (template + `render.mjs`); rendered
-PNGs in `assets/thumbnails/`.
+Thumbnails are a **template**, not a one-off, so the series is recognizable on the
+channel page (`thumbnails/` template + render script; PNGs live in the episode
+folder per `WORKFLOW.md`).
 
-- **Constant across every episode** (series identity): the big **SYSTEM DESIGN**
-  title, the client→server→database diagram, the `THE TECH INTERN // SYSTEM
-  DESIGN` tag, and the dark navy + cyan + orange palette.
-- **Per-episode (only these change):** the episode number and the **topic line**
-  (Ep 1 = "The Fundamentals", Ep 2 = "Client & Server", …) + a one-line hook.
-- **Format:** 1280×720 rendered @2x (2560×1440), built in the Season-2
-  dark-blueprint skin so the thumbnail matches the video frame-for-frame.
-- New episode = one command (`node thumbnails/render.mjs --ep … --main … --micro …`);
-  see `thumbnails/README.md`.
+- **Constant (series identity):** the big **SYSTEM DESIGN** title, the request-path
+  / client→server→database diagram, the `THE TECH INTERN // SYSTEM DESIGN` tag, and
+  the Engineer's-Terminal palette.
+- **Per-episode (only these change):** the episode number + the **topic line**
+  (the actual episode title), and a ≤7-word hook.
+- **Format:** 1280×720 rendered @2x, in this vertical's dark skin so the thumbnail
+  matches the video.
