@@ -1,23 +1,36 @@
-# The Tech Intern — Video Studio
+# The Tech Intern — System Design · Video Studio
 
-> **New session? Read `docs/` first — it's the channel brain.** These four files
-> carry everything decided about this channel across sessions, so you don't have
-> to re-explain the brand, style, or workflow each time:
+> **This is the System Design vertical** of *The Tech Intern*. The **AI vertical**
+> lives on branch `claude/gifted-brown-7e7t72` — its docs are a structural
+> reference only; never mix its cream/orange look into this vertical.
 >
-> - **`docs/BRAND.md`** — who the channel is for, voice/tone, exact palette & fonts.
-> - **`docs/STYLE.md`** — the motion-graphics style (living bg, wipes, breathing,
->   building diagrams, counters). The rule that keeps videos from looking like slides.
-> - **`docs/PIPELINE.md`** — HyperFrames render workflow, gotchas, commands,
->   and how to compress + deliver the MP4 to the creator via GitHub.
-> - **`docs/CURRICULUM.md`** — the 30-episode AI Season 1 plan + future seasons
->   (system design, DevOps, security) + the teaching discipline.
+> **NEW SESSION? READ THESE IN ORDER:**
 >
-> **TL;DR of the channel:** *The Tech Intern* — faceless, beginner-first tech
-> explainers. We render **silent** motion-graphics episodes with HyperFrames
-> (HTML/CSS + GSAP → MP4); the creator adds **voiceover later**. Brand orange
-> `#FF6B2C` on cream `#FAF8F3`. Infographic/motion-graphics style, **never**
-> slideshow, **never** cinematic AI b-roll. Reference episode:
-> `compositions/ep01-full.html`.
+> 1. **`docs/WORKFLOW.md`** — ⭐ **THE EPISODE PRODUCTION PROCESS.**
+>    The 7 phases (topic → outline → deck → validate → script → render → deliver),
+>    the gates between them, the per-episode folder structure. **Follow this
+>    every time. Don't deviate.** Deviations cost hours and trigger
+>    "we already did this differently last time" feedback.
+> 2. **`docs/BRAND.md`** — audience, voice/tone, exact palette & fonts
+>    (Engineer's Terminal: deep navy `#0F1729` + cobalt `#3B7BFF`).
+> 3. **`docs/STYLE.md`** — the motion-graphics style (living bg, scan-sweeps,
+>    request-path diagrams, building infographics). Keeps videos from looking
+>    like slides.
+> 4. **`docs/PIPELINE.md`** — HyperFrames render technical details: commands,
+>    gotchas, asset paths, compression + delivery.
+> 5. **`docs/CURRICULUM.md`** — the 30-episode System Design plan, recurring
+>    metaphors, Indian-example matrix, the teaching discipline.
+>
+> **TL;DR of this vertical:** *The Tech Intern — System Design* — faceless,
+> beginner-first explainers of how real systems scale. We render **silent**
+> motion-graphics episodes with HyperFrames (HTML/CSS + GSAP → MP4); the creator
+> adds **voiceover later**. Cobalt `#3B7BFF` on deep navy `#0F1729`.
+> Infographic/motion-graphics style, **never** slideshow, **never** cinematic
+> AI b-roll. Signature motif: the animated request-path diagram.
+>
+> **All episode files live in `episodes/epNN/`** (per `WORKFLOW.md`). Never put
+> episode files in top-level `compositions/`, `scripts/`, `decks/`,
+> `deliverables/` — those folders are not used here.
 
 ---
 
@@ -27,22 +40,7 @@
 
 **Always invoke the relevant skill before writing or modifying compositions.** Skills encode framework-specific patterns (e.g., `window.__timelines` registration, `data-*` attribute semantics, shader-compatible CSS rules) that are NOT in generic web docs. Skipping them produces broken compositions.
 
-**Doing anything with HyperFrames?** Start at `/hyperframes` — it tells you what HyperFrames can do and which skill or workflow handles your intent (make a video, TTS / BGM, prep footage, author / animate, render, install blocks), and routes every "make me a video" request to the right workflow. Read it first, especially when there's no project context to orient you. The video workflows it routes to:
-
-- `/product-launch-video` — a **product** URL or brief / script → 60-90s product launch / SaaS / promo video.
-- `/website-to-video` — a **general** website / URL → a video _of_ the site (tour / showcase / social clip from captured visuals); a product **launch / promo** is `/product-launch-video`.
-- `/faceless-explainer` — arbitrary text (topic / article / notes), **no URL, no website capture** → 60-90s faceless explainer.
-- `/embedded-captions` — an existing talking-head video (MP4) → the same footage with captions / subtitles added (rail + embed, or pure-cinematic embed); the footage itself is untouched.
-- `/graphic-overlays` — an existing talking-head / interview / podcast video (MP4) → the same footage **packaged with designed graphic overlays** (kinetic titles, lower-thirds, data callouts, pull-quotes, side panels, pip) synced to the transcript; the clip plays unchanged underneath. (Plain captions/subtitles → `/embedded-captions`.)
-- `/pr-to-video` — a GitHub PR (URL / `owner/repo#N` / "this PR") → 30-90s code-change explainer (changelog / feature reveal / fix / refactor).
-- `/motion-graphics` — a short (typically under 10s) design-led **motion graphic**, motion-is-the-message, no narration: kinetic type, a stat / number count-up, a chart, a logo sting, a lower-third / overlay, or an animated tweet / headline / captured-page highlight; rendered to MP4 or a transparent overlay. Longer / narrated / custom → `/general-video`.
-- `/general-video` — fallback for any other video (title card, longer brand / sizzle reel, multi-scene montage, static loop, custom composition); the original hyperframes authoring flow, any length.
-
-**Porting an existing composition?** `/remotion-to-hyperframes` translates a Remotion (React) composition into HyperFrames HTML — a source migration, separate from the creation workflows above.
-
-The domain skills (`/hyperframes-core`, `/hyperframes-animation`, `/hyperframes-creative`, `/hyperframes-cli`, `/hyperframes-media`, `/hyperframes-registry`) and the full capability map live inside `/hyperframes` — it is the single source of truth for which skill handles which intent.
-
-> **Tailwind v4 projects** (`hyperframes init --tailwind`): see `/hyperframes-core` → `references/tailwind.md`.
+**Doing anything with HyperFrames?** Start at `/hyperframes` — it routes every "make me a video" intent to the right skill or workflow. The project-scope skills bundled here: `infographic-builder` (diagram/infographic patterns), `humanizer`, `caveman`, `karpathy-guidelines`, `find-skills`.
 
 > **Skills not available or need updating?** Run `npx skills add heygen-com/hyperframes`
 > and restart the agent session so the new skills load.
@@ -50,61 +48,35 @@ The domain skills (`/hyperframes-core`, `/hyperframes-animation`, `/hyperframes-
 ## Commands
 
 ```bash
-npm run dev          # start the preview server (long-running — keep it alive in background)
+npm run dev          # preview server (long-running — run with run_in_background:true)
 npm run check        # lint + validate + inspect
 npm run render       # render to MP4
-npm run publish      # publish and get a shareable link
-npx hyperframes lint --verbose  # include info-level findings
-npx hyperframes lint --json     # machine-readable output for CI
-npx hyperframes docs <topic> # reference docs in terminal
+npx hyperframes docs <topic>    # local reference docs (no network)
 ```
 
-> **`npm run dev` is a long-running server, not a one-shot command.** It blocks until stopped.
-> In Claude Code, always run it with `run_in_background: true`. Never run it as a foreground
-> command — it will time out and the server will die, breaking the browser preview.
-
-## Documentation
-
-**For quick reference**, use the local CLI docs command (no network required):
-
-```bash
-npx hyperframes docs <topic>
-```
-
-Topics: `data-attributes`, `gsap`, `compositions`, `rendering`, `examples`, `troubleshooting`
-
-**For full documentation**, discover pages via the machine-readable index — do NOT guess URLs:
-
-```
-https://hyperframes.heygen.com/llms.txt
-```
+> **`npm run dev` is a long-running server.** In Claude Code always run it with
+> `run_in_background: true`; never as a foreground command (it will time out).
 
 ## Project Structure
 
-- `index.html` — main composition (root timeline)
-- `compositions/` — sub-compositions referenced via `data-composition-src`
-- `meta.json` — project metadata (id, name)
-- `transcript.json` — whisper word-level transcript (if generated)
+- `episodes/epNN/` — **everything for one episode** (composition.html, deck.html,
+  script.md, research.md, video.mp4, thumbnail.png). `paths.blocks` = `episodes`.
+- `docs/` — the channel brain (read order above).
+- `assets/` — bundled fonts + GSAP (no CDN; the renderer has no network).
+- `.claude/skills/` — project-scope skills.
+- `index.html` — root composition / brand-intro test.
+- `thumbnails/` — the series thumbnail template + render script (per `STYLE.md`).
 
 ## Linting — ALWAYS RUN AFTER CHANGES
 
-After creating or editing any `.html` composition, **always** run the full check before considering the task complete:
-
-```bash
-npm run check
-```
-
-Fix all errors before presenting the result. Inspect warnings should be reviewed before rendering.
+After creating or editing any `.html` composition, run `npm run check` and fix all
+errors before presenting. Review inspect warnings before rendering.
 
 ## Key Rules
 
-1. Every timed element needs `data-start`, `data-duration`, and `data-track-index`
-2. Elements with timing **MUST** have `class="clip"` — the framework uses this for visibility control
-3. Timelines must be paused and registered on `window.__timelines`:
-   ```js
-   window.__timelines = window.__timelines || {};
-   window.__timelines["composition-id"] = gsap.timeline({ paused: true });
-   ```
-4. Videos use `muted` with a separate `<audio>` element for the audio track
-5. Sub-compositions use `data-composition-src="compositions/file.html"` to reference other HTML files
-6. Only deterministic logic — no `Date.now()`, no `Math.random()`, no network fetches
+1. Every timed element needs `data-start`, `data-duration`, `data-track-index`.
+2. Elements with timing **MUST** have `class="clip"` (visibility control).
+3. Timelines are paused and registered on `window.__timelines["composition-id"]`.
+4. Videos use `muted` + a separate `<audio>` element for audio.
+5. Sub-compositions referenced via `data-composition-src="…"`.
+6. Only deterministic logic — no `Date.now()`, no `Math.random()`, no network fetches.
