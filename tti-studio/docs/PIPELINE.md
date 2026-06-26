@@ -97,11 +97,64 @@ client, and large files (70+ MB) can choke. So:
 
 ```
 tti-studio/
-├── CLAUDE.md            # auto-loaded; points here
-├── docs/                # the channel brain (BRAND, STYLE, PIPELINE, CURRICULUM)
-├── compositions/        # the HTML+GSAP episodes (ep01.html, ep01-full.html, ...)
-├── assets/vendor/       # local gsap.min.js
-├── assets/fonts/        # local brand woff2
-├── deliverables/        # compressed MP4s, tracked, for GitHub download
-└── renders/             # raw render output (gitignored)
+├── CLAUDE.md             # auto-loaded; points to docs/
+├── docs/                 # the channel brain
+│   ├── WORKFLOW.md       # ⭐ the 7-phase episode process
+│   ├── BRAND.md, STYLE.md, PIPELINE.md (this file), CURRICULUM.md
+├── .claude/skills/       # project-scope skills (caveman, humanizer,
+│                         # infographic-builder, …)
+├── assets/               # shared, used by every episode composition
+│   ├── vendor/gsap.min.js
+│   └── fonts/*.woff2
+├── episodes/             # one folder per episode, ALL deliverables go here
+│   ├── ep01/
+│   │   ├── composition.html      # main 11-min HyperFrames composition
+│   │   ├── composition-outro.html
+│   │   ├── deck.html             # navigable HTML deck
+│   │   ├── script.md             # narration script
+│   │   ├── script.srt            # subtitles (after recording)
+│   │   ├── contact-sheet.png     # review stills (optional)
+│   │   ├── video.mp4             # final compressed deliverable
+│   │   ├── outro.mp4
+│   │   └── youtube.md            # title + description (optional, post-record)
+│   └── ep02/ …
+└── renders/              # raw render output, gitignored — staging only
+```
+
+**Asset paths from a composition** (now two levels deep at `episodes/epNN/`):
+
+```html
+<script src="../../assets/vendor/gsap.min.js"></script>
+<link … src="../../assets/fonts/inter-latin-700-normal.woff2" …>
+```
+
+**Per-episode commands** (replace `epNN` with the episode number):
+
+```bash
+cd tti-studio
+export PATH="/usr/local/bin:$PATH"
+HF=../tech-intern-videos/node_modules/.bin/hyperframes
+
+# Lint
+$HF lint
+
+# Render main → renders/ (gitignored staging)
+$HF render -c episodes/epNN/composition.html \
+   -o renders/epNN-full.mp4 \
+   --fps 24 --quality standard --workers 4
+
+# Render outro
+$HF render -c episodes/epNN/composition-outro.html \
+   -o renders/epNN-outro.mp4 \
+   --fps 24 --quality standard --workers 4
+
+# Compress to deliverable (near-lossless CRF 20)
+ffmpeg -y -i renders/epNN-full.mp4 \
+   -c:v libx264 -profile:v high -pix_fmt yuv420p \
+   -crf 20 -preset medium -movflags +faststart -an \
+   episodes/epNN/video.mp4
+ffmpeg -y -i renders/epNN-outro.mp4 \
+   -c:v libx264 -profile:v high -pix_fmt yuv420p \
+   -crf 20 -preset medium -movflags +faststart -an \
+   episodes/epNN/outro.mp4
 ```

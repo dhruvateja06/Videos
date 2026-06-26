@@ -1,23 +1,31 @@
 # The Tech Intern — Video Studio
 
-> **New session? Read `docs/` first — it's the channel brain.** These four files
-> carry everything decided about this channel across sessions, so you don't have
-> to re-explain the brand, style, or workflow each time:
+> **NEW SESSION? READ THESE IN ORDER:**
 >
-> - **`docs/BRAND.md`** — who the channel is for, voice/tone, exact palette & fonts.
-> - **`docs/STYLE.md`** — the motion-graphics style (living bg, wipes, breathing,
->   building diagrams, counters). The rule that keeps videos from looking like slides.
-> - **`docs/PIPELINE.md`** — HyperFrames render workflow, gotchas, commands,
->   and how to compress + deliver the MP4 to the creator via GitHub.
-> - **`docs/CURRICULUM.md`** — the 30-episode AI Season 1 plan + future seasons
->   (system design, DevOps, security) + the teaching discipline.
+> 1. **`docs/WORKFLOW.md`** — ⭐ **THE EPISODE PRODUCTION PROCESS.**
+>    The 7 phases (topic → outline → deck → validate → script → render → deliver),
+>    the gates between them, the per-episode folder structure. **Follow this
+>    every time. Don't deviate.** Deviations cost hours and trigger
+>    "we already did this differently last time" feedback from the user.
+> 2. **`docs/BRAND.md`** — audience, voice/tone, exact palette & fonts.
+> 3. **`docs/STYLE.md`** — the motion-graphics style (living bg, wipes,
+>    breathing, building diagrams). The rule that keeps videos from looking
+>    like slides.
+> 4. **`docs/PIPELINE.md`** — HyperFrames render technical details: commands,
+>    gotchas, asset paths, compression + delivery.
+> 5. **`docs/CURRICULUM.md`** — the 30-episode AI Season 1 plan + future
+>    seasons (system design, DevOps, security) + the teaching discipline.
 >
 > **TL;DR of the channel:** *The Tech Intern* — faceless, beginner-first tech
 > explainers. We render **silent** motion-graphics episodes with HyperFrames
 > (HTML/CSS + GSAP → MP4); the creator adds **voiceover later**. Brand orange
 > `#FF6B2C` on cream `#FAF8F3`. Infographic/motion-graphics style, **never**
-> slideshow, **never** cinematic AI b-roll. Reference episode:
-> `compositions/ep01-full.html`.
+> slideshow, **never** cinematic AI b-roll. Reference episodes:
+> `episodes/ep01/composition.html`, `episodes/ep02/composition.html`.
+>
+> **All episode files live in `episodes/epNN/`.** Never put episode files in
+> top-level `compositions/`, `scripts/`, `decks/`, `deliverables/` — those
+> folders no longer exist. See `WORKFLOW.md` for the canonical layout.
 
 ---
 
