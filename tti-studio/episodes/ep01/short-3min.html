@@ -30,7 +30,6 @@
       #sweep{ position:absolute; top:-60px; bottom:-60px; left:0; width:300px; opacity:0; z-index:20; pointer-events:none;
         background:linear-gradient(90deg, rgba(45,212,191,0) 0%, rgba(94,234,212,.5) 50%, rgba(45,212,191,0) 100%); transform:skewX(-10deg); }
 
-      /* content in upper ~70%; bottom ~480px kept clear for captions */
       .scene{ position:absolute; inset:0; opacity:0; z-index:2; padding:290px 70px 510px 70px; display:flex; flex-direction:column; justify-content:center; }
       .kick{ font-family:"JetBrains Mono"; font-size:30px; letter-spacing:.18em; text-transform:uppercase; color:var(--cyan); margin-bottom:28px; }
       .kick:before{ content:"// "; color:var(--muted); }
@@ -38,7 +37,6 @@
       .sub{ color:var(--soft); }
       .cy{ color:var(--cyan); } .cyb{ color:var(--cyanb); } .or{ color:var(--o); } .mono{ font-family:"JetBrains Mono"; }
 
-      /* baby instagram post card (hook) */
       .postcard{ width:540px; background:var(--panel); border:1px solid var(--hair); border-radius:26px; padding:26px; opacity:0; margin-top:40px; }
       .postcard .ptop{ font-family:"JetBrains Mono"; font-size:26px; color:var(--soft); display:flex; justify-content:space-between; align-items:center; }
       .postcard .ptop .heart{ color:var(--o); font-size:36px; }
@@ -84,7 +82,7 @@
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="sdep01short" data-start="0" data-duration="192" data-width="1080" data-height="1920">
+    <div id="root" data-composition-id="sdep01short" data-start="0" data-duration="151" data-width="1080" data-height="1920">
       <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
         <symbol id="ic-phone" viewBox="0 0 100 100"><rect x="33" y="14" width="34" height="72" rx="8" fill="none" stroke="#5EEAD4" stroke-width="4.5"/><line x1="45" y1="76" x2="55" y2="76" stroke="#5EEAD4" stroke-width="4.5"/></symbol>
         <symbol id="ic-server" viewBox="0 0 100 100"><rect x="20" y="24" width="60" height="22" rx="5" fill="none" stroke="#5EEAD4" stroke-width="4.5"/><rect x="20" y="54" width="60" height="22" rx="5" fill="none" stroke="#5EEAD4" stroke-width="4.5"/><circle cx="32" cy="35" r="3" fill="#5EEAD4"/><circle cx="32" cy="65" r="3" fill="#5EEAD4"/></symbol>
@@ -97,8 +95,8 @@
       <div id="hudline"></div>
       <div id="sweep"></div>
 
-      <!-- 1. HOOK + meet the app (0–24) -->
-      <div class="scene clip" id="s1" data-start="0" data-duration="24" data-track-index="0">
+      <!-- 1. HOOK (0–22) -->
+      <div class="scene clip" id="s1" data-start="0" data-duration="22" data-track-index="0">
         <div class="kick" id="s1k">System Design · Episode 01</div>
         <h1 id="s1t" style="font-size:100px;">How does ONE app serve <span class="cy">millions</span>?</h1>
         <div class="postcard" id="s1card">
@@ -109,8 +107,8 @@
         <div class="ptag" id="s1tag">PROJECT · <b>let's build a baby Instagram</b></div>
       </div>
 
-      <!-- 2. WHAT IS IT (24–43) -->
-      <div class="scene clip" id="s2" data-start="24" data-duration="19" data-track-index="0">
+      <!-- 2. WHAT IS IT (22–37) -->
+      <div class="scene clip" id="s2" data-start="22" data-duration="15" data-track-index="0">
         <div class="kick" id="s2k">What is system design?</div>
         <h1 id="s2t" style="font-size:72px;">Plan the app — <span class="cy">before</span> you build it.</h1>
         <div class="cardcol">
@@ -119,8 +117,8 @@
         </div>
       </div>
 
-      <!-- 3. THE MENTAL MODEL (43–70) -->
-      <div class="scene clip" id="s3" data-start="43" data-duration="27" data-track-index="0">
+      <!-- 3. THE MENTAL MODEL (37–57) -->
+      <div class="scene clip" id="s3" data-start="37" data-duration="20" data-track-index="0">
         <div class="kick" id="s3k">The one mental model</div>
         <h1 id="s3t" style="font-size:64px; margin-bottom:18px;">Our app is just <span class="cy">3 things</span>.</h1>
         <svg id="s3svg" width="640" height="760" viewBox="0 0 640 760" style="overflow:visible; align-self:center;">
@@ -137,8 +135,8 @@
         <div class="sub" id="s3s" style="font-size:36px; margin-top:24px; opacity:0; align-self:center;">Post a photo → <span class="cy">request</span>, then <span class="cy">response</span>.</div>
       </div>
 
-      <!-- 4. THE 4 STEPS (70–86) -->
-      <div class="scene clip" id="s4" data-start="70" data-duration="16" data-track-index="0">
+      <!-- 4. THE 4 STEPS (57–71) -->
+      <div class="scene clip" id="s4" data-start="57" data-duration="14" data-track-index="0">
         <div class="kick" id="s4k">The process — on baby Instagram</div>
         <h1 id="s4t" style="font-size:72px;">4 steps. <span class="cy">Every time.</span></h1>
         <div class="chipcol">
@@ -149,8 +147,8 @@
         </div>
       </div>
 
-      <!-- 5. STEP 1 · REQUIREMENTS (86–108) -->
-      <div class="scene clip" id="s5" data-start="86" data-duration="22" data-track-index="0">
+      <!-- 5. STEP 1 · REQUIREMENTS (71–86) -->
+      <div class="scene clip" id="s5" data-start="71" data-duration="15" data-track-index="0">
         <div class="kick" id="s5k">Step 1 · requirements</div>
         <h1 id="s5t" style="font-size:62px;">What must it do — <span class="cy">for how many?</span></h1>
         <ul class="bullets">
@@ -164,8 +162,8 @@
         </div>
       </div>
 
-      <!-- 6. STEP 4 · SCALE (108–136) -->
-      <div class="scene clip" id="s6" data-start="108" data-duration="28" data-track-index="0">
+      <!-- 6. STEP 4 · SCALE (86–105) -->
+      <div class="scene clip" id="s6" data-start="86" data-duration="19" data-track-index="0">
         <div class="kick" id="s6k">Step 4 · scale</div>
         <h1 id="s6t" style="font-size:60px; margin-bottom:18px;"><span class="or">10 million</span> open baby Instagram. One server melts.</h1>
         <svg id="s6svg" width="860" height="560" viewBox="0 0 860 560" style="overflow:visible; align-self:center;">
@@ -185,8 +183,8 @@
         <div class="sub" id="s6s" style="font-size:38px; margin-top:20px; opacity:0; align-self:center;">More servers <span class="cy">(scale out)</span> + a <span class="cy">cache</span>.</div>
       </div>
 
-      <!-- 7. HLD vs LLD (136–156) -->
-      <div class="scene clip" id="s7" data-start="136" data-duration="20" data-track-index="0">
+      <!-- 7. HLD vs LLD (105–120) -->
+      <div class="scene clip" id="s7" data-start="105" data-duration="15" data-track-index="0">
         <div class="kick" id="s7k">Two zoom levels</div>
         <h1 id="s7t" style="font-size:68px;">HLD vs LLD</h1>
         <div class="cardcol">
@@ -195,16 +193,16 @@
         </div>
       </div>
 
-      <!-- 8. REAL SCALE (156–174) -->
-      <div class="scene clip" id="s8" data-start="156" data-duration="18" data-track-index="0">
+      <!-- 8. REAL SCALE (120–136) -->
+      <div class="scene clip" id="s8" data-start="120" data-duration="16" data-track-index="0">
         <div class="kick" id="s8k">This isn't a toy</div>
         <h1 id="s8t" style="font-size:60px;">Hotstar did exactly this.</h1>
         <div class="big" id="s8big"><span id="s8num">59</span><span class="u">M</span></div>
         <div class="sub" id="s8s" style="font-size:38px; margin-top:24px; opacity:0;">watching at once · 2023 WC final. <span class="cy">Same ideas, more boxes.</span></div>
       </div>
 
-      <!-- 9. OUTRO (174–192) -->
-      <div class="scene clip" id="s9" data-start="174" data-duration="18" data-track-index="0">
+      <!-- 9. OUTRO (136–151) -->
+      <div class="scene clip" id="s9" data-start="136" data-duration="15" data-track-index="0">
         <div class="kick" id="s9k">That's system design</div>
         <h1 id="s9t" style="font-size:88px;">You just <span class="cy">designed an app.</span></h1>
         <div class="sub" id="s9s" style="font-size:42px; margin-top:40px; opacity:0;">Follow — we build the whole thing, one box at a time.</div>
@@ -235,69 +233,70 @@
       function packet(sel, x1, y1, x2, y2, t, dur, n){ tl.set(sel, { attr:{ cx:x1, cy:y1 }, opacity:0 }, t); tl.to(sel, { opacity:1, duration:0.2 }, t); tl.fromTo(sel, { attr:{ cx:x1, cy:y1 } }, { attr:{ cx:x2, cy:y2 }, duration:dur, ease:"none", repeat:(n==null?20:n) }, t); }
       function sweep(t){ tl.set("#sweep", { opacity:1 }, t-0.4); tl.fromTo("#sweep", { x:-360 }, { x:1280, duration:0.7, ease:"power2.inOut" }, t-0.4); tl.set("#sweep", { opacity:0 }, t+0.4); }
 
-      // 1. HOOK (0–24) — narration ~24s; question early, card mid, project tag late
-      scene("#s1", 0, 24);
-      kick("#s1k", 1.0); head("#s1t", 2.2, 1.0);
-      tl.to("#s1t .cy", { opacity:0.72, duration:1.6, ease:"sine.inOut", repeat:3, yoyo:true }, 6.0);
-      pop("#s1card", 9.0, 0.7); breathe("#s1card", 12, 1.02, 2.4, 5);
-      pop("#s1tag", 16.0, 0.7); breathe("#s1tag", 19, 1.04, 1.6, 4);
+      // Timings are matched to the measured TTS voiceover. Each scene: VO starts ~0.6s
+      // after the scene begins; reveals are spread across the VO window; ~1s settled tail.
 
-      // 2. WHAT IS IT (24–43) — ~19s
-      sweep(24); scene("#s2", 24, 19);
-      kick("#s2k", 25.0); head("#s2t", 25.9, 0.9);
-      pop("#s2c1", 31.0, 0.7); pop("#s2c2", 37.0, 0.7);
+      // 1. HOOK (0–22) — VO ~19.9s
+      scene("#s1", 0, 22);
+      kick("#s1k", 0.6); head("#s1t", 1.2, 1.0);
+      tl.to("#s1t .cy", { opacity:0.72, duration:1.6, ease:"sine.inOut", repeat:4, yoyo:true }, 5.5);
+      pop("#s1card", 9.5, 0.7); breathe("#s1card", 12.5, 1.02, 2.4, 4);
+      pop("#s1tag", 16.5, 0.7); breathe("#s1tag", 19.0, 1.04, 1.4, 2);
 
-      // 3. MENTAL MODEL (43–70) — ~26s, reveals 48→66
-      sweep(43); scene("#s3", 43, 27);
-      kick("#s3k", 44.0); head("#s3t", 44.9, 0.9);
-      pop("#m_cli", 48.5); draw("#m_e1", 130, 52.0, 0.6); pop("#m_srv", 54.0);
-      draw("#m_e2", 130, 58.0, 0.6); pop("#m_db", 60.0);
-      packet("#m_p1", 320, 170, 320, 600, 62.5, 2.0, 4);
-      rise("#s3s", 66.0, 18);
+      // 2. WHAT IS IT (22–37) — VO ~13.1s, window [22.6,35.7]
+      sweep(22); scene("#s2", 22, 15);
+      kick("#s2k", 22.7); head("#s2t", 23.5, 0.9);
+      pop("#s2c1", 27.5, 0.7); pop("#s2c2", 31.0, 0.7);
 
-      // 4. THE 4 STEPS (70–86) — ~15s, chips 75→83
-      sweep(70); scene("#s4", 70, 16);
-      kick("#s4k", 71.0); head("#s4t", 71.9, 0.9);
-      pop("#s4a", 75.0, 0.6); pop("#s4b", 77.3, 0.6); pop("#s4c", 79.6, 0.6); pop("#s4d", 81.9, 0.6);
-      breathe("#s4d", 83.5, 1.03, 1.2, 3);
+      // 3. MENTAL MODEL (37–57) — VO ~18.4s, window [37.6,56.0]
+      sweep(37); scene("#s3", 37, 20);
+      kick("#s3k", 37.6); head("#s3t", 38.4, 0.9);
+      pop("#m_cli", 42.0); draw("#m_e1", 130, 44.5, 0.6); pop("#m_srv", 45.5);
+      draw("#m_e2", 130, 48.5, 0.6); pop("#m_db", 49.5);
+      packet("#m_p1", 320, 170, 320, 600, 51.5, 1.8, 2);
+      rise("#s3s", 53.3, 18);
 
-      // 5. STEP 1 · REQUIREMENTS (86–108) — ~20s, reveals 91→104
-      sweep(86); scene("#s5", 86, 22);
-      kick("#s5k", 87.0); head("#s5t", 87.9, 0.9);
-      rise("#s5b1", 91.5, 18); rise("#s5b2", 95.0, 18);
-      pop("#s5n1", 99.0, 0.6); pop("#s5vs", 100.6, 0.5); pop("#s5n2", 101.8, 0.7);
-      tl.to("#s5n2", { scale:1.04, duration:1.4, ease:"sine.inOut", repeat:4, yoyo:true, transformOrigin:"left center" }, 104.0);
+      // 4. THE 4 STEPS (57–71) — VO ~12.3s, window [57.6,69.9]
+      sweep(57); scene("#s4", 57, 14);
+      kick("#s4k", 57.6); head("#s4t", 58.4, 0.9);
+      pop("#s4a", 61.5, 0.6); pop("#s4b", 63.5, 0.6); pop("#s4c", 65.5, 0.6); pop("#s4d", 67.5, 0.6);
 
-      // 6. STEP 4 · SCALE (108–136) — ~26s, reveals 113→131
-      sweep(108); scene("#s6", 108, 28);
-      kick("#s6k", 109.0); head("#s6t", 109.9, 0.9);
-      pop("#sc_cl", 113.5);
-      draw("#sc_e1", 360, 116.0, 0.6); draw("#sc_e2", 300, 116.4, 0.6); draw("#sc_e3", 360, 116.8, 0.6);
-      pop("#sc_s1", 119.0); pop("#sc_s2", 121.0); pop("#sc_s3", 123.0);
-      draw("#sc_e4", 220, 126.0, 0.6); pop("#sc_cache", 128.0);
-      breathe("#sc_cache", 131, 1.03, 2.0, 4);
-      rise("#s6s", 131.5, 18);
+      // 5. STEP 1 · REQUIREMENTS (71–86) — VO ~12.7s, window [71.6,84.3]
+      sweep(71); scene("#s5", 71, 15);
+      kick("#s5k", 71.6); head("#s5t", 72.4, 0.9);
+      rise("#s5b1", 75.0, 18); rise("#s5b2", 77.5, 18);
+      pop("#s5n1", 80.0, 0.6); pop("#s5vs", 81.0, 0.5); pop("#s5n2", 81.8, 0.7);
+      tl.to("#s5n2", { scale:1.04, duration:1.4, ease:"sine.inOut", repeat:1, yoyo:true, transformOrigin:"left center" }, 83.5);
 
-      // 7. HLD vs LLD (136–156) — ~18s, cards 141→149
-      sweep(136); scene("#s7", 136, 20);
-      kick("#s7k", 137.0); head("#s7t", 137.9, 0.9);
-      pop("#s7c1", 141.5, 0.7); pop("#s7c2", 147.0, 0.7);
+      // 6. STEP 4 · SCALE (86–105) — VO ~17.6s, window [86.6,104.2]
+      sweep(86); scene("#s6", 86, 19);
+      kick("#s6k", 86.6); head("#s6t", 87.4, 0.9);
+      pop("#sc_cl", 90.5);
+      draw("#sc_e1", 360, 92.5, 0.6); draw("#sc_e2", 300, 92.9, 0.6); draw("#sc_e3", 360, 93.3, 0.6);
+      pop("#sc_s1", 95.0); pop("#sc_s2", 96.8); pop("#sc_s3", 98.6);
+      draw("#sc_e4", 220, 100.5, 0.6); pop("#sc_cache", 101.8);
+      rise("#s6s", 102.5, 18);
 
-      // 8. REAL SCALE (156–174) — ~17s, count-up + sub
-      sweep(156); scene("#s8", 156, 18);
-      kick("#s8k", 157.0); head("#s8t", 157.9, 0.9);
-      pop("#s8big", 161.0, 0.8);
+      // 7. HLD vs LLD (105–120) — VO ~12.9s, window [105.6,118.5]
+      sweep(105); scene("#s7", 105, 15);
+      kick("#s7k", 105.6); head("#s7t", 106.4, 0.9);
+      pop("#s7c1", 109.5, 0.7); pop("#s7c2", 113.5, 0.7);
+
+      // 8. REAL SCALE (120–136) — VO ~14.2s, window [120.6,134.8]; "59M" near "fifty-nine million"
+      sweep(120); scene("#s8", 120, 16);
+      kick("#s8k", 120.6); head("#s8t", 121.4, 0.9);
+      pop("#s8big", 124.5, 0.8);
       var hc = { v:59 };
-      tl.set(hc, { v:0 }, 161.5);
-      tl.to(hc, { v:59, duration:2.2, ease:"power1.out", onUpdate:function(){ var e=document.getElementById('s8num'); if(e) e.textContent = Math.round(hc.v); } }, 161.7);
-      breathe("#s8big", 165.0, 1.03, 2.0, 4);
-      rise("#s8s", 168.0, 18);
+      tl.set(hc, { v:0 }, 125.0);
+      tl.to(hc, { v:59, duration:2.4, ease:"power1.out", onUpdate:function(){ var e=document.getElementById('s8num'); if(e) e.textContent = Math.round(hc.v); } }, 125.2);
+      breathe("#s8big", 128.5, 1.03, 2.0, 2);
+      rise("#s8s", 130.5, 18);
 
-      // 9. OUTRO (174–192) — ~16s
-      sweep(174); scene("#s9", 174, 18);
-      kick("#s9k", 175.0); head("#s9t", 175.9, 1.0);
-      tl.to("#s9t .cy", { opacity:0.72, duration:1.5, ease:"sine.inOut", repeat:4, yoyo:true }, 179.0);
-      rise("#s9s", 181.0, 18);
+      // 9. OUTRO (136–151) — VO ~13.1s, window [136.6,149.7]
+      sweep(136); scene("#s9", 136, 15);
+      kick("#s9k", 136.6); head("#s9t", 137.4, 1.0);
+      tl.to("#s9t .cy", { opacity:0.72, duration:1.5, ease:"sine.inOut", repeat:3, yoyo:true }, 140.0);
+      rise("#s9s", 142.0, 18);
 
       window.__timelines["sdep01short"] = tl;
     </script>
