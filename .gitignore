@@ -9,3 +9,10 @@ tech-intern-videos/
 tti-studio/renders/
 .cache/
 *.log
+
+# Voiceover build cache (raw TTS clips + alignment; regenerate via sync_build.py)
+**/audio_v2/
+
+# macOS junk
+.DS_Store
+**/.DS_Store
