@@ -15,6 +15,10 @@
 >    gotchas, asset paths, compression + delivery.
 > 5. **`docs/CURRICULUM.md`** — the 30-episode AI Season 1 plan + future
 >    seasons (system design, DevOps, security) + the teaching discipline.
+> 6. **`docs/LOCAL-SETUP.md`** — if running Claude Code on a laptop (vs. the
+>    cloud sandbox): how to set up the local env, MCP servers (ElevenLabs),
+>    and the hybrid cloud-vs-local workflow. The cloud sandbox firewall
+>    blocks external APIs like ElevenLabs — those steps run locally.
 >
 > **TL;DR of the channel:** *The Tech Intern* — faceless, beginner-first tech
 > explainers. We render **silent** motion-graphics episodes with HyperFrames
