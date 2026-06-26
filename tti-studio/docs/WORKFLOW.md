@@ -12,9 +12,10 @@
 | 2 | **Content outline** | 1-page outline: 15 scenes, timings, examples, recurring metaphor | ✅ Yes |
 | 3 | **Build deck + composition together** | `deck.html` (navigable) + `composition.html` (timed source) | — |
 | 4 | **Deck validation** | User reviews `deck.html` slide-by-slide; iterate until greenlight | ✅ Yes (full greenlight, every slide) |
-| 5 | **Narration script** | `script.md` — conversational voice, matches the validated deck | ✅ Yes |
-| 6 | **Render video** | `video.mp4` + `outro.mp4` (near-lossless, compressed) | — |
-| 7 | **Deliver** | All files in `episodes/epNN/`, committed and pushed | done |
+| 5 | **Narration script** | `script.md` — **joyful, conversational** voice, matches the validated deck | ✅ Yes |
+| 6 | **Render video (silent)** | `video.mp4` + `outro.mp4` (near-lossless, compressed) | — |
+| 7 | **Voiceover & word-sync** | `video-voiced.mp4` + `outro-voiced.mp4` (Dhruva voice, animations land on the words) | — |
+| 8 | **Deliver** | All files in `episodes/epNN/`, committed and pushed | done |
 
 **Hard rule:** never start phase N+1 until phase N's gate is explicitly approved. No "I'll go ahead and start while you review." That's the deviation that costs us.
 
@@ -38,14 +39,20 @@ tti-studio/
 │                                 # infographic-builder, …)
 ├── episodes/                     # one folder per episode — ALL deliverables go here
 │   ├── ep01/
-│   │   ├── composition.html      # main HyperFrames composition (15 scenes, ~660s)
-│   │   ├── composition-outro.html # 30s outro composition
+│   │   ├── composition.html      # main HyperFrames composition (silent source)
+│   │   ├── composition-outro.html # outro composition (silent source)
+│   │   ├── composition_synced.html        # re-timed, word-synced render source
+│   │   ├── composition-outro_synced.html  # re-timed outro render source
 │   │   ├── deck.html             # single-file navigable HTML deck
-│   │   ├── script.md             # narration script (conversational)
-│   │   ├── script.srt            # subtitle file (after recording)
+│   │   ├── script.md             # narration script (joyful, conversational)
+│   │   ├── sync_build.py         # voiceover + word-sync pipeline (see VOICEOVER.md)
+│   │   ├── audio_v2/             # TTS clips + alignment cache (GITIGNORED)
+│   │   ├── script.srt            # subtitle file (after recording, optional)
 │   │   ├── contact-sheet.png     # review stills sheet (optional)
-│   │   ├── video.mp4             # final main video (near-lossless CRF 20)
-│   │   ├── outro.mp4             # final outro video
+│   │   ├── video.mp4             # silent render (near-lossless CRF 20)
+│   │   ├── outro.mp4             # silent outro render
+│   │   ├── video-voiced.mp4      # ⭐ final voiced deliverable (Dhruva, word-synced)
+│   │   ├── outro-voiced.mp4      # ⭐ final voiced outro
 │   │   └── youtube.md            # title + description + tags (post-record)
 │   ├── ep02/ …
 │   └── ep03/ …
@@ -175,14 +182,35 @@ Mechanical phase. Don't reach here until phases 4 and 5 are both greenlit.
 
 ---
 
-## Phase 7 — Deliver
+## Phase 7 — Voiceover & word-sync
 
-1. `git add episodes/epNN/`
+Add the creator's **Dhruva** voice (joyful tone) and sync the visuals to it so
+every animation/transition lands on the spoken words. **Full process in
+`docs/VOICEOVER.md`** — follow it exactly.
+
+1. Copy `episodes/ep02/sync_build.py` as the starting kit; fill in the new
+   episode's beat maps (narration chunks → element ids) and scene table.
+2. Run `python3 sync_build.py` — generates joyful TTS with timestamps, re-times
+   each scene to its narration, pins reveals to word times, writes
+   `composition_synced.html` + `composition-outro_synced.html` and the audio.
+3. Re-render the `_synced` compositions, then ffmpeg-mux the voice into
+   `video-voiced.mp4` + `outro-voiced.mp4` (commands in `VOICEOVER.md`).
+4. QA: duration matches, voice energy at every scene start, spot-check a reveal
+   before/after its cue, tone sounds joyful (not strict).
+
+**Why this phase exists:** scene-boundary-only sync fires animations early and
+leaves dead air. Word-level sync (ElevenLabs `/with-timestamps`) fixes it.
+
+---
+
+## Phase 8 — Deliver
+
+1. `git add episodes/epNN/` (the `audio_v2/` cache is gitignored — that's expected).
 2. Commit with a clear message naming the episode + what's inside.
 3. Push to `claude/gifted-brown-7e7t72` (the dev branch).
 4. Reply with GitHub download URLs for each deliverable:
-   - `https://github.com/dhruvateja06/videos/blob/claude/gifted-brown-7e7t72/tti-studio/episodes/epNN/video.mp4`
-   - `…/script.md`, `…/deck.html`, `…/outro.mp4`, etc.
+   - `https://github.com/dhruvateja06/videos/blob/claude/gifted-brown-7e7t72/tti-studio/episodes/epNN/video-voiced.mp4`
+   - `…/video.mp4` (silent), `…/script.md`, `…/deck.html`, `…/outro-voiced.mp4`, etc.
 
 ---
 

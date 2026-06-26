@@ -13,6 +13,17 @@
 | Chrome Headless Shell | `hyperframes browser ensure` (cached in `~/.cache/hyperframes`) | Google CDN is allowed |
 | GSAP (local) | `assets/vendor/gsap.min.js` | **never** load GSAP from a CDN |
 | Fonts (local) | `assets/fonts/*.woff2` | **never** load Google Fonts |
+| ElevenLabs TTS | `ELEVENLABS_API_KEY` env (needs `text_to_speech` perm) | Dhruva voice; see `docs/VOICEOVER.md` |
+
+> **Voiceover is now a standard phase.** After the silent render, generate the
+> creator's Dhruva voice and word-sync the visuals to it (`docs/VOICEOVER.md`,
+> reference impl `episodes/ep02/sync_build.py`). Deliverables: `video-voiced.mp4`
+> + `outro-voiced.mp4`.
+
+> **Fresh clone?** None of the toolchain ships in the repo. Install once:
+> `brew install node ffmpeg` then `npx --yes hyperframes@0.7.5 browser ensure`
+> (uses system Chrome if installed). The old `tech-intern-videos/` sibling install
+> is optional — `npx hyperframes@0.7.5` works without it.
 
 Recreate after a sandbox reset:
 ```bash

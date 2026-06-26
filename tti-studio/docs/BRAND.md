@@ -13,15 +13,19 @@ for anybody just starting out. Beginner-first, jargon-free, real-world examples.
 - **Format:** motion-graphics / infographic explainers (10–12 min long-form) +
   3–5 derivative shorts each. **Faceless** — no presenter on camera.
 - **Production model:** render a **silent** motion-graphics video with HyperFrames,
-  then the creator adds **voiceover later** in their editor. Scenes are timed/held
-  long enough to narrate over. (See `PIPELINE.md`.)
+  then add the creator's **own AI voice (Dhruva, via ElevenLabs)** and **word-sync**
+  the visuals to it — every animation lands on the spoken words. (See
+  `VOICEOVER.md`; the silent render stays the source-of-truth, the voiced cut is the
+  deliverable.)
 - **Tagline in use:** *"tech, explained from day one."*
 - **Do NOT** use the name "AI Seekho" or any other old working name anywhere on
   screen or in scripts. The channel is **The Tech Intern**.
 
 ## Voice & tone
 
-Calm, conversational, warm. Talks *with* a beginner, never down to them.
+Calm, conversational, warm — and **joyful**, like a lecturer who genuinely loves
+this and is delighted to share it (never strict or formal). Talks *with* a
+beginner, never down to them.
 Indian, everyday examples are the **primary** illustrations (Swiggy, UPI, Google
 Maps, Gmail, UPI fraud, Flipkart). Western examples (OpenAI, Tesla) are secondary.
 

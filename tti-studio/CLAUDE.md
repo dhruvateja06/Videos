@@ -3,7 +3,7 @@
 > **NEW SESSION? READ THESE IN ORDER:**
 >
 > 1. **`docs/WORKFLOW.md`** — ⭐ **THE EPISODE PRODUCTION PROCESS.**
->    The 7 phases (topic → outline → deck → validate → script → render → deliver),
+>    The 8 phases (topic → outline → deck → validate → script → render → voiceover → deliver),
 >    the gates between them, the per-episode folder structure. **Follow this
 >    every time. Don't deviate.** Deviations cost hours and trigger
 >    "we already did this differently last time" feedback from the user.
@@ -13,16 +13,19 @@
 >    like slides.
 > 4. **`docs/PIPELINE.md`** — HyperFrames render technical details: commands,
 >    gotchas, asset paths, compression + delivery.
-> 5. **`docs/CURRICULUM.md`** — the 30-episode AI Season 1 plan + future
+> 5. **`docs/VOICEOVER.md`** — ⭐ **adding the Dhruva voice + word-level sync**
+>    (animations land on the spoken words). A standard phase now, not optional.
+> 6. **`docs/CURRICULUM.md`** — the 30-episode AI Season 1 plan + future
 >    seasons (system design, DevOps, security) + the teaching discipline.
-> 6. **`docs/LOCAL-SETUP.md`** — if running Claude Code on a laptop (vs. the
+> 7. **`docs/LOCAL-SETUP.md`** — if running Claude Code on a laptop (vs. the
 >    cloud sandbox): how to set up the local env, MCP servers (ElevenLabs),
 >    and the hybrid cloud-vs-local workflow. The cloud sandbox firewall
 >    blocks external APIs like ElevenLabs — those steps run locally.
 >
 > **TL;DR of the channel:** *The Tech Intern* — faceless, beginner-first tech
 > explainers. We render **silent** motion-graphics episodes with HyperFrames
-> (HTML/CSS + GSAP → MP4); the creator adds **voiceover later**. Brand orange
+> (HTML/CSS + GSAP → MP4), then add the creator's **Dhruva AI voice** and
+> **word-sync** the visuals to it (`docs/VOICEOVER.md`). Brand orange
 > `#FF6B2C` on cream `#FAF8F3`. Infographic/motion-graphics style, **never**
 > slideshow, **never** cinematic AI b-roll. Reference episodes:
 > `episodes/ep01/composition.html`, `episodes/ep02/composition.html`.
