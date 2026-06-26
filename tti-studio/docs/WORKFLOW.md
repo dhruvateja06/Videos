@@ -202,6 +202,7 @@ Mechanical phase. Don't reach here until phases 4 and 5 are both greenlit.
 | Using cinematic AI-generated b-roll | Wrong format for the channel | Infographic / motion-graphics only (see `STYLE.md`) |
 | Writing on-screen text in long sentences | Reads like slides, not infographics | Headlines ≤7 words, bullets as fragments |
 | **Animations bunched at the start of a scene** | **Ep 1: a ~60s scene finished all its animation by ~35s, then froze while the voiceover kept reading — badly out of sync** | **Spread reveals across the scene's full narration length (~1 every 5–8s); the last reveal lands near the end. See `STYLE.md` → "Pacing & narration sync".** |
+| **Scripts that read like written paragraphs** | **Ep 1 short: the hook was dense prose, named "system design" too early, and was em-dash heavy — robotic and hard to teleprompt** | **Spoken rhythm: short lines, one thought per breath; show the scenario and build to the concept before naming it; run the `humanizer` skill (Phase 5). Read it out loud — if it doesn't sound like talking, rewrite.** |
 
 ---
 
