@@ -76,6 +76,34 @@ These are this vertical's vocabulary — standardize them so episodes compound:
 - Each scene **held long enough to narrate over** (silent render; VO added later).
 - Plain language, no jargon, Indian examples first (see `BRAND.md`).
 
+## ⏱️ Pacing & narration sync — the #1 timing rule (Ep 1 got this wrong)
+
+**The failure mode (do NOT repeat):** in Ep 1, every reveal in a scene fired in
+the first ~half — a 60s scene finished all its animation by ~35s, then sat frozen
+while the voiceover kept reading. Dead air. The motion has to track the *words*,
+not race ahead of them.
+
+**The rule:** within each scene, **spread the element reveals evenly across the
+scene's full narration length** so each build lands roughly when the voice reaches
+that point, and the *last* element arrives near the *end* of the scene's spoken
+lines — not at 60% of the way through.
+
+**How to time it concretely:**
+1. Take the scene's narration (its lines in `script.md`), count words → spoken
+   seconds at **~145 wpm** (`words / 145 × 60`). That is the scene's duration.
+2. The scene **enter** takes the first ~0.9s; reserve the **last ~12–15%** as a
+   settled hold.
+3. Distribute the N reveals across the middle: reveal *i* at roughly
+   `enter + (i / N) × (duration − enter − hold)`. So a 60s scene with 4 reveals
+   fires at ≈ **8s, 22s, 36s, 50s** — *not* 3s, 5s, 7s, 9s.
+4. Each reveal aligns to one `▸` marker in the script (one marker per reveal), so
+   the visual lands on the spoken beat.
+5. Hero elements **breathe/float** during the hold so even the settled tail is
+   never frozen.
+
+**Check before render:** scrub the composition — if a scene is visually *done*
+with more than ~15% of its time left, the reveals are bunched. Re-space them.
+
 ## What we are NOT doing
 
 - ❌ Cinematic / AI-generated b-roll footage (wrong format, expensive, imprecise).

@@ -172,6 +172,11 @@ Mechanical phase. Don't reach here until phases 4 and 5 are both greenlit.
    ```
    Repeat for outro.
 5. **QA:** extract a few key frames with `ffprobe` / `ffmpeg -ss`. Verify the signature visual + any phone mockups + the recap.
+6. **⏱️ Pacing QA (Ep 1 lesson — do not skip):** scrub each scene. If a scene is
+   visually *done* with more than ~15% of its time left, the reveals are bunched
+   at the start and will fall out of sync with the voiceover. Re-space them across
+   the scene's full narration length before the final render. See `STYLE.md` →
+   "Pacing & narration sync".
 
 ---
 
@@ -196,6 +201,7 @@ Mechanical phase. Don't reach here until phases 4 and 5 are both greenlit.
 | Re-rendering the whole video to fix one scene | The moving background means partial-range renders are seamless-broken | Lint + QA the composition before render, not after |
 | Using cinematic AI-generated b-roll | Wrong format for the channel | Infographic / motion-graphics only (see `STYLE.md`) |
 | Writing on-screen text in long sentences | Reads like slides, not infographics | Headlines ≤7 words, bullets as fragments |
+| **Animations bunched at the start of a scene** | **Ep 1: a ~60s scene finished all its animation by ~35s, then froze while the voiceover kept reading — badly out of sync** | **Spread reveals across the scene's full narration length (~1 every 5–8s); the last reveal lands near the end. See `STYLE.md` → "Pacing & narration sync".** |
 
 ---
 
