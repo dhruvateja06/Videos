@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="../../assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face { font-family:"Fraunces"; font-weight:400; src:url("../../assets/fonts/fraunces-latin-400-normal.woff2") format("woff2"); }
+      @font-face { font-family:"Fraunces"; font-weight:400; font-style:italic; src:url("../../assets/fonts/fraunces-latin-400-italic.woff2") format("woff2"); }
+      @font-face { font-family:"Fraunces"; font-weight:600; src:url("../../assets/fonts/fraunces-latin-600-normal.woff2") format("woff2"); }
+      @font-face { font-family:"Inter"; font-weight:400; src:url("../../assets/fonts/inter-latin-400-normal.woff2") format("woff2"); }
+      @font-face { font-family:"Inter"; font-weight:600; src:url("../../assets/fonts/inter-latin-600-normal.woff2") format("woff2"); }
+      @font-face { font-family:"Inter"; font-weight:700; src:url("../../assets/fonts/inter-latin-700-normal.woff2") format("woff2"); }
+      @font-face { font-family:"JetBrains Mono"; font-weight:400; src:url("../../assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); }
+
+      :root{
+        --paper:#0F1729; --panel:#16223C; --panel2:#1B2A47;
+        --ink:#E6ECF5; --soft:#B7C2D6; --muted:#7B8AA5; --hair:rgba(123,138,165,.22);
+        --accent:#3B7BFF; --accent-bright:#6AA0FF; --accent-soft:rgba(59,123,255,.14);
+        --spike:#FF6B6B; --ok:#34D399;
+      }
+      *{ margin:0; padding:0; box-sizing:border-box; }
+      html,body{ width:1920px; height:1080px; overflow:hidden; }
+      body{ font-family:"Inter",sans-serif; background:var(--paper); }
+      #root{ position:relative; width:1920px; height:1080px; background:var(--paper); color:var(--ink); }
+
+      /* ---- living background ---- */
+      #bg{ position:absolute; inset:0; overflow:hidden; z-index:0; pointer-events:none; }
+      #bggrid{ position:absolute; left:-140px; top:-140px; width:2300px; height:1400px;
+        background-image:linear-gradient(rgba(123,138,165,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(123,138,165,.07) 1px, transparent 1px); background-size:72px 72px; }
+      .glow{ position:absolute; border-radius:50%; filter:blur(70px); }
+      #glow1{ width:900px; height:900px; left:980px; top:-260px; background:radial-gradient(circle, rgba(59,123,255,.20), rgba(59,123,255,0) 70%); }
+      #glow2{ width:820px; height:820px; left:-300px; top:560px; background:radial-gradient(circle, rgba(106,160,255,.14), rgba(106,160,255,0) 70%); }
+
+      /* ---- HUD frame ---- */
+      .hud{ position:absolute; left:64px; right:64px; top:52px; display:flex; justify-content:space-between; align-items:center; z-index:7;
+        font-family:"JetBrains Mono"; font-size:22px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
+      .hud .l span{ color:var(--accent); }
+      #hudline{ position:absolute; left:64px; right:64px; top:94px; height:1px; background:var(--hair); z-index:7; transform-origin:left; }
+      .bracket{ position:absolute; width:34px; height:34px; z-index:7; border-color:var(--hair); }
+      #brTL{ left:30px; top:30px; border-left:2px solid var(--hair); border-top:2px solid var(--hair); }
+      #brTR{ right:30px; top:30px; border-right:2px solid var(--hair); border-top:2px solid var(--hair); }
+      #brBL{ left:30px; bottom:30px; border-left:2px solid var(--hair); border-bottom:2px solid var(--hair); }
+      #brBR{ right:30px; bottom:30px; border-right:2px solid var(--hair); border-bottom:2px solid var(--hair); }
+      #sweep{ position:absolute; top:-60px; bottom:-60px; left:0; width:340px; opacity:0; z-index:20; pointer-events:none;
+        background:linear-gradient(90deg, rgba(59,123,255,0) 0%, rgba(106,160,255,.5) 50%, rgba(59,123,255,0) 100%); transform:skewX(-10deg); }
+
+      /* ---- scene shell ---- */
+      .scene{ position:absolute; inset:0; opacity:0; z-index:2; padding:172px 130px 110px 130px; display:flex; flex-direction:column; justify-content:center; }
+      .kick{ font-family:"JetBrains Mono"; font-size:27px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:26px; }
+      .kick:before{ content:"// "; color:var(--muted); }
+      h1{ font-family:"Fraunces"; font-weight:600; color:var(--ink); line-height:1.04; letter-spacing:-.012em; }
+      .sub{ color:var(--soft); font-family:"Inter"; }
+      .ac{ color:var(--accent); } .acb{ color:var(--accent-bright); } .sp{ color:var(--spike); } .ok{ color:var(--ok); }
+      .mono{ font-family:"JetBrains Mono"; } .it{ font-style:italic; }
+
+      /* ---- phone postcard ---- */
+      .postcard{ width:560px; background:var(--panel); border:1px solid var(--hair); border-radius:26px; padding:28px; opacity:0; }
+      .postcard .ptop{ font-family:"JetBrains Mono"; font-size:26px; color:var(--soft); display:flex; justify-content:space-between; align-items:center; }
+      .postcard .ptop .heart{ color:var(--accent-bright); font-size:34px; }
+      .postcard .ph{ height:230px; border-radius:16px; margin-top:18px; background:linear-gradient(135deg, rgba(59,123,255,.5), rgba(106,160,255,.28)); }
+      .postcard .cap{ font-size:28px; color:var(--soft); margin-top:18px; } .postcard .cap b{ color:#fff; }
+      .ptag{ display:inline-block; font-family:"JetBrains Mono"; font-size:25px; letter-spacing:.08em; color:var(--accent-bright);
+        border:1px solid var(--hair); border-radius:40px; padding:13px 28px; opacity:0; align-self:flex-start; }
+      .ptag b{ color:#fff; font-weight:400; }
+
+      /* ---- two-card column / row ---- */
+      .cardrow{ display:flex; gap:38px; margin-top:46px; }
+      .ncard{ flex:1; background:var(--panel); border:1px solid var(--hair); border-radius:22px; padding:42px 46px; opacity:0; }
+      .ncard.b{ border-color:rgba(59,123,255,.45); background:var(--accent-soft); }
+      .ncard .nm{ font-family:"JetBrains Mono"; font-size:24px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+      .ncard.b .nm{ color:var(--accent); }
+      .ncard .hd{ font-family:"Fraunces"; font-weight:600; font-size:50px; color:#fff; margin-top:14px; }
+      .ncard .ds{ font-size:28px; color:var(--soft); margin-top:16px; line-height:1.35; }
+
+      /* ---- step chips ---- */
+      .chiprow{ display:flex; gap:30px; margin-top:50px; }
+      .chip{ flex:1; font-family:"JetBrains Mono"; font-size:34px; color:var(--soft); background:var(--panel); border:1px solid var(--hair);
+        border-radius:18px; padding:34px 30px; opacity:0; text-align:center; }
+      .chip .n{ display:block; font-size:30px; color:var(--accent); margin-bottom:14px; }
+      .chip b{ color:#fff; font-weight:400; }
+
+      /* ---- requirement bullets + contrast ---- */
+      ul.bullets{ list-style:none; display:flex; flex-direction:column; gap:26px; margin-top:42px; }
+      ul.bullets li{ display:flex; gap:24px; align-items:center; opacity:0; }
+      ul.bullets li .mk{ flex:none; width:18px; height:18px; border-radius:4px; background:var(--accent); transform:rotate(45deg); box-shadow:0 0 16px rgba(59,123,255,.6); }
+      ul.bullets li .tx{ font-size:46px; color:#fff; font-weight:600; }
+      .contrast{ display:flex; align-items:center; gap:54px; margin-top:54px; }
+      .cnum{ font-family:"JetBrains Mono"; opacity:0; }
+      .cnum .n{ font-size:104px; color:var(--ink); line-height:1; } .cnum.big .n{ color:var(--accent-bright); }
+      .cnum .l{ font-size:28px; color:var(--muted); margin-top:12px; }
+      .cvs{ font-family:"Fraunces"; font-style:italic; font-size:56px; color:var(--muted); opacity:0; }
+
+      /* ---- big number ---- */
+      .big{ font-family:"JetBrains Mono"; font-size:240px; line-height:1; color:var(--accent-bright); margin-top:24px; }
+      .big .u{ font-size:110px; color:var(--accent); }
+
+      /* ---- recap row ---- */
+      .recaprow{ display:flex; gap:24px; margin-top:46px; flex-wrap:wrap; }
+      .rcell{ font-family:"JetBrains Mono"; font-size:28px; color:var(--soft); background:var(--panel); border:1px solid var(--hair);
+        border-radius:14px; padding:22px 28px; opacity:0; }
+      .rcell b{ color:var(--accent-bright); font-weight:400; }
+      .nextline{ font-family:"Fraunces"; font-style:italic; font-size:40px; color:var(--soft); margin-top:52px; opacity:0; }
+      .nextline .ac{ font-style:normal; }
+
+      /* ---- shared SVG styling ---- */
+      svg .edge{ stroke:var(--hair); stroke-width:3; fill:none; opacity:0; }
+      svg .edge.live{ stroke:var(--accent); }
+      svg .edge.resp{ stroke:var(--accent-bright); stroke-dasharray:2 10; stroke-linecap:round; }
+      svg .pkt{ opacity:0; }
+      svg text{ font-family:"JetBrains Mono"; fill:var(--soft); }
+      svg .nlabel{ font-family:"Inter"; font-weight:700; fill:var(--ink); }
+      svg .ncode{ font-family:"JetBrains Mono"; fill:var(--accent); }
+      svg .nbox{ fill:var(--panel); stroke:var(--hair); stroke-width:2; }
+      svg .spikeline{ stroke:var(--spike); stroke-width:4; fill:none; opacity:0; }
+      .hideg{ opacity:0; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="sdep01full" data-start="0" data-duration="655" data-width="1920" data-height="1080">
+      <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+        <symbol id="ic-phone" viewBox="0 0 100 100"><rect x="33" y="14" width="34" height="72" rx="8" fill="none" stroke="#6AA0FF" stroke-width="4.5"/><line x1="45" y1="76" x2="55" y2="76" stroke="#6AA0FF" stroke-width="4.5"/></symbol>
+        <symbol id="ic-server" viewBox="0 0 100 100"><rect x="20" y="24" width="60" height="22" rx="5" fill="none" stroke="#6AA0FF" stroke-width="4.5"/><rect x="20" y="54" width="60" height="22" rx="5" fill="none" stroke="#6AA0FF" stroke-width="4.5"/><circle cx="32" cy="35" r="3" fill="#6AA0FF"/><circle cx="32" cy="65" r="3" fill="#6AA0FF"/></symbol>
+        <symbol id="ic-db" viewBox="0 0 100 100"><ellipse cx="50" cy="24" rx="26" ry="9" fill="none" stroke="#6AA0FF" stroke-width="4.5"/><path d="M24 24 V76 a26 9 0 0 0 52 0 V24" fill="none" stroke="#6AA0FF" stroke-width="4.5"/><path d="M24 50 a26 9 0 0 0 52 0" fill="none" stroke="#6AA0FF" stroke-width="4.5"/></symbol>
+      </defs></svg>
+
+      <div id="bg"><div id="bggrid"></div><div class="glow" id="glow1"></div><div class="glow" id="glow2"></div></div>
+      <div class="hud"><div class="l">THE TECH INTERN <span>// SYSTEM DESIGN</span></div><div class="r">S1 · E01</div></div>
+      <div id="hudline"></div>
+      <div class="bracket" id="brTL"></div><div class="bracket" id="brTR"></div>
+      <div class="bracket" id="brBL"></div><div class="bracket" id="brBR"></div>
+      <div id="sweep"></div>
+
+      <!-- ========== 1. HOOK (0-40) ========== -->
+      <div class="scene clip" id="s1" data-start="0" data-duration="40" data-track-index="0">
+        <div class="kick" id="s1k">System Design · Episode 01</div>
+        <h1 id="s1t" style="font-size:108px; max-width:1180px;">How does one app serve <span class="ac">millions</span> — and not break?</h1>
+        <div style="display:flex; gap:60px; align-items:center; margin-top:48px;">
+          <div class="postcard" id="s1card">
+            <div class="ptop"><span>baby_insta</span><span class="heart">&#9829;</span></div>
+            <div class="ph"></div>
+            <div class="cap"><b>your friend</b> just posted a photo</div>
+          </div>
+          <div class="ptag" id="s1tag">PROJECT &middot; <b>let's build a baby Instagram</b></div>
+        </div>
+      </div>
+
+      <!-- ========== 2. THE QUESTION (40-70) ========== -->
+      <div class="scene clip" id="s2" data-start="40" data-duration="30" data-track-index="0">
+        <div class="kick" id="s2k">8pm &middot; the whole city opens it at once</div>
+        <h1 id="s2t" style="font-size:96px; max-width:1300px;">It doesn't crash. It doesn't even lag.</h1>
+        <div class="sub it" id="s2s" style="font-family:'Fraunces'; font-size:56px; margin-top:40px; opacity:0;">That invisible plan? <span class="ac" style="font-style:normal;">That's system design.</span></div>
+      </div>
+
+      <!-- ========== 3. WHAT IT ACTUALLY IS (70-110) ========== -->
+      <div class="scene clip" id="s3" data-start="70" data-duration="40" data-track-index="0">
+        <div class="kick" id="s3k">What system design actually is</div>
+        <h1 id="s3t" style="font-size:86px; max-width:1250px;">Plan the app <span class="ac">before</span> you write the code.</h1>
+        <div class="cardrow">
+          <div class="ncard" id="s3c1"><div class="nm">Writing code</div><div class="hd">Laying the bricks.</div><div class="ds">The actual building, line by line.</div></div>
+          <div class="ncard b" id="s3c2"><div class="nm">System design</div><div class="hd">Drawing the blueprint.</div><div class="ds">What goes where, and how it all connects.</div></div>
+        </div>
+      </div>
+
+      <!-- ========== 4. MEET BABY INSTAGRAM (110-145) ========== -->
+      <div class="scene clip" id="s4" data-start="110" data-duration="35" data-track-index="0">
+        <div class="kick" id="s4k">Our project for the whole series</div>
+        <h1 id="s4t" style="font-size:92px;">Let's design a <span class="ac">baby Instagram.</span></h1>
+        <div style="display:flex; gap:56px; align-items:center; margin-top:48px;">
+          <div class="postcard" id="s4card">
+            <div class="ptop"><span>baby_insta</span><span class="heart">&#9829;</span></div>
+            <div class="ph"></div>
+            <div class="cap"><b>2 things only.</b> keep it tiny.</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:28px;">
+            <div class="ptag" id="s4f1" style="font-size:32px;">1 &middot; <b>post a photo</b></div>
+            <div class="ptag" id="s4f2" style="font-size:32px;">2 &middot; <b>see your friends' feed</b></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== 5. THREE PIECES (145-190) ========== -->
+      <div class="scene clip" id="s5" data-start="145" data-duration="45" data-track-index="0">
+        <div class="kick" id="s5k">The one mental model</div>
+        <h1 id="s5t" style="font-size:80px; margin-bottom:10px;">Almost every app is just <span class="ac">3 pieces.</span></h1>
+        <svg id="s5svg" width="1600" height="360" viewBox="0 0 1600 360" style="overflow:visible; align-self:center; margin-top:18px;">
+          <g id="s5_cli" class="hideg"><rect class="nbox" x="40" y="100" width="380" height="170" rx="18"/>
+            <use href="#ic-phone" x="78" y="140" width="72" height="72"/><text class="ncode" x="190" y="170" font-size="24" letter-spacing="2">CLIENT</text><text class="nlabel" x="190" y="220" font-size="40">your phone</text></g>
+          <g id="s5_srv" class="hideg"><rect class="nbox" x="610" y="100" width="380" height="170" rx="18"/>
+            <use href="#ic-server" x="648" y="140" width="72" height="72"/><text class="ncode" x="760" y="170" font-size="24" letter-spacing="2">SERVER</text><text class="nlabel" x="760" y="220" font-size="40">the app</text></g>
+          <g id="s5_db" class="hideg"><rect class="nbox" x="1180" y="100" width="380" height="170" rx="18"/>
+            <use href="#ic-db" x="1218" y="140" width="72" height="72"/><text class="ncode" x="1330" y="170" font-size="24" letter-spacing="2">DATABASE</text><text class="nlabel" x="1330" y="220" font-size="40">your photos</text></g>
+        </svg>
+        <div class="sub" id="s5s" style="font-size:36px; margin-top:26px; opacity:0; align-self:center;">The <span class="ac">client</span>, the <span class="ac">server</span>, and the <span class="ac">database</span>.</div>
+      </div>
+
+      <!-- ========== 6. REQUEST & RESPONSE (190-235) ========== -->
+      <div class="scene clip" id="s6" data-start="190" data-duration="45" data-track-index="0">
+        <div class="kick" id="s6k">The one thing they keep doing</div>
+        <h1 id="s6t" style="font-size:78px; margin-bottom:6px;">Your phone <span class="ac">asks.</span> The server <span class="ac">answers.</span></h1>
+        <svg id="s6svg" width="1600" height="380" viewBox="0 0 1600 380" style="overflow:visible; align-self:center; margin-top:10px;">
+          <path class="edge live" id="s6_e1" d="M420 150 H610" />
+          <path class="edge live" id="s6_e2" d="M990 150 H1180" />
+          <path class="edge resp" id="s6_r1" d="M610 220 H420" />
+          <path class="edge resp" id="s6_r2" d="M1180 220 H990" />
+          <text id="s6_lreq" x="800" y="120" font-size="26" text-anchor="middle" fill="#6AA0FF" class="hideg">request &#8594;</text>
+          <text id="s6_lres" x="800" y="265" font-size="26" text-anchor="middle" fill="#6AA0FF" class="hideg">&#8592; response</text>
+          <circle class="pkt" id="s6_p" r="12" fill="#6AA0FF" cx="200" cy="150" />
+          <g id="s6_cli"><rect class="nbox" x="40" y="100" width="380" height="170" rx="18"/><use href="#ic-phone" x="78" y="140" width="72" height="72"/><text class="ncode" x="190" y="170" font-size="24" letter-spacing="2">CLIENT</text><text class="nlabel" x="190" y="220" font-size="38">your phone</text></g>
+          <g id="s6_srv"><rect class="nbox" x="610" y="100" width="380" height="170" rx="18"/><use href="#ic-server" x="648" y="140" width="72" height="72"/><text class="ncode" x="760" y="170" font-size="24" letter-spacing="2">SERVER</text><text class="nlabel" x="760" y="220" font-size="38">the app</text></g>
+          <g id="s6_db"><rect class="nbox" x="1180" y="100" width="380" height="170" rx="18"/><use href="#ic-db" x="1218" y="140" width="72" height="72"/><text class="ncode" x="1330" y="170" font-size="24" letter-spacing="2">DATABASE</text><text class="nlabel" x="1330" y="220" font-size="38">your photos</text></g>
+        </svg>
+        <div class="sub" id="s6s" style="font-size:36px; margin-top:22px; opacity:0; align-self:center;">One <span class="ac">request</span>, one <span class="ac">response</span>. Every app, ever.</div>
+      </div>
+
+      <!-- ========== 7. THE REQUEST'S JOURNEY (235-295) ========== -->
+      <div class="scene clip" id="s7" data-start="235" data-duration="60" data-track-index="0">
+        <div class="kick" id="s7k">// the request path</div>
+        <h1 id="s7t" style="font-size:74px; margin-bottom:6px;">Follow one tap, all the way through.</h1>
+        <svg id="s7svg" width="1620" height="420" viewBox="0 0 1620 420" style="overflow:visible; align-self:center; margin-top:14px;">
+          <path class="edge live" id="s7_e1" d="M420 170 H610" />
+          <path class="edge live" id="s7_e2" d="M990 170 H1180" />
+          <circle class="pkt" id="s7_p" r="13" fill="#6AA0FF" cx="200" cy="170" />
+          <g id="s7_cli"><rect class="nbox" x="40" y="120" width="380" height="170" rx="18"/><use href="#ic-phone" x="78" y="160" width="72" height="72"/><text class="ncode" x="190" y="190" font-size="24" letter-spacing="2">CLIENT</text><text class="nlabel" x="190" y="240" font-size="38">your phone</text></g>
+          <g id="s7_srv"><rect class="nbox" x="610" y="120" width="380" height="170" rx="18"/><use href="#ic-server" x="648" y="160" width="72" height="72"/><text class="ncode" x="760" y="190" font-size="24" letter-spacing="2">SERVER</text><text class="nlabel" x="760" y="240" font-size="38">the app</text></g>
+          <g id="s7_db"><rect class="nbox" x="1180" y="120" width="380" height="170" rx="18"/><use href="#ic-db" x="1218" y="160" width="72" height="72"/><text class="ncode" x="1330" y="190" font-size="24" letter-spacing="2">DATABASE</text><text class="nlabel" x="1330" y="240" font-size="38">your photos</text></g>
+          <text id="s7_t1" x="515" y="140" font-size="24" text-anchor="middle" class="hideg">tap</text>
+          <text id="s7_t2" x="1085" y="140" font-size="24" text-anchor="middle" class="hideg">fetch</text>
+          <text id="s7_t3" x="800" y="360" font-size="26" text-anchor="middle" fill="#6AA0FF" class="hideg">&#8592; photo travels back to your screen</text>
+        </svg>
+        <div class="sub" id="s7s" style="font-size:36px; margin-top:18px; opacity:0; align-self:center;">This exact path is hiding inside <span class="ac">every app you use.</span></div>
+      </div>
+
+      <!-- ========== 8. THE 4 DESIGN STEPS (295-335) ========== -->
+      <div class="scene clip" id="s8" data-start="295" data-duration="40" data-track-index="0">
+        <div class="kick" id="s8k">How engineers actually design it</div>
+        <h1 id="s8t" style="font-size:92px;">4 steps. <span class="ac">Every time.</span></h1>
+        <div class="chiprow">
+          <div class="chip" id="s8a"><span class="n">01</span><b>Requirements</b></div>
+          <div class="chip" id="s8b"><span class="n">02</span><b>High-level design</b></div>
+          <div class="chip" id="s8c"><span class="n">03</span><b>Core components</b></div>
+          <div class="chip" id="s8d"><span class="n">04</span><b>Scale it</b></div>
+        </div>
+        <div class="sub" id="s8s" style="font-size:34px; margin-top:46px; opacity:0;">Let's run all four on baby Instagram.</div>
+      </div>
+
+      <!-- ========== 9. STEP 1 · REQUIREMENTS (335-380) ========== -->
+      <div class="scene clip" id="s9" data-start="335" data-duration="45" data-track-index="0">
+        <div class="kick" id="s9k">Step 01 &middot; requirements</div>
+        <h1 id="s9t" style="font-size:80px;">What must it do — <span class="ac">for how many?</span></h1>
+        <ul class="bullets">
+          <li id="s9b1"><span class="mk"></span><span class="tx">Post a photo</span></li>
+          <li id="s9b2"><span class="mk"></span><span class="tx">See your friends' feed</span></li>
+        </ul>
+        <div class="contrast">
+          <div class="cnum" id="s9n1"><div class="n">10</div><div class="l">friends?</div></div>
+          <div class="cvs" id="s9vs">or</div>
+          <div class="cnum big" id="s9n2"><div class="n">10,000,000</div><div class="l">users?</div></div>
+        </div>
+        <div class="sub" id="s9s" style="font-size:34px; margin-top:40px; opacity:0;">Same app. <span class="ac">Completely different problem.</span></div>
+      </div>
+
+      <!-- ========== 10. STEP 2 · HIGH-LEVEL DESIGN (380-425) ========== -->
+      <div class="scene clip" id="s10" data-start="380" data-duration="45" data-track-index="0">
+        <div class="kick" id="s10k">Step 02 &middot; high-level design</div>
+        <h1 id="s10t" style="font-size:80px; margin-bottom:8px;">Draw the boxes. Connect them.</h1>
+        <svg id="s10svg" width="1600" height="340" viewBox="0 0 1600 340" style="overflow:visible; align-self:center; margin-top:12px;">
+          <path class="edge live" id="s10_e1" d="M420 150 H610" />
+          <path class="edge live" id="s10_e2" d="M990 150 H1180" />
+          <g id="s10_cli"><rect class="nbox" x="40" y="80" width="380" height="170" rx="18"/><use href="#ic-phone" x="78" y="120" width="72" height="72"/><text class="ncode" x="190" y="150" font-size="24" letter-spacing="2">CLIENT</text><text class="nlabel" x="190" y="200" font-size="38">your phone</text></g>
+          <g id="s10_srv"><rect class="nbox" x="610" y="80" width="380" height="170" rx="18"/><use href="#ic-server" x="648" y="120" width="72" height="72"/><text class="ncode" x="760" y="150" font-size="24" letter-spacing="2">SERVER</text><text class="nlabel" x="760" y="200" font-size="38">the app</text></g>
+          <g id="s10_db"><rect class="nbox" x="1180" y="80" width="380" height="170" rx="18"/><use href="#ic-db" x="1218" y="120" width="72" height="72"/><text class="ncode" x="1330" y="150" font-size="24" letter-spacing="2">DATABASE</text><text class="nlabel" x="1330" y="200" font-size="38">your photos</text></g>
+          <rect id="s10_brk" x="10" y="40" width="1580" height="270" rx="22" fill="none" stroke="#3B7BFF" stroke-width="2" stroke-dasharray="10 10" class="hideg"/>
+          <text id="s10_blab" x="800" y="30" font-size="26" text-anchor="middle" fill="#3B7BFF" class="hideg">HIGH-LEVEL DESIGN (HLD)</text>
+        </svg>
+        <div class="sub" id="s10s" style="font-size:34px; margin-top:20px; opacity:0; align-self:center;">This whole picture <span class="ac">is</span> the high-level design.</div>
+      </div>
+
+      <!-- ========== 11. STEP 3 · CORE COMPONENTS / HLD vs LLD (425-470) ========== -->
+      <div class="scene clip" id="s11" data-start="425" data-duration="45" data-track-index="0">
+        <div class="kick" id="s11k">Step 03 &middot; core components</div>
+        <h1 id="s11t" style="font-size:82px;">Now zoom <span class="ac">inside</span> one box.</h1>
+        <div class="cardrow">
+          <div class="ncard" id="s11c1"><div class="nm">HLD &middot; high-level</div><div class="hd">The boxes.</div><div class="ds">Which parts exist, and how they connect. (the zoomed-out map)</div></div>
+          <div class="ncard b" id="s11c2"><div class="nm">LLD &middot; low-level</div><div class="hd">Inside one box.</div><div class="ds">Exactly how a single photo gets stored. (the zoomed-in detail)</div></div>
+        </div>
+        <div class="sub" id="s11s" style="font-size:34px; margin-top:40px; opacity:0;">Same job — <span class="ac">two zoom levels.</span></div>
+      </div>
+
+      <!-- ========== 12. STEP 4 · SCALE (470-530) ========== -->
+      <div class="scene clip" id="s12" data-start="470" data-duration="60" data-track-index="0">
+        <div class="kick" id="s12k">Step 04 &middot; scale</div>
+        <h1 id="s12t" style="font-size:66px; margin-bottom:8px;"><span class="sp">10 million</span> open it at 9pm. One server <span class="sp">melts.</span></h1>
+        <svg id="s12svg" width="1640" height="440" viewBox="0 0 1640 440" style="overflow:visible; align-self:center; margin-top:8px;">
+          <g id="s12_cl" class="hideg">
+            <circle cx="80" cy="150" r="13" fill="#3B7BFF"/><circle cx="140" cy="150" r="13" fill="#3B7BFF"/><circle cx="110" cy="210" r="13" fill="#3B7BFF"/>
+            <circle cx="80" cy="270" r="13" fill="#3B7BFF"/><circle cx="140" cy="270" r="13" fill="#3B7BFF"/>
+            <text x="110" y="330" font-size="26" text-anchor="middle" fill="#7B8AA5">10,000,000</text></g>
+          <path class="edge live" id="s12_e1" d="M200 210 C 420 210, 520 110, 680 110" />
+          <path class="edge live" id="s12_e2" d="M200 210 H680" />
+          <path class="edge live" id="s12_e3" d="M200 210 C 420 210, 520 310, 680 310" />
+          <g id="s12_s1" class="hideg"><rect class="nbox" x="680" y="70" width="320" height="80" rx="14"/><use href="#ic-server" x="700" y="90" width="42" height="42"/><text class="nlabel" x="820" y="122" font-size="30" text-anchor="middle">server</text></g>
+          <g id="s12_s2" class="hideg"><rect class="nbox" x="680" y="170" width="320" height="80" rx="14"/><use href="#ic-server" x="700" y="190" width="42" height="42"/><text class="nlabel" x="820" y="222" font-size="30" text-anchor="middle">server</text></g>
+          <g id="s12_s3" class="hideg"><rect class="nbox" x="680" y="270" width="320" height="80" rx="14"/><use href="#ic-server" x="700" y="290" width="42" height="42"/><text class="nlabel" x="820" y="322" font-size="30" text-anchor="middle">server</text></g>
+          <path class="edge" id="s12_e4" d="M840 250 V380 H1180" />
+          <g id="s12_cache" class="hideg"><rect class="nbox" x="1180" y="330" width="420" height="100" rx="16" style="stroke:#3B7BFF;"/><text class="ncode" x="1390" y="372" font-size="24" text-anchor="middle" letter-spacing="2">CACHE</text><text class="nlabel" x="1390" y="408" font-size="26" text-anchor="middle">popular photos, kept near</text></g>
+          <polyline id="s12_spk" class="spikeline" points="1180,140 1240,138 1300,142 1360,135 1410,60 1460,150 1520,90 1580,150"/>
+          <text id="s12_spklab" x="1390" y="40" font-size="22" text-anchor="middle" fill="#FF6B6B" class="hideg">traffic spike</text>
+        </svg>
+        <div class="sub" id="s12s" style="font-size:36px; margin-top:14px; opacity:0; align-self:center;">Add more servers <span class="ac">(scale out)</span> + a <span class="ac">cache.</span> <span class="ok">Healthy again.</span></div>
+      </div>
+
+      <!-- ========== 13. THE TRADE-OFF (530-565) ========== -->
+      <div class="scene clip" id="s13" data-start="530" data-duration="35" data-track-index="0">
+        <div class="kick" id="s13k">The engineer's call</div>
+        <h1 id="s13t" style="font-size:82px; max-width:1300px;">Don't build for 10 million on <span class="ac">day one.</span></h1>
+        <div class="cardrow" style="margin-top:50px;">
+          <div class="ncard b" id="s13c1"><div class="nm">Start here</div><div class="hd">Simple.</div><div class="ds">One server. Ship it. Learn what real users do.</div></div>
+          <div class="ncard" id="s13c2"><div class="nm">Add later</div><div class="hd">Only when it breaks.</div><div class="ds">A new piece for each new problem — not before.</div></div>
+        </div>
+      </div>
+
+      <!-- ========== 14. THIS IS REAL · HOTSTAR (565-610) ========== -->
+      <div class="scene clip" id="s14" data-start="565" data-duration="45" data-track-index="0">
+        <div class="kick" id="s14k">This isn't a toy example</div>
+        <h1 id="s14t" style="font-size:74px;">Hotstar did <span class="ac">exactly this.</span></h1>
+        <div class="big" id="s14big"><span id="s14num">59</span><span class="u">M</span></div>
+        <div class="sub" id="s14s" style="font-size:38px; margin-top:20px; opacity:0;">watching at once &middot; 2023 World Cup final. <span class="ac">Same request &amp; response — just a lot more boxes.</span></div>
+      </div>
+
+      <!-- ========== 15. RECAP + CLIFFHANGER (610-655) ========== -->
+      <div class="scene clip" id="s15" data-start="610" data-duration="45" data-track-index="0">
+        <div class="kick" id="s15k">That's it &middot; recap</div>
+        <h1 id="s15t" style="font-size:96px;">You just <span class="ac">designed an app.</span></h1>
+        <div class="recaprow">
+          <div class="rcell" id="s15r1">client &rarr; server &rarr; <b>database</b></div>
+          <div class="rcell" id="s15r2">one <b>request</b>, one <b>response</b></div>
+          <div class="rcell" id="s15r3"><b>4 steps</b>, every time</div>
+          <div class="rcell" id="s15r4">scale only when it <b>breaks</b></div>
+        </div>
+        <div class="nextline" id="s15next">Next time: your phone <span class="ac">asked</span> the server&hellip; but how did it even <span class="ac">find</span> it? &mdash; DNS &amp; HTTP.</div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      /* ---- frame + living background (NOT gated; spans whole composition) ---- */
+      tl.from("#hudline", { scaleX:0, duration:1.0, ease:"power2.out" }, 0);
+      tl.fromTo(".hud", { opacity:0 }, { opacity:1, duration:1.0 }, 0.2);
+      tl.fromTo(".bracket", { opacity:0 }, { opacity:1, duration:1.2, stagger:0.1 }, 0.3);
+      tl.to("#bggrid", { x:-72, y:-50, duration:120, ease:"sine.inOut", repeat:6, yoyo:true }, 0);
+      tl.to("#glow1", { x:-180, y:140, scale:1.2, duration:80, ease:"sine.inOut", repeat:8, yoyo:true }, 0);
+      tl.to("#glow2", { x:160, y:-120, scale:1.2, duration:90, ease:"sine.inOut", repeat:8, yoyo:true }, 0);
+
+      /* ---- helper kit ---- */
+      function scene(sel, t, dur){
+        tl.fromTo(sel, { opacity:0, y:40, scale:0.992 }, { opacity:1, y:0, scale:1, duration:0.9, ease:"power3.out" }, t);
+        tl.to(sel, { opacity:0, y:-46, scale:0.992, duration:0.6, ease:"power2.in" }, t+dur-0.6);
+        tl.set(sel, { opacity:0 }, t+dur);
+      }
+      function head(sel, t, d){ tl.fromTo(sel, { opacity:0, y:60, scale:0.95 }, { opacity:1, y:0, scale:1, duration:(d||0.9), ease:"back.out(1.25)" }, t); }
+      function kick(sel, t){ tl.fromTo(sel, { opacity:0, x:-26 }, { opacity:1, x:0, duration:0.6, ease:"power2.out" }, t); }
+      function rise(sel, t, dy, d){ tl.fromTo(sel, { opacity:0, y:(dy==null?24:dy) }, { opacity:1, y:0, duration:(d||0.6), ease:"power3.out" }, t); }
+      function pop(sel, t, d){ tl.fromTo(sel, { opacity:0, y:24, scale:0.9 }, { opacity:1, y:0, scale:1, duration:(d||0.55), ease:"back.out(1.5)", transformOrigin:"center" }, t); }
+      function fade(sel, t, d){ tl.fromTo(sel, { opacity:0 }, { opacity:1, duration:(d||0.5), ease:"power2.out" }, t); }
+      function breathe(sel, t, to, dur, n){ tl.to(sel, { scale:to, duration:dur, ease:"sine.inOut", repeat:n, yoyo:true, transformOrigin:"center" }, t); }
+      function floaty(sel, t, dy, dur, n){ tl.to(sel, { y:dy, duration:dur, ease:"sine.inOut", repeat:n, yoyo:true }, t); }
+      function draw(sel, len, t, d){ tl.set(sel, { opacity:1, attr:{ "stroke-dasharray":len, "stroke-dashoffset":len } }, t); tl.to(sel, { attr:{ "stroke-dashoffset":0 }, duration:(d||0.6), ease:"power2.inOut" }, t); }
+      function packet(sel, x1, y1, x2, y2, t, dur, n){ tl.set(sel, { attr:{ cx:x1, cy:y1 }, opacity:0 }, t); tl.to(sel, { opacity:1, duration:0.2 }, t); tl.fromTo(sel, { attr:{ cx:x1, cy:y1 } }, { attr:{ cx:x2, cy:y2 }, duration:dur, ease:"none", repeat:(n==null?20:n) }, t); }
+      function sweep(t){ tl.set("#sweep", { opacity:1 }, t-0.4); tl.fromTo("#sweep", { x:-380 }, { x:2000, duration:0.7, ease:"power2.inOut" }, t-0.4); tl.set("#sweep", { opacity:0 }, t+0.4); }
+
+      // Draft timings (silent). sync_build.py re-times each scene to the measured
+      // Dhruva VO and re-pins every reveal to the spoken word. Reveals here are
+      // spread across each scene so the silent draft reads cleanly too.
+
+      // === DRAFT TIMELINE START ===
+      // 1. HOOK (0-40)
+      scene("#s1", 0, 40);
+      kick("#s1k", 0.6); head("#s1t", 1.4, 1.0);
+      tl.to("#s1t .ac", { opacity:0.72, duration:1.6, ease:"sine.inOut", repeat:6, yoyo:true }, 7);
+      pop("#s1card", 14, 0.7); breathe("#s1card", 17, 1.02, 2.6, 5);
+      pop("#s1tag", 26, 0.7); floaty("#s1tag", 29, -10, 2.2, 4);
+
+      // 2. THE QUESTION (40-70)
+      sweep(40); scene("#s2", 40, 30);
+      kick("#s2k", 40.7); head("#s2t", 41.6, 0.9);
+      rise("#s2s", 58, 20);
+
+      // 3. WHAT IT IS (70-110)
+      sweep(70); scene("#s3", 70, 40);
+      kick("#s3k", 70.7); head("#s3t", 71.6, 0.9);
+      pop("#s3c1", 84, 0.7); pop("#s3c2", 96, 0.7);
+
+      // 4. MEET BABY INSTAGRAM (110-145)
+      sweep(110); scene("#s4", 110, 35);
+      kick("#s4k", 110.7); head("#s4t", 111.6, 0.9);
+      pop("#s4card", 120, 0.7); breathe("#s4card", 123, 1.02, 2.6, 4);
+      pop("#s4f1", 128, 0.6); pop("#s4f2", 134, 0.6);
+
+      // 5. THREE PIECES (145-190)
+      sweep(145); scene("#s5", 145, 45);
+      kick("#s5k", 145.7); head("#s5t", 146.6, 0.9);
+      pop("#s5_cli", 156); pop("#s5_srv", 165); pop("#s5_db", 174);
+      rise("#s5s", 182, 18);
+
+      // 6. REQUEST & RESPONSE (190-235)
+      sweep(190); scene("#s6", 190, 45);
+      kick("#s6k", 190.7); head("#s6t", 191.6, 0.9);
+      draw("#s6_e1", 190, 200, 0.5); draw("#s6_e2", 190, 200.6, 0.5); fade("#s6_lreq", 201);
+      packet("#s6_p", 200, 150, 1400, 150, 204, 2.2, 2);
+      draw("#s6_r1", 190, 212, 0.5); draw("#s6_r2", 190, 212.6, 0.5); fade("#s6_lres", 213);
+      rise("#s6s", 226, 18);
+
+      // 7. THE REQUEST'S JOURNEY (235-295)
+      sweep(235); scene("#s7", 235, 60);
+      kick("#s7k", 235.7); head("#s7t", 236.6, 0.9);
+      draw("#s7_e1", 190, 246, 0.5); fade("#s7_t1", 247);
+      draw("#s7_e2", 190, 254, 0.5); fade("#s7_t2", 255);
+      packet("#s7_p", 200, 170, 1400, 170, 262, 2.6, 20);
+      fade("#s7_t3", 274);
+      rise("#s7s", 284, 18);
+
+      // 8. THE 4 DESIGN STEPS (295-335)
+      sweep(295); scene("#s8", 295, 40);
+      kick("#s8k", 295.7); head("#s8t", 296.6, 0.9);
+      pop("#s8a", 306, 0.6); pop("#s8b", 311, 0.6); pop("#s8c", 316, 0.6); pop("#s8d", 321, 0.6);
+      rise("#s8s", 329, 16);
+
+      // 9. STEP 1 · REQUIREMENTS (335-380)
+      sweep(335); scene("#s9", 335, 45);
+      kick("#s9k", 335.7); head("#s9t", 336.6, 0.9);
+      rise("#s9b1", 346, 18); rise("#s9b2", 351, 18);
+      pop("#s9n1", 360, 0.6); pop("#s9vs", 362, 0.5); pop("#s9n2", 364, 0.7);
+      tl.to("#s9n2", { scale:1.04, duration:1.4, ease:"sine.inOut", repeat:1, yoyo:true, transformOrigin:"left center" }, 366);
+      rise("#s9s", 373, 16);
+
+      // 10. STEP 2 · HIGH-LEVEL DESIGN (380-425)
+      sweep(380); scene("#s10", 380, 45);
+      kick("#s10k", 380.7); head("#s10t", 381.6, 0.9);
+      pop("#s10_cli", 391); draw("#s10_e1", 190, 394, 0.5); pop("#s10_srv", 396);
+      draw("#s10_e2", 190, 399, 0.5); pop("#s10_db", 401);
+      fade("#s10_brk", 408); fade("#s10_blab", 408.4);
+      rise("#s10s", 416, 18);
+
+      // 11. STEP 3 · CORE COMPONENTS / HLD vs LLD (425-470)
+      sweep(425); scene("#s11", 425, 45);
+      kick("#s11k", 425.7); head("#s11t", 426.6, 0.9);
+      pop("#s11c1", 437, 0.7); pop("#s11c2", 450, 0.7);
+      rise("#s11s", 462, 16);
+
+      // 12. STEP 4 · SCALE (470-530)
+      sweep(470); scene("#s12", 470, 60);
+      kick("#s12k", 470.7); head("#s12t", 471.6, 0.9);
+      pop("#s12_cl", 482);
+      draw("#s12_e1", 360, 488, 0.6); draw("#s12_e2", 480, 488.5, 0.6); draw("#s12_e3", 360, 489, 0.6);
+      pop("#s12_s1", 492); pop("#s12_s2", 495); pop("#s12_s3", 498);
+      fade("#s12_spk", 503); fade("#s12_spklab", 503.4);
+      draw("#s12_e4", 470, 510, 0.6); pop("#s12_cache", 513);
+      rise("#s12s", 521, 18);
+
+      // 13. THE TRADE-OFF (530-565)
+      sweep(530); scene("#s13", 530, 35);
+      kick("#s13k", 530.7); head("#s13t", 531.6, 0.9);
+      pop("#s13c1", 544, 0.7); pop("#s13c2", 553, 0.7);
+
+      // 14. THIS IS REAL · HOTSTAR (565-610)
+      sweep(565); scene("#s14", 565, 45);
+      kick("#s14k", 565.7); head("#s14t", 566.6, 0.9);
+      pop("#s14big", 578, 0.8);
+      var hc = { v:59 };
+      tl.set(hc, { v:0 }, 579);
+      tl.to(hc, { v:59, duration:2.6, ease:"power1.out", onUpdate:function(){ var e=document.getElementById('s14num'); if(e) e.textContent = Math.round(hc.v); } }, 579.3);
+      breathe("#s14big", 583, 1.03, 2.2, 4);
+      rise("#s14s", 596, 18);
+
+      // 15. RECAP + CLIFFHANGER (610-655)
+      sweep(610); scene("#s15", 610, 45);
+      kick("#s15k", 610.7); head("#s15t", 611.6, 1.0);
+      tl.to("#s15t .ac", { opacity:0.72, duration:1.5, ease:"sine.inOut", repeat:4, yoyo:true }, 615);
+      pop("#s15r1", 624, 0.5); pop("#s15r2", 627, 0.5); pop("#s15r3", 630, 0.5); pop("#s15r4", 633, 0.5);
+      rise("#s15next", 642, 18);
+      // === DRAFT TIMELINE END ===
+
+      window.__timelines["sdep01full"] = tl;
+    </script>
+  </body>
+</html>

@@ -47,7 +47,7 @@ Difficulty: 🟢 easy · 🟡 medium · 🔴 hard. Code = a light code-along.
 
 | Ep | Title | Diff | Code | Status |
 |---|---|---|---|---|
-| 1 | What even *is* a "system"? (a request's journey) | 🟢 | – | next |
+| 1 | What even *is* a "system"? (a request's journey) | 🟢 | – | ✅ done |
 | 2 | Client, server & the network — DNS & HTTP when you open Swiggy | 🟢 | – | |
 | 3 | Latency vs throughput vs bandwidth — the numbers that rule everything | 🟢 | – | |
 | 4 | Scale vocabulary — qps, p50/p99, and availability "nines" | 🟡 | – | |
@@ -77,6 +77,10 @@ Difficulty: 🟢 easy · 🟡 medium · 🔴 hard. Code = a light code-along.
 | 28 | Design live streaming (Hotstar / IPL) — CDN + extreme concurrency | 🔴 | – | |
 | 29 | Design a payment system (UPI) — money must never be wrong | 🔴 | – | |
 | 30 | Design ride-hailing (Ola / Uber) + the system-design interview roadmap | 🔴 | – | |
+
+> **Ep01 note:** the shipped long-form anchors on a **baby Instagram** example
+> (post a photo → friends see it), not Dabba. The Dabba food-app season spine
+> resumes from later episodes.
 
 ## The 4-beat teaching pattern (every episode)
 

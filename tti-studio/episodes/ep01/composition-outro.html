@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=1920, height=1080"/>
+<script src="../../assets/vendor/gsap.min.js"></script>
+<style>
+@font-face{font-family:"Fraunces";font-weight:600;src:url("../../assets/fonts/fraunces-latin-600-normal.woff2") format("woff2");}
+@font-face{font-family:"Inter";font-weight:600;src:url("../../assets/fonts/inter-latin-600-normal.woff2") format("woff2");}
+@font-face{font-family:"Inter";font-weight:700;src:url("../../assets/fonts/inter-latin-700-normal.woff2") format("woff2");}
+@font-face{font-family:"JetBrains Mono";font-weight:400;src:url("../../assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");}
+:root{--paper:#0F1729;--panel:#16223C;--ink:#E6ECF5;--soft:#B7C2D6;--muted:#7B8AA5;--hair:rgba(123,138,165,.22);--accent:#3B7BFF;--accent-bright:#6AA0FF;--accent-soft:rgba(59,123,255,.14);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1920px;height:1080px;overflow:hidden;} body{font-family:"Inter",sans-serif;background:var(--paper);}
+#root{position:relative;width:1920px;height:1080px;background:var(--paper);color:var(--ink);}
+#bg{position:absolute;inset:0;overflow:hidden;z-index:0;}
+#bggrid{position:absolute;left:-140px;top:-140px;width:2300px;height:1400px;background-image:linear-gradient(rgba(123,138,165,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(123,138,165,.07) 1px,transparent 1px);background-size:72px 72px;}
+.glow{position:absolute;border-radius:50%;filter:blur(70px);}
+#glow1{width:900px;height:900px;left:980px;top:-260px;background:radial-gradient(circle,rgba(59,123,255,.20),rgba(59,123,255,0) 70%);}
+#glow2{width:820px;height:820px;left:-300px;top:560px;background:radial-gradient(circle,rgba(106,160,255,.14),rgba(106,160,255,0) 70%);}
+.hud{position:absolute;left:64px;right:64px;top:52px;display:flex;justify-content:space-between;align-items:center;z-index:7;font-family:"JetBrains Mono";font-size:22px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+.hud .l span{color:var(--accent);}
+#hudline{position:absolute;left:64px;right:64px;top:94px;height:1px;background:var(--hair);z-index:7;transform-origin:left;}
+.bracket{position:absolute;width:34px;height:34px;z-index:7;}
+#brTL{left:30px;top:30px;border-left:2px solid var(--hair);border-top:2px solid var(--hair);}
+#brTR{right:30px;top:30px;border-right:2px solid var(--hair);border-top:2px solid var(--hair);}
+#brBL{left:30px;bottom:30px;border-left:2px solid var(--hair);border-bottom:2px solid var(--hair);}
+#brBR{right:30px;bottom:30px;border-right:2px solid var(--hair);border-bottom:2px solid var(--hair);}
+.scene{position:absolute;inset:0;z-index:2;padding:172px 130px 120px 130px;display:flex;flex-direction:column;justify-content:center;}
+.kick{font-family:"JetBrains Mono";font-size:27px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:26px;}
+.kick:before{content:"// ";color:var(--muted);}
+h1{font-family:"Fraunces";font-weight:600;color:var(--ink);line-height:1.04;letter-spacing:-.012em;font-size:104px;max-width:1300px;}
+.ac{color:var(--accent);}
+.osub{font-family:"JetBrains Mono";font-size:30px;letter-spacing:.12em;color:var(--soft);margin-top:34px;opacity:0;}
+.onext{margin-top:44px;background:var(--accent-soft);border:1px solid rgba(59,123,255,.45);border-radius:18px;padding:30px 38px;opacity:0;align-self:flex-start;}
+.onext .nm{font-family:"JetBrains Mono";font-size:24px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);}
+.onext .hd{font-family:"Fraunces";font-weight:600;font-size:48px;color:#fff;margin-top:10px;}
+.oend{font-family:"Fraunces";font-style:italic;font-size:44px;color:var(--soft);margin-top:46px;opacity:0;}
+.oend .ac{font-style:normal;}
+</style></head>
+<body>
+<div id="root" data-composition-id="sdep01outro" data-start="0" data-duration="20" data-width="1920" data-height="1080">
+  <div id="bg"><div id="bggrid"></div><div class="glow" id="glow1"></div><div class="glow" id="glow2"></div></div>
+  <div class="hud"><div class="l">THE TECH INTERN <span>// SYSTEM DESIGN</span></div><div class="r">S1 · E01</div></div>
+  <div id="hudline"></div>
+  <div class="bracket" id="brTL"></div><div class="bracket" id="brTR"></div><div class="bracket" id="brBL"></div><div class="bracket" id="brBR"></div>
+  <div class="scene clip" id="o" data-start="0" data-duration="20" data-track-index="0">
+    <div class="kick" id="ok">that's a wrap</div>
+    <h1 id="ot">Subscribe — we build it <span class="ac">one box at a time.</span></h1>
+    <div class="osub" id="osub">THE TECH INTERN &nbsp;//&nbsp; SYSTEM DESIGN, FROM DAY ONE</div>
+    <div class="onext" id="onext"><div class="nm">Next &middot; Episode 02</div><div class="hd">How your phone finds the server &mdash; DNS &amp; HTTP</div></div>
+    <div class="oend" id="oend">See you in <span class="ac">episode two.</span></div>
+  </div>
+</div>
+<script>
+window.__timelines = window.__timelines || {};
+const tl = gsap.timeline({ paused: true });
+tl.from("#hudline", { scaleX:0, duration:1.0, ease:"power2.out" }, 0);
+tl.fromTo(".hud", { opacity:0 }, { opacity:1, duration:1.0 }, 0.2);
+tl.fromTo(".bracket", { opacity:0 }, { opacity:1, duration:1.2, stagger:0.1 }, 0.3);
+tl.to("#bggrid", { x:-72, y:-50, duration:60, ease:"sine.inOut", repeat:2, yoyo:true }, 0);
+tl.to("#glow1", { x:-160, y:120, scale:1.2, duration:40, ease:"sine.inOut", repeat:2, yoyo:true }, 0);
+tl.to("#glow2", { x:140, y:-110, scale:1.2, duration:46, ease:"sine.inOut", repeat:2, yoyo:true }, 0);
+function head(sel,t,d){ tl.fromTo(sel,{opacity:0,y:60,scale:0.95},{opacity:1,y:0,scale:1,duration:(d||0.9),ease:"back.out(1.25)"},t); }
+function kick(sel,t){ tl.fromTo(sel,{opacity:0,x:-26},{opacity:1,x:0,duration:0.6,ease:"power2.out"},t); }
+function rise(sel,t,dy,d){ tl.fromTo(sel,{opacity:0,y:(dy==null?24:dy)},{opacity:1,y:0,duration:(d||0.6),ease:"power3.out"},t); }
+function pop(sel,t,d){ tl.fromTo(sel,{opacity:0,y:24,scale:0.9},{opacity:1,y:0,scale:1,duration:(d||0.55),ease:"back.out(1.5)",transformOrigin:"center"},t); }
+function breathe(sel,t,to,dur,n){ tl.to(sel,{scale:to,duration:dur,ease:"sine.inOut",repeat:n,yoyo:true,transformOrigin:"center"},t); }
+      kick("#ok", 0.4); head("#ot", 0.8, 1.0);
+      tl.to("#ot .ac", { opacity:0.72, duration:1.5, ease:"sine.inOut", repeat:3, yoyo:true }, 3.3);
+      rise("#osub", 5.16, 16);
+      pop("#onext", 8.713, 0.7); breathe("#onext", 10.313, 1.02, 2.4, 3);
+      rise("#oend", 16.747, 18);
+window.__timelines["sdep01outro"] = tl;
+</script></body></html>

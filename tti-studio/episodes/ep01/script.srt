@@ -1,0 +1,679 @@
+1
+00:00:00,000 --> 00:00:00,871
+It's 8pm.
+
+2
+00:00:01,289 --> 00:00:05,085
+You flop onto your bed, pull out your phone, and open your favourite app.
+
+3
+00:00:05,503 --> 00:00:06,792
+And here's the wild part.
+
+4
+00:00:07,279 --> 00:00:10,937
+At that same second, half your city is doing the exact same thing.
+
+5
+00:00:11,505 --> 00:00:13,479
+Millions of taps, all at once.
+
+6
+00:00:13,967 --> 00:00:14,663
+And the app?
+
+7
+00:00:14,965 --> 00:00:15,906
+It just works.
+
+8
+00:00:16,324 --> 00:00:18,367
+No crash, no spinning wheel.
+
+9
+00:00:18,785 --> 00:00:21,212
+Ever stopped to wonder how that's even possible?
+
+10
+00:00:21,781 --> 00:00:25,345
+Stick around, because by the end of this video you'll understand it completely.
+
+11
+00:00:25,763 --> 00:00:27,226
+Not by memorising anything.
+
+12
+00:00:27,586 --> 00:00:28,897
+By building one yourself.
+
+13
+00:00:29,385 --> 00:00:31,440
+Meet our project for the whole series.
+
+14
+00:00:31,742 --> 00:00:32,938
+A tiny photo app.
+
+15
+00:00:33,356 --> 00:00:34,819
+We'll call it baby Instagram.
+
+16
+00:00:35,237 --> 00:00:36,374
+It does two things.
+
+17
+00:00:36,479 --> 00:00:37,477
+You post a photo.
+
+18
+00:00:37,779 --> 00:00:38,801
+Your friends see it.
+
+19
+00:00:39,288 --> 00:00:40,368
+That's the entire app.
+
+20
+00:00:40,856 --> 00:00:44,165
+And it's all we need to learn how the big ones work.
+
+21
+00:00:46,000 --> 00:00:47,927
+Hold on to that 8pm picture.
+
+22
+00:00:48,589 --> 00:00:50,458
+A whole city, tapping at once.
+
+23
+00:00:50,760 --> 00:00:51,956
+And nothing breaks.
+
+24
+00:00:52,444 --> 00:00:55,160
+That isn't luck, and it certainly isn't magic.
+
+25
+00:00:55,927 --> 00:01:00,095
+Somebody sat down, long before launch, and planned for that crowd.
+
+26
+00:01:00,756 --> 00:01:03,555
+That invisible plan is system design.
+
+27
+00:01:04,217 --> 00:01:07,734
+And it might be the most useful thing you'll ever learn as an engineer.
+
+28
+00:01:10,000 --> 00:01:13,332
+So let's get the definition out of the way, in plain English.
+
+29
+00:01:13,994 --> 00:01:19,683
+System design is planning how the pieces of your app fit together, before you write a single line of code.
+
+30
+00:01:20,344 --> 00:01:22,608
+The easiest way to picture it is building a house.
+
+31
+00:01:22,968 --> 00:01:25,209
+Writing code is laying the bricks.
+
+32
+00:01:25,569 --> 00:01:27,194
+It's the actual construction.
+
+33
+00:01:27,612 --> 00:01:29,284
+System design is the blueprint.
+
+34
+00:01:29,644 --> 00:01:30,817
+Where do the rooms go?
+
+35
+00:01:31,084 --> 00:01:32,245
+Where do the pipes run?
+
+36
+00:01:32,732 --> 00:01:37,399
+You draw that first, because nobody builds a house and figures out the bathroom afterwards.
+
+37
+00:01:39,000 --> 00:01:39,453
+Right.
+
+38
+00:01:39,871 --> 00:01:41,844
+Let's actually design our baby Instagram.
+
+39
+00:01:42,262 --> 00:01:44,039
+And we're keeping it tiny on purpose.
+
+40
+00:01:44,341 --> 00:01:45,385
+One simple screen.
+
+41
+00:01:45,687 --> 00:01:47,429
+A feed, and a button to post.
+
+42
+00:01:48,091 --> 00:01:54,905
+Here's the secret: the small version teaches you the exact same ideas as the giant version, just without the headache.
+
+43
+00:01:55,567 --> 00:01:56,856
+So, two jobs.
+
+44
+00:01:56,972 --> 00:01:58,075
+One, post a photo.
+
+45
+00:01:58,644 --> 00:02:00,176
+Two, see your friends' feed.
+
+46
+00:02:02,000 --> 00:02:02,998
+Now the big idea.
+
+47
+00:02:03,416 --> 00:02:06,644
+The one that, once it clicks, you'll start seeing everywhere.
+
+48
+00:02:07,875 --> 00:02:12,588
+Almost every app you have ever used is really just three pieces, talking to each other.
+
+49
+00:02:13,006 --> 00:02:14,481
+The first piece is the client.
+
+50
+00:02:15,909 --> 00:02:17,557
+That's a fancy word for your phone.
+
+51
+00:02:17,975 --> 00:02:19,299
+The second is the server.
+
+52
+00:02:20,530 --> 00:02:27,879
+That's the app's brain, running on a powerful computer in some data centre, maybe a thousand kilometres away.
+
+53
+00:02:29,307 --> 00:02:30,735
+The third is the database.
+
+54
+00:02:31,222 --> 00:02:35,680
+Picture a giant, very organised filing cabinet, where every photo actually lives.
+
+55
+00:02:36,447 --> 00:02:38,107
+Client, server, database.
+
+56
+00:02:38,525 --> 00:02:41,985
+Hold on to those three, every episode after this is built on them.
+
+57
+00:02:44,000 --> 00:02:45,695
+So what do they actually do all day?
+
+58
+00:02:46,264 --> 00:02:47,669
+One thing, again and again.
+
+59
+00:02:48,029 --> 00:02:49,480
+Your phone asks for something.
+
+60
+00:02:49,840 --> 00:02:51,210
+Show me the latest photos.
+
+61
+00:02:51,872 --> 00:02:53,253
+That little ask has a name.
+
+62
+00:02:53,485 --> 00:02:54,797
+It's called a request.
+
+63
+00:02:55,366 --> 00:02:58,860
+The server hears it, gets what's needed, and sends it back.
+
+64
+00:02:59,627 --> 00:03:01,333
+That return trip is a response.
+
+65
+00:03:01,751 --> 00:03:03,655
+Picture asking a librarian for a book.
+
+66
+00:03:04,073 --> 00:03:04,665
+You ask.
+
+67
+00:03:04,770 --> 00:03:05,908
+They walk to the shelf.
+
+68
+00:03:06,210 --> 00:03:07,173
+They bring it back.
+
+69
+00:03:07,591 --> 00:03:11,771
+You're the client, the librarian is the server, and the shelf is the database.
+
+70
+00:03:12,258 --> 00:03:14,128
+One request, one response.
+
+71
+00:03:14,696 --> 00:03:17,204
+That's quite literally every app you've ever opened.
+
+72
+00:03:19,000 --> 00:03:21,496
+Let's slow it right down and follow one single tap.
+
+73
+00:03:21,984 --> 00:03:23,400
+You tap to open your feed.
+
+74
+00:03:23,760 --> 00:03:25,815
+Your phone sends a request to the server.
+
+75
+00:03:26,233 --> 00:03:27,348
+That's the first hop.
+
+76
+00:03:27,916 --> 00:03:32,142
+The server doesn't keep the photos itself, so it fetches them from the database.
+
+77
+00:03:33,199 --> 00:03:34,058
+Second hop.
+
+78
+00:03:34,627 --> 00:03:35,938
+Then it all travels back.
+
+79
+00:03:36,240 --> 00:03:38,423
+Database, to server, to your screen.
+
+80
+00:03:38,841 --> 00:03:40,199
+All in a fraction of a second.
+
+81
+00:03:40,687 --> 00:03:42,754
+And this is the heart of the whole episode.
+
+82
+00:03:43,322 --> 00:03:46,051
+That exact path is hiding inside every app you use.
+
+83
+00:03:46,469 --> 00:03:48,535
+Once you've seen it, you can't unsee it.
+
+84
+00:03:51,000 --> 00:03:52,997
+So how do real engineers design this?
+
+85
+00:03:53,485 --> 00:03:54,785
+Do they just start typing?
+
+86
+00:03:55,272 --> 00:03:56,224
+Not a chance.
+
+87
+00:03:56,584 --> 00:03:58,744
+They follow the same four steps, every time.
+
+88
+00:03:59,638 --> 00:04:01,182
+Step one, requirements.
+
+89
+00:04:01,542 --> 00:04:03,574
+What are we building, and who for?
+
+90
+00:04:04,468 --> 00:04:06,464
+Step two, high-level design.
+
+91
+00:04:06,766 --> 00:04:07,799
+The big boxes.
+
+92
+00:04:08,566 --> 00:04:10,783
+Step three, core components.
+
+93
+00:04:11,143 --> 00:04:12,467
+Zooming into each box.
+
+94
+00:04:12,768 --> 00:04:14,162
+Step four, scale.
+
+95
+00:04:14,649 --> 00:04:15,741
+Surviving a crowd.
+
+96
+00:04:16,042 --> 00:04:17,331
+And here's the fun part.
+
+97
+00:04:17,691 --> 00:04:20,582
+We're going to run all four, right now, on baby Instagram.
+
+98
+00:04:23,000 --> 00:04:23,778
+Step one.
+
+99
+00:04:24,265 --> 00:04:25,125
+Requirements.
+
+100
+00:04:25,786 --> 00:04:29,978
+A serious-sounding word for a simple question: what should the app do?
+
+101
+00:04:30,396 --> 00:04:31,986
+It should let you post a photo.
+
+102
+00:04:32,404 --> 00:04:33,983
+And see your friends' feed.
+
+103
+00:04:34,285 --> 00:04:35,376
+Easy so far.
+
+104
+00:04:36,142 --> 00:04:38,290
+But here's the bit beginners rush past.
+
+105
+00:04:38,592 --> 00:04:39,788
+For how many people?
+
+106
+00:04:40,554 --> 00:04:43,828
+Because ten friends and ten million users are not the same project.
+
+107
+00:04:44,397 --> 00:04:45,303
+Not even close.
+
+108
+00:04:45,872 --> 00:04:49,657
+Same app on the screen, completely different problem underneath.
+
+109
+00:04:50,225 --> 00:04:51,247
+One's a footbridge.
+
+110
+00:04:51,735 --> 00:04:53,325
+The other's a national highway.
+
+111
+00:04:55,000 --> 00:04:55,697
+Step two.
+
+112
+00:04:55,859 --> 00:04:56,927
+High-level design.
+
+113
+00:04:57,287 --> 00:04:59,249
+Big name, gentle idea.
+
+114
+00:04:59,818 --> 00:05:01,664
+You draw the boxes, and connect them.
+
+115
+00:05:02,233 --> 00:05:03,951
+Here's our phone, the client.
+
+116
+00:05:04,253 --> 00:05:05,205
+Here's the server.
+
+117
+00:05:05,623 --> 00:05:07,481
+And the database, all wired together.
+
+118
+00:05:07,899 --> 00:05:09,013
+That's the whole move.
+
+119
+00:05:09,675 --> 00:05:12,183
+This bird's-eye picture is your high-level design.
+
+120
+00:05:14,000 --> 00:05:14,824
+Step three.
+
+121
+00:05:15,312 --> 00:05:16,287
+Core components.
+
+122
+00:05:16,775 --> 00:05:18,331
+Now we zoom inside one box.
+
+123
+00:05:18,632 --> 00:05:23,555
+The boxes and how they connect, that wide view, is high-level design.
+
+124
+00:05:24,124 --> 00:05:24,867
+HLD.
+
+125
+00:05:25,006 --> 00:05:25,622
+The map.
+
+126
+00:05:26,109 --> 00:05:31,415
+But how one single photo gets stored inside the database, that close-up, is low-level design.
+
+127
+00:05:32,077 --> 00:05:32,739
+LLD.
+
+128
+00:05:33,041 --> 00:05:33,923
+The street view.
+
+129
+00:05:34,283 --> 00:05:35,955
+Same system, two zoom levels.
+
+130
+00:05:36,315 --> 00:05:38,056
+Today, we're staying up on the map.
+
+131
+00:05:40,000 --> 00:05:41,393
+And now, step four.
+
+132
+00:05:41,811 --> 00:05:42,380
+Scale.
+
+133
+00:05:42,868 --> 00:05:44,412
+This is where it gets really fun.
+
+134
+00:05:45,840 --> 00:05:49,149
+Picture ten million people opening baby Instagram at 9pm.
+
+135
+00:05:49,718 --> 00:05:50,983
+That one little server?
+
+136
+00:05:51,645 --> 00:05:52,469
+It melts.
+
+137
+00:05:52,771 --> 00:05:55,372
+Think of one ticket counter facing an entire stadium.
+
+138
+00:05:55,859 --> 00:05:57,287
+So we add more servers.
+
+139
+00:05:57,856 --> 00:05:59,749
+A whole row of them, splitting the crowd.
+
+140
+00:06:00,317 --> 00:06:02,152
+That trick is called scaling out.
+
+141
+00:06:02,639 --> 00:06:04,276
+And the photos everyone wants?
+
+142
+00:06:05,043 --> 00:06:10,105
+We keep copies close by, in a cache, so we're not bothering the database every time.
+
+143
+00:06:10,592 --> 00:06:12,473
+More servers, plus a cache.
+
+144
+00:06:13,042 --> 00:06:15,178
+And just like that, green lights.
+
+145
+00:06:15,480 --> 00:06:16,548
+We're healthy again.
+
+146
+00:06:19,000 --> 00:06:22,181
+But here's the move that makes you sound like a real engineer.
+
+147
+00:06:23,075 --> 00:06:24,875
+You don't build all of that on day one.
+
+148
+00:06:25,142 --> 00:06:26,012
+Start simple.
+
+149
+00:06:26,430 --> 00:06:27,255
+One server.
+
+150
+00:06:27,824 --> 00:06:28,567
+Ship it.
+
+151
+00:06:28,985 --> 00:06:31,051
+Watch what real people actually do with it.
+
+152
+00:06:31,469 --> 00:06:34,394
+Then add a new piece only when something actually breaks.
+
+153
+00:06:34,963 --> 00:06:36,113
+Not a second sooner.
+
+154
+00:06:36,682 --> 00:06:39,990
+You wouldn't pour a six-lane highway for a street with three houses.
+
+155
+00:06:42,000 --> 00:06:46,807
+And if part of you is thinking sure, but this is just a toy example, it really isn't.
+
+156
+00:06:47,573 --> 00:06:53,738
+When Hotstar streamed the 2023 World Cup final, fifty-nine million people were watching at the very same moment.
+
+157
+00:06:54,307 --> 00:06:55,386
+Fifty-nine million.
+
+158
+00:06:55,688 --> 00:06:56,454
+And it held.
+
+159
+00:06:56,942 --> 00:06:59,473
+The exact same request and response you just learned.
+
+160
+00:07:00,042 --> 00:07:02,805
+There were simply a lot more boxes behind the scenes.
+
+161
+00:07:05,000 --> 00:07:05,778
+And that's it.
+
+162
+00:07:06,196 --> 00:07:07,879
+I mean it, you just designed an app.
+
+163
+00:07:08,541 --> 00:07:09,783
+Let's lock in what you know.
+
+164
+00:07:10,201 --> 00:07:13,324
+Every app is a client, a server, and a database.
+
+165
+00:07:13,742 --> 00:07:16,471
+They talk in one request, one response.
+
+166
+00:07:17,040 --> 00:07:19,187
+Engineers design in four steps, every time.
+
+167
+00:07:19,756 --> 00:07:21,822
+And you scale only when something breaks.
+
+168
+00:07:22,240 --> 00:07:24,435
+But one question is left hanging.
+
+169
+00:07:24,922 --> 00:07:30,240
+Your phone asked the server, so how did it even find that server, out of the entire internet?
+
+170
+00:07:30,600 --> 00:07:34,071
+That's DNS and HTTP, and that's where we pick up next time.
