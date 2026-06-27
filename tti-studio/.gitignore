@@ -4,3 +4,5 @@ thumbnails/.render.tmp.html
 *.log
 .DS_Store
 episodes/*/audio_v2/
+__pycache__/
+*.pyc
