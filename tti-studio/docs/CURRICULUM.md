@@ -48,7 +48,7 @@ Difficulty: 🟢 easy · 🟡 medium · 🔴 hard. Code = a light code-along.
 | Ep | Title | Diff | Code | Status |
 |---|---|---|---|---|
 | 1 | What even *is* a "system"? (a request's journey) | 🟢 | – | ✅ done |
-| 2 | Client, server & the network — DNS & HTTP when you open Swiggy | 🟢 | – | |
+| 2 | Client, server & the network — DNS & HTTP when you open Swiggy | 🟢 | – | ✅ done |
 | 3 | Latency vs throughput vs bandwidth — the numbers that rule everything | 🟢 | – | |
 | 4 | Scale vocabulary — qps, p50/p99, and availability "nines" | 🟡 | – | |
 | 5 | Scaling up vs out + load balancers — the waiter that picks the kitchen | 🟢 | – | |
