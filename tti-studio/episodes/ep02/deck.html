@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+      
+      :root{ --paper:#0F1729; --panel:#16223C; --panel2:#1B2A47; --ink:#E6ECF5; --soft:#B7C2D6; --muted:#7B8AA5; --hair:rgba(123,138,165,.22); --accent:#3B7BFF; --accent-bright:#6AA0FF; --accent-soft:rgba(59,123,255,.14); --spike:#FF6B6B; --ok:#34D399; }
+      *{ margin:0; padding:0; box-sizing:border-box; }
+      html,body{ width:1920px; height:1080px; overflow:hidden; }
+      body{ font-family:"Inter",sans-serif; background:var(--paper); }
+      #root{ position:relative; width:1920px; height:1080px; background:var(--paper); color:var(--ink); }
+      #bg{ position:absolute; inset:0; overflow:hidden; z-index:0; }
+      #bggrid{ position:absolute; left:-140px; top:-140px; width:2300px; height:1400px; background-image:linear-gradient(rgba(123,138,165,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(123,138,165,.06) 1px,transparent 1px); background-size:72px 72px; }
+      .glow{ position:absolute; border-radius:50%; filter:blur(80px); }
+      #glow1{ width:1100px; height:1100px; left:900px; top:-340px; background:radial-gradient(circle,rgba(59,123,255,.20),rgba(59,123,255,0) 70%); }
+      #glow2{ width:820px; height:820px; left:-320px; top:600px; background:radial-gradient(circle,rgba(106,160,255,.13),rgba(106,160,255,0) 70%); }
+      #flow{ position:absolute; inset:0; z-index:1; pointer-events:none; }
+      .hud{ position:absolute; left:64px; right:64px; top:52px; display:flex; justify-content:space-between; align-items:center; z-index:7; font-family:"JetBrains Mono"; font-size:22px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
+      .hud .l span{ color:var(--accent); }
+      #hudline{ position:absolute; left:64px; right:64px; top:94px; height:1px; background:var(--hair); z-index:7; transform-origin:left; }
+      .bracket{ position:absolute; width:34px; height:34px; z-index:7; }
+      #brTL{ left:30px; top:30px; border-left:2px solid var(--hair); border-top:2px solid var(--hair);} #brTR{ right:30px; top:30px; border-right:2px solid var(--hair); border-top:2px solid var(--hair);}
+      #brBL{ left:30px; bottom:30px; border-left:2px solid var(--hair); border-bottom:2px solid var(--hair);} #brBR{ right:30px; bottom:30px; border-right:2px solid var(--hair); border-bottom:2px solid var(--hair);}
+      #sweep{ position:absolute; top:-60px; bottom:-60px; left:0; width:340px; opacity:0; z-index:20; pointer-events:none; background:linear-gradient(90deg, rgba(59,123,255,0) 0%, rgba(106,160,255,.5) 50%, rgba(59,123,255,0) 100%); transform:skewX(-10deg); }
+      .scene{ position:absolute; inset:0; opacity:0; z-index:2; padding:158px 110px 92px 110px; display:flex; flex-direction:column; justify-content:center; }
+      .kick{ font-family:"JetBrains Mono"; font-size:26px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:18px; }
+      .kick:before{ content:"// "; color:var(--muted); }
+      h1{ font-family:"Fraunces"; font-weight:600; color:var(--ink); line-height:1.05; letter-spacing:-.012em; }
+      .sub{ color:var(--soft); font-family:"Inter"; }
+      .ac{ color:var(--accent); } .acb{ color:var(--accent-bright); } .sp{ color:var(--spike); } .ok{ color:var(--ok); }
+      .mono{ font-family:"JetBrains Mono"; } .it{ font-style:italic; }
+      .nextline{ font-family:"Fraunces"; font-style:italic; font-size:40px; color:var(--soft); margin-top:44px; opacity:0; } .nextline .ac{ font-style:normal; }
+      svg text{ font-family:"JetBrains Mono"; fill:var(--soft); }
+      svg .ttl{ font-family:"Inter"; font-weight:700; fill:var(--ink); }
+      svg .cap{ font-family:"Inter"; font-weight:400; fill:var(--soft); }
+      svg .code{ font-family:"JetBrains Mono"; fill:var(--accent); }
+      svg .edge{ stroke:var(--hair); stroke-width:3; fill:none; opacity:0; } svg .edge.live{ stroke:var(--accent); } svg .edge.resp{ stroke:var(--accent-bright); stroke-dasharray:2 10; stroke-linecap:round; }
+      svg .nbox{ fill:var(--panel); stroke:var(--hair); stroke-width:2; } svg .nboxlive{ fill:var(--panel); stroke:var(--accent); stroke-width:2.5; }
+      svg .pkt{ opacity:0; }
+      .hideg{ opacity:0; }
+    
+      /* deck overrides */
+      .scene { display:none !important; opacity:1 !important; }
+      .scene.active { display:flex !important; }
+      .hideg { opacity:1 !important; }
+      #flow { display:none; }
+      #counter{ position:fixed; right:18px; bottom:14px; font-family:"JetBrains Mono"; font-size:14px; color:#5b6b85; z-index:50; }
+      #title{ position:fixed; left:18px; bottom:14px; font-family:"JetBrains Mono"; font-size:14px; color:#5b6b85; z-index:50; }
+      #hintbar{ position:fixed; left:50%; transform:translateX(-50%); bottom:12px; font-family:"JetBrains Mono"; font-size:12px; color:#3f4d63; z-index:50; }
+      html,body{ height:100% !important; min-height:100vh; }
+      body{ display:flex; align-items:center; justify-content:center; background:#070b14; }
+      #root{ transform-origin:center center; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="sdep02full" data-start="0" data-duration="970" data-width="1920" data-height="1080">
+      <svg width="0" height="0" style="position:absolute"><defs>
+        <filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+        <linearGradient id="gcli" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B2A47"/><stop offset="1" stop-color="#16223C"/></linearGradient>
+        <linearGradient id="gsrv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16223C"/><stop offset="1" stop-color="#111c33"/></linearGradient>
+        <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6AA0FF" stop-opacity="0"/><stop offset="0.5" stop-color="#6AA0FF" stop-opacity="0.22"/><stop offset="1" stop-color="#6AA0FF" stop-opacity="0"/></linearGradient>
+        <linearGradient id="food1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B7BFF"/><stop offset="1" stop-color="#6AA0FF"/></linearGradient>
+        <linearGradient id="food2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#3B7BFF"/></linearGradient>
+        <linearGradient id="food3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6AA0FF"/><stop offset="1" stop-color="#1B2A47"/></linearGradient>
+        <symbol id="i-phone" viewBox="0 0 48 48"><rect x="15" y="6" width="18" height="36" rx="4" fill="none" stroke="#6AA0FF" stroke-width="3.5"/><line x1="21" y1="37" x2="27" y2="37" stroke="#6AA0FF" stroke-width="3.5"/></symbol>
+        <symbol id="i-mag" viewBox="0 0 48 48"><circle cx="21" cy="21" r="13" fill="none" stroke="#6AA0FF" stroke-width="3.5"/><line x1="31" y1="31" x2="40" y2="40" stroke="#6AA0FF" stroke-width="3.5" stroke-linecap="round"/></symbol>
+        <symbol id="i-globe" viewBox="0 0 48 48"><circle cx="24" cy="24" r="16" fill="none" stroke="#6AA0FF" stroke-width="3.5"/><ellipse cx="24" cy="24" rx="7" ry="16" fill="none" stroke="#6AA0FF" stroke-width="3"/><line x1="8" y1="24" x2="40" y2="24" stroke="#6AA0FF" stroke-width="3"/></symbol>
+        <symbol id="i-tag" viewBox="0 0 48 48"><path d="M8 8 H26 L40 22 L26 36 L8 36 Z" fill="none" stroke="#6AA0FF" stroke-width="3.5" stroke-linejoin="round"/><circle cx="16" cy="20" r="3" fill="#6AA0FF"/></symbol>
+        <symbol id="i-key" viewBox="0 0 48 48"><circle cx="16" cy="20" r="9" fill="none" stroke="#34D399" stroke-width="3.5"/><path d="M23 24 L40 41 M34 35 L30 39 M38 39 L35 42" stroke="#34D399" stroke-width="3.5" fill="none" stroke-linecap="round"/></symbol>
+        <symbol id="i-flag" viewBox="0 0 48 48"><line x1="12" y1="6" x2="12" y2="42" stroke="#34D399" stroke-width="3.5"/><path d="M12 8 H36 L30 16 L36 24 H12 Z" fill="#34D399" opacity="0.85"/></symbol>
+        <symbol id="i-eye" viewBox="0 0 48 48"><path d="M4 24 C 14 8, 34 8, 44 24 C 34 40, 14 40, 4 24 Z" fill="none" stroke="#6AA0FF" stroke-width="3.2"/><circle cx="24" cy="24" r="7" fill="none" stroke="#6AA0FF" stroke-width="3.2"/></symbol>
+        <symbol id="i-pen" viewBox="0 0 48 48"><path d="M8 40 L10 30 L32 8 L40 16 L18 38 Z" fill="none" stroke="#6AA0FF" stroke-width="3.2" stroke-linejoin="round"/><line x1="28" y1="12" x2="36" y2="20" stroke="#6AA0FF" stroke-width="3.2"/></symbol>
+        <symbol id="i-lock" viewBox="0 0 100 100"><rect x="26" y="44" width="48" height="40" rx="7" fill="none" stroke="#34D399" stroke-width="5"/><path d="M36 44 V32 a14 14 0 0 1 28 0 V44" fill="none" stroke="#34D399" stroke-width="5"/><circle cx="50" cy="62" r="5" fill="#34D399"/></symbol>
+        <symbol id="i-cookie" viewBox="0 0 48 48"><path d="M24 6 a18 18 0 1 0 18 18 a7 7 0 0 1 -7 -7 a6 6 0 0 1 -6 -6 a18 18 0 0 0 -5 -5 Z" fill="none" stroke="#6AA0FF" stroke-width="3"/><circle cx="18" cy="22" r="2.5" fill="#6AA0FF"/><circle cx="28" cy="30" r="2.5" fill="#6AA0FF"/><circle cx="30" cy="18" r="2" fill="#6AA0FF"/></symbol>
+      </defs></svg>
+
+      <div id="bg"><div id="bggrid"></div><div class="glow" id="glow1"></div><div class="glow" id="glow2"></div></div>
+      <svg id="flow" width="1920" height="1080" viewBox="0 0 1920 1080">
+        <g stroke="rgba(106,160,255,.08)" stroke-width="1.5" fill="none"><path d="M-50 220 H1980"/><path d="M-50 540 H1980"/><path d="M-50 860 H1980"/><path d="M300 -50 V1140"/><path d="M1620 -50 V1140"/></g>
+        <g fill="#6AA0FF"><circle class="fp" id="fp1" cx="0" cy="220" r="3"/><circle class="fp" id="fp2" cx="0" cy="540" r="3"/><circle class="fp" id="fp3" cx="0" cy="860" r="3"/><circle class="fp" id="fp4" cx="300" cy="0" r="3"/><circle class="fp" id="fp5" cx="1620" cy="0" r="3"/><circle class="fp" id="fp6" cx="0" cy="220" r="2.4"/></g>
+      </svg>
+      <div class="hud"><div class="l">THE TECH INTERN <span>// SYSTEM DESIGN</span></div><div class="r">S1 · E02</div></div>
+      <div id="hudline"></div>
+      <div class="bracket" id="brTL"></div><div class="bracket" id="brTR"></div><div class="bracket" id="brBL"></div><div class="bracket" id="brBR"></div>
+      <div id="sweep"></div>
+
+      <!-- 1. RECAP HOOK -->
+      <div class="scene" id="s1" data-name="1 · Recap hook" data-start="0" data-duration="40" data-track-index="0">
+        <div class="kick" id="s1k">Episode 02 · last time, on baby Instagram</div>
+        <h1 id="s1t" style="font-size:84px; max-width:1300px;">A request goes client → server → database. But <span class="ac">how?</span></h1>
+        <svg width="1560" height="300" viewBox="0 0 1560 300" style="overflow:visible; align-self:center; margin-top:34px;">
+          <path class="edge live" id="s1_e1" d="M400 130 H580"/><path class="edge live" id="s1_e2" d="M980 130 H1160"/>
+          <g id="s1_cli"><rect class="nbox" x="40" y="60" width="360" height="140" rx="18"/><use href="#i-phone" x="78" y="100" width="60" height="60"/><text class="code" x="180" y="110" font-size="22">CLIENT</text><text class="ttl" x="180" y="156" font-size="34">your phone</text></g>
+          <g id="s1_srv"><rect class="nbox" x="580" y="60" width="400" height="140" rx="18"/><use href="#i-globe" x="618" y="100" width="60" height="60"/><text class="code" x="720" y="110" font-size="22">SERVER</text><text class="ttl" x="720" y="156" font-size="34">the app</text></g>
+          <g id="s1_db"><rect class="nbox" x="1160" y="60" width="360" height="140" rx="18"/><g transform="translate(1200,96)"><ellipse cx="34" cy="10" rx="34" ry="9" fill="none" stroke="#6AA0FF" stroke-width="3"/><path d="M0 10 V58 a34 9 0 0 0 68 0 V10" fill="none" stroke="#6AA0FF" stroke-width="3"/></g><text class="code" x="1300" y="110" font-size="22">DATABASE</text><text class="ttl" x="1300" y="156" font-size="34">your photos</text></g>
+          <circle class="pkt" id="s1pkt" r="11" fill="#6AA0FF" cx="220" cy="130"/>
+          <g id="s1q" class="hideg"><circle cx="490" cy="46" r="30" fill="#1B2A47" stroke="#3B7BFF" stroke-width="2"/><text x="490" y="58" font-size="40" text-anchor="middle" fill="#3B7BFF">?</text></g>
+        </svg>
+        <div class="sub" id="s1s" style="font-size:34px; margin-top:24px; opacity:0; align-self:center;">Tonight: what's <span class="ac">inside</span> those boxes — and how they find each other.</div>
+      </div>
+
+      <!-- 2. TWO QUESTIONS -->
+      <div class="scene" id="s2" data-name="2 · Two questions" data-start="40" data-duration="30" data-track-index="0">
+        <div class="kick" id="s2k">two questions, one app (Swiggy)</div>
+        <h1 id="s2t" style="font-size:88px;">Tonight answers <span class="ac">two questions.</span></h1>
+        <svg width="1560" height="320" viewBox="0 0 1560 320" style="overflow:visible; align-self:center; margin-top:30px;">
+          <g id="s2q1"><rect x="20" y="20" width="740" height="280" rx="24" fill="url(#gcli)" stroke="rgba(59,123,255,.4)" stroke-width="2"/><text x="64" y="120" font-size="120" fill="rgba(106,160,255,.22)" font-family="Fraunces">01</text><use href="#i-mag" x="600" y="56" width="86" height="86"/><text class="ttl" x="64" y="200" font-size="40">What's inside client &amp; server?</text><text class="cap" x="64" y="248" font-size="26">who does what — and where data lives.</text></g>
+          <g id="s2q2"><rect x="800" y="20" width="740" height="280" rx="24" fill="url(#gcli)" stroke="rgba(59,123,255,.4)" stroke-width="2"/><text x="844" y="120" font-size="120" fill="rgba(106,160,255,.22)" font-family="Fraunces">02</text><use href="#i-globe" x="1380" y="56" width="86" height="86"/><text class="ttl" x="844" y="200" font-size="40">How do they find &amp; talk?</text><text class="cap" x="844" y="248" font-size="26">DNS finds the server. HTTP does the talking.</text></g>
+        </svg>
+      </div>
+
+      <!-- 3. THE RESTAURANT (rich zones) -->
+      <div class="scene" id="s3" data-name="3 · The restaurant" data-start="70" data-duration="40" data-track-index="0">
+        <div class="kick" id="s3k">the one analogy for tonight</div>
+        <h1 id="s3t" style="font-size:80px;">Every app is a <span class="ac">restaurant.</span></h1>
+        <svg width="1680" height="560" viewBox="0 0 1680 560" style="overflow:visible; align-self:center; margin-top:18px;">
+          <g id="s3cli"><rect x="0" y="20" width="660" height="520" rx="26" fill="url(#gcli)" stroke="rgba(59,123,255,.45)" stroke-width="2"/><text class="code" x="40" y="76" font-size="22" letter-spacing="3">CLIENT</text><text class="ttl" x="40" y="124" font-size="42">The dining room</text>
+            <rect x="240" y="170" width="180" height="300" rx="22" fill="#0B1322" stroke="#6AA0FF" stroke-width="3"/><rect x="262" y="196" width="136" height="24" rx="6" fill="rgba(106,160,255,.35)"/><rect x="262" y="234" width="136" height="74" rx="8" fill="rgba(106,160,255,.18)"/><rect x="262" y="320" width="136" height="14" rx="5" fill="rgba(183,194,214,.3)"/><rect x="284" y="404" width="92" height="36" rx="18" fill="#3B7BFF"/><text class="cap" x="330" y="510" font-size="25" text-anchor="middle">you sit, browse &amp; tap</text></g>
+          <g id="s3srv"><rect x="1020" y="20" width="660" height="520" rx="26" fill="url(#gsrv)" stroke="var(--hair)" stroke-width="2"/><text class="code" x="1060" y="76" font-size="22" letter-spacing="3" fill="#6AA0FF">SERVER</text><text class="ttl" x="1060" y="124" font-size="42">The kitchen</text>
+            <rect x="1230" y="170" width="250" height="150" rx="12" fill="#0B1322" stroke="#6AA0FF" stroke-width="3"/><rect x="1252" y="190" width="206" height="28" rx="5" fill="none" stroke="#6AA0FF" stroke-width="2"/><circle cx="1268" cy="204" r="4" fill="#34D399"/><rect x="1252" y="228" width="206" height="28" rx="5" fill="none" stroke="#6AA0FF" stroke-width="2"/><circle cx="1268" cy="242" r="4" fill="#34D399"/><rect x="1252" y="266" width="206" height="28" rx="5" fill="none" stroke="#6AA0FF" stroke-width="2"/><circle cx="1268" cy="280" r="4" fill="#6AA0FF"/>
+            <g transform="translate(1300,360)"><ellipse cx="54" cy="12" rx="54" ry="14" fill="none" stroke="#6AA0FF" stroke-width="2.5"/><path d="M0 12 V74 a54 14 0 0 0 108 0 V12" fill="none" stroke="#6AA0FF" stroke-width="2.5"/><path d="M0 43 a54 14 0 0 0 108 0" fill="none" stroke="#6AA0FF" stroke-width="2.5"/></g><text class="cap" x="1354" y="510" font-size="25" text-anchor="middle">cooks logic · guards the data</text></g>
+          <g id="s3api"><rect x="690" y="210" width="300" height="140" rx="20" fill="var(--accent-soft)" stroke="#3B7BFF" stroke-width="2"/><text class="code" x="840" y="262" font-size="26" text-anchor="middle">API</text><text class="cap" x="840" y="300" font-size="24" text-anchor="middle">the waiter</text><text x="840" y="186" font-size="20" text-anchor="middle" fill="#6AA0FF">request → ← response</text></g>
+        </svg>
+      </div>
+
+      <!-- 4. THE CLIENT (animated phone UI · HERO) -->
+      <div class="scene" id="s4" data-name="4 · The client" data-start="110" data-duration="40" data-track-index="0">
+        <div class="kick" id="s4k">the client · the frontend</div>
+        <h1 id="s4t" style="font-size:78px;">Your phone is the <span class="ac">dining room.</span></h1>
+        <svg width="1620" height="600" viewBox="0 0 1620 600" style="overflow:visible; align-self:center; margin-top:8px;">
+          <g id="s4phone">
+            <rect x="120" y="20" width="330" height="560" rx="40" fill="#0B1322" stroke="#6AA0FF" stroke-width="3"/>
+            <text x="150" y="66" font-size="18" fill="#B7C2D6">9:41</text><text class="ttl" x="150" y="120" font-size="28" fill="#fff">Swiggy</text>
+            <rect x="150" y="140" width="270" height="42" rx="21" fill="#16223C" stroke="var(--hair)"/><text x="170" y="167" font-size="18" fill="#7B8AA5">search…</text>
+            <g id="s4cards">
+              <rect x="150" y="200" width="270" height="108" rx="12" fill="#111c33" stroke="var(--hair)"/><rect x="164" y="214" width="80" height="80" rx="9" fill="url(#food1)"/><rect x="258" y="222" width="120" height="15" rx="5" fill="#E6ECF5"/><rect x="258" y="248" width="84" height="13" rx="5" fill="#7B8AA5"/><text x="258" y="290" font-size="16" fill="#34D399">★ 4.5 · Rs 199</text>
+              <rect x="150" y="320" width="270" height="108" rx="12" fill="#111c33" stroke="var(--hair)"/><rect x="164" y="334" width="80" height="80" rx="9" fill="url(#food2)"/><rect x="258" y="342" width="120" height="15" rx="5" fill="#E6ECF5"/><rect x="258" y="368" width="84" height="13" rx="5" fill="#7B8AA5"/><text x="258" y="410" font-size="16" fill="#34D399">★ 4.2 · Rs 249</text>
+              <rect x="150" y="440" width="270" height="108" rx="12" fill="#111c33" stroke="var(--hair)"/><rect x="164" y="454" width="80" height="80" rx="9" fill="url(#food3)"/><rect x="258" y="462" width="120" height="15" rx="5" fill="#E6ECF5"/><rect x="258" y="488" width="84" height="13" rx="5" fill="#7B8AA5"/><text x="258" y="530" font-size="16" fill="#34D399">★ 4.7 · Rs 159</text>
+            </g>
+          </g>
+          <!-- callouts -->
+          <g id="s4c1" class="hideg"><line x1="450" y1="120" x2="640" y2="120" stroke="#3B7BFF" stroke-width="2"/><circle cx="450" cy="120" r="5" fill="#3B7BFF"/><text class="ttl" x="660" y="116" font-size="34">Shows the screen</text><text class="cap" x="660" y="150" font-size="24">the menu, the images, the buttons</text></g>
+          <g id="s4c2" class="hideg"><line x1="450" y1="254" x2="640" y2="254" stroke="#3B7BFF" stroke-width="2"/><circle cx="450" cy="254" r="5" fill="#3B7BFF"/><text class="ttl" x="660" y="250" font-size="34">Handles taps &amp; typing</text><text class="cap" x="660" y="284" font-size="24">scrolls, searches, animates</text></g>
+          <g id="s4c3" class="hideg"><line x1="450" y1="388" x2="640" y2="388" stroke="#3B7BFF" stroke-width="2"/><circle cx="450" cy="388" r="5" fill="#3B7BFF"/><text class="ttl" x="660" y="384" font-size="34">Asks the server for things</text><text class="cap" x="660" y="418" font-size="24">but holds no real data of its own</text></g>
+        </svg>
+      </div>
+
+      <!-- 5. THE SERVER (rack + db) -->
+      <div class="scene" id="s5" data-name="5 · The server" data-start="150" data-duration="40" data-track-index="0">
+        <div class="kick" id="s5k">the server · the backend</div>
+        <h1 id="s5t" style="font-size:78px;">The kitchen <span class="ac">runs the show.</span></h1>
+        <svg width="1600" height="560" viewBox="0 0 1600 560" style="overflow:visible; align-self:center; margin-top:10px;">
+          <g id="s5rack"><rect x="120" y="40" width="420" height="380" rx="18" fill="#111c33" stroke="#6AA0FF" stroke-width="3"/><text class="code" x="330" y="26" font-size="22" text-anchor="middle">SERVER</text>
+            <rect x="150" y="74" width="360" height="70" rx="9" fill="none" stroke="#6AA0FF" stroke-width="2"/><circle id="s5l1" cx="178" cy="109" r="7" fill="#34D399"/><rect x="210" y="102" width="250" height="14" rx="4" fill="rgba(106,160,255,.3)"/>
+            <rect x="150" y="160" width="360" height="70" rx="9" fill="none" stroke="#6AA0FF" stroke-width="2"/><circle id="s5l2" cx="178" cy="195" r="7" fill="#34D399"/><rect x="210" y="188" width="200" height="14" rx="4" fill="rgba(106,160,255,.3)"/>
+            <rect x="150" y="246" width="360" height="70" rx="9" fill="none" stroke="#6AA0FF" stroke-width="2"/><circle id="s5l3" cx="178" cy="281" r="7" fill="#6AA0FF"/><rect x="210" y="274" width="230" height="14" rx="4" fill="rgba(106,160,255,.3)"/>
+            <g transform="translate(240,336)"><ellipse cx="90" cy="12" rx="90" ry="14" fill="none" stroke="#6AA0FF" stroke-width="2.5"/><path d="M0 12 V58 a90 14 0 0 0 180 0 V12" fill="none" stroke="#6AA0FF" stroke-width="2.5"/></g></g>
+          <g id="s5b1" class="hideg"><rect x="640" y="70" width="900" height="90" rx="16" fill="var(--panel)" stroke="var(--hair)"/><circle cx="690" cy="115" r="22" fill="none" stroke="#3B7BFF" stroke-width="3"/><path d="M681 115 l7 7 l12 -14" fill="none" stroke="#3B7BFF" stroke-width="3"/><text class="ttl" x="740" y="125" font-size="36">Runs the business logic</text></g>
+          <g id="s5b2" class="hideg"><rect x="640" y="180" width="900" height="90" rx="16" fill="var(--panel)" stroke="var(--hair)"/><circle cx="690" cy="225" r="22" fill="none" stroke="#3B7BFF" stroke-width="3"/><path d="M681 225 l7 7 l12 -14" fill="none" stroke="#3B7BFF" stroke-width="3"/><text class="ttl" x="740" y="235" font-size="36">Enforces the rules</text></g>
+          <g id="s5b3" class="hideg"><rect x="640" y="290" width="900" height="90" rx="16" fill="var(--accent-soft)" stroke="rgba(59,123,255,.4)"/><circle cx="690" cy="335" r="22" fill="none" stroke="#3B7BFF" stroke-width="3"/><path d="M681 335 l7 7 l12 -14" fill="none" stroke="#3B7BFF" stroke-width="3"/><text class="ttl" x="740" y="345" font-size="36">Owns the data — the database</text></g>
+        </svg>
+      </div>
+
+      <!-- 6. WHERE DATA LIVES -->
+      <div class="scene" id="s6" data-name="6 · Where data lives" data-start="190" data-duration="40" data-track-index="0">
+        <div class="kick" id="s6k">where does the data live?</div>
+        <h1 id="s6t" style="font-size:76px;">The database is <span class="ac">always</span> server-side.</h1>
+        <svg width="1620" height="500" viewBox="0 0 1620 500" style="overflow:visible; align-self:center; margin-top:14px;">
+          <g id="s6cli"><rect x="40" y="80" width="520" height="340" rx="22" fill="url(#gcli)" stroke="var(--hair)" stroke-width="2"/><text class="code" x="80" y="140" font-size="22">CLIENT HOLDS</text><rect x="80" y="170" width="440" height="200" rx="14" fill="#0B1322" stroke="rgba(106,160,255,.4)" stroke-dasharray="8 8"/><text class="ttl" x="300" y="265" font-size="34" text-anchor="middle">a temporary copy</text><text class="cap" x="300" y="305" font-size="24" text-anchor="middle">just what's on screen now</text></g>
+          <g id="s6arrow" class="hideg"><path d="M580 250 H760" class="edge live" style="opacity:1"/><text x="670" y="232" font-size="22" text-anchor="middle" fill="#6AA0FF">refresh →</text></g>
+          <g id="s6srv"><rect x="780" y="80" width="800" height="340" rx="22" fill="url(#gsrv)" stroke="rgba(59,123,255,.45)" stroke-width="2"/><text class="code" x="820" y="140" font-size="22" fill="#3B7BFF">SERVER OWNS</text>
+            <g transform="translate(900,180)"><ellipse cx="120" cy="18" rx="120" ry="22" fill="none" stroke="#6AA0FF" stroke-width="3"/><path d="M0 18 V150 a120 22 0 0 0 240 0 V18" fill="none" stroke="#6AA0FF" stroke-width="3"/><path d="M0 84 a120 22 0 0 0 240 0" fill="none" stroke="#6AA0FF" stroke-width="3"/></g>
+            <text class="ttl" x="1180" y="250" font-size="34">the real, permanent data</text><text class="cap" x="1180" y="290" font-size="24">the single source of truth</text></g>
+        </svg>
+        <div class="sub" id="s6note" style="font-size:33px; margin-top:14px; opacity:0; align-self:center;">Your phone is a <span class="ac">window</span> onto the data — not where it's kept.</div>
+      </div>
+
+      <!-- 7. NEVER TRUST THE CLIENT -->
+      <div class="scene" id="s7" data-name="7 · Never trust the client" data-start="230" data-duration="45" data-track-index="0">
+        <div class="kick" id="s7k">the golden rule of system design</div>
+        <h1 id="s7t" style="font-size:90px;">Never trust the <span class="sp">client.</span></h1>
+        <svg width="1500" height="320" viewBox="0 0 1500 320" style="overflow:visible; align-self:center; margin-top:28px;">
+          <g id="s7cli"><rect x="20" y="90" width="420" height="150" rx="18" fill="var(--panel)" stroke="rgba(255,107,107,.55)" stroke-width="2.5"/><use href="#i-phone" x="56" y="130" width="56" height="56"/><text class="cap" x="150" y="150" font-size="26" fill="#FF6B6B">hacked app says</text><text x="150" y="200" font-size="40" fill="#FF6B6B" font-family="JetBrains Mono">pay Rs 1</text><line id="s7strike" x1="150" y1="186" x2="320" y2="186" stroke="#FF6B6B" stroke-width="4" class="hideg"/></g>
+          <path class="edge live" id="s7e" d="M440 165 H620"/>
+          <g id="s7srv"><rect class="nboxlive" x="620" y="80" width="380" height="170" rx="18"/><circle cx="710" cy="150" r="34" fill="none" stroke="#3B7BFF" stroke-width="4"/><path d="M710 122 l24 12 v22 c0 18 -12 28 -24 34 c-12 -6 -24 -16 -24 -34 v-22 Z" fill="rgba(59,123,255,.18)" stroke="#3B7BFF" stroke-width="2.5"/><text class="code" x="800" y="150" font-size="22">SERVER</text><text class="ttl" x="800" y="196" font-size="28">re-checks everything</text></g>
+          <g id="s7v" class="hideg"><rect x="1040" y="80" width="320" height="170" rx="18" fill="rgba(52,211,153,.12)" stroke="#34D399" stroke-width="2.5"/><path d="M1120 165 l22 22 l44 -52" fill="none" stroke="#34D399" stroke-width="6" stroke-linecap="round"/><text x="1200" y="225" font-size="34" text-anchor="middle" fill="#34D399" font-family="JetBrains Mono">Rs 299</text></g>
+        </svg>
+        <div class="sub" id="s7note" style="font-size:33px; margin-top:22px; opacity:0; align-self:center;">Anyone can edit their own device. The server has the final say — every time.</div>
+      </div>
+
+      <!-- 8. THE API (fan-in · HERO) -->
+      <div class="scene" id="s8" data-name="8 · The API (waiter)" data-start="275" data-duration="45" data-track-index="0">
+        <div class="kick" id="s8k">the api · the waiter</div>
+        <h1 id="s8t" style="font-size:82px;">One kitchen. <span class="ac">Many dining rooms.</span></h1>
+        <svg width="1560" height="380" viewBox="0 0 1560 380" style="overflow:visible; align-self:center; margin-top:22px;">
+          <g id="s8c1"><rect class="nbox" x="20" y="30" width="280" height="80" rx="14"/><use href="#i-phone" x="44" y="48" width="44" height="44"/><text class="ttl" x="180" y="86" font-size="28" text-anchor="middle">iOS app</text></g>
+          <g id="s8c2"><rect class="nbox" x="20" y="150" width="280" height="80" rx="14"/><use href="#i-phone" x="44" y="168" width="44" height="44"/><text class="ttl" x="180" y="206" font-size="28" text-anchor="middle">Android app</text></g>
+          <g id="s8c3"><rect class="nbox" x="20" y="270" width="280" height="80" rx="14"/><use href="#i-globe" x="44" y="288" width="44" height="44"/><text class="ttl" x="180" y="326" font-size="28" text-anchor="middle">website</text></g>
+          <path class="edge live" id="s8e1" d="M300 70 C 440 70, 480 190, 640 190"/><path class="edge live" id="s8e2" d="M300 190 H640"/><path class="edge live" id="s8e3" d="M300 310 C 440 310, 480 190, 640 190"/>
+          <g id="s8gate"><rect x="640" y="120" width="240" height="140" rx="18" fill="var(--accent-soft)" stroke="#3B7BFF" stroke-width="2.5"/><text class="code" x="760" y="180" font-size="30" text-anchor="middle">API</text><text class="cap" x="760" y="218" font-size="24" text-anchor="middle">the waiter</text></g>
+          <path class="edge live" id="s8e4" d="M880 190 H1040"/>
+          <g id="s8srv"><rect class="nboxlive" x="1040" y="110" width="500" height="160" rx="16"/><rect x="1070" y="140" width="220" height="44" rx="8" fill="none" stroke="#6AA0FF" stroke-width="2"/><circle cx="1092" cy="162" r="6" fill="#34D399"/><rect x="1070" y="196" width="220" height="44" rx="8" fill="none" stroke="#6AA0FF" stroke-width="2"/><circle cx="1092" cy="218" r="6" fill="#34D399"/><text class="ttl" x="1420" y="200" font-size="32" text-anchor="middle">one backend</text></g>
+          <circle class="pkt" id="s8p1" r="9" fill="#6AA0FF" cx="320" cy="70"/><circle class="pkt" id="s8p2" r="9" fill="#6AA0FF" cx="320" cy="190"/><circle class="pkt" id="s8p3" r="9" fill="#6AA0FF" cx="320" cy="310"/>
+        </svg>
+        <div class="sub" id="s8note" style="font-size:31px; margin-top:18px; opacity:0; align-self:center;">Split it for <span class="ac">security</span> (rules in one place), <span class="ac">reuse</span> (many apps, one backend) and <span class="ac">scale.</span></div>
+      </div>
+
+      <!-- 9. CSR vs SSR (timeline data-viz · HERO) -->
+      <div class="scene" id="s9" data-name="9 · CSR vs SSR" data-start="320" data-duration="50" data-track-index="0">
+        <div class="kick" id="s9k">who draws the screen?</div>
+        <h1 id="s9t" style="font-size:72px;">Speed to first view: <span class="ac">SSR vs CSR.</span></h1>
+        <svg width="1640" height="520" viewBox="0 0 1640 520" style="overflow:visible; align-self:center; margin-top:18px;">
+          <text class="cap" x="420" y="34" font-size="24">time until you see the page →</text>
+          <line x1="420" y1="54" x2="1600" y2="54" stroke="var(--hair)" stroke-width="2"/>
+          <g id="s9ssr"><text class="code" x="0" y="150" font-size="26" fill="#34D399">SSR</text><text class="cap" x="0" y="184" font-size="20">server builds it</text>
+            <rect x="170" y="100" width="110" height="190" rx="14" fill="#0B1322" stroke="#34D399" stroke-width="3"/><rect x="186" y="120" width="78" height="12" rx="4" fill="rgba(52,211,153,.5)"/><rect x="186" y="142" width="78" height="40" rx="6" fill="rgba(52,211,153,.28)"/><rect x="186" y="192" width="58" height="10" rx="3" fill="rgba(183,194,214,.4)"/>
+            <rect id="s9ssrbar" x="420" y="112" width="230" height="40" rx="20" fill="#34D399" opacity="0.92"/><text x="535" y="139" font-size="22" text-anchor="middle" fill="#0F1729" font-family="Inter" font-weight="700">page ready</text><text class="cap" x="680" y="139" font-size="23" fill="#34D399">fast first view · great for search</text></g>
+          <g id="s9csr"><text class="code" x="0" y="380" font-size="26" fill="#6AA0FF">CSR</text><text class="cap" x="0" y="414" font-size="20">browser builds it</text>
+            <rect x="170" y="330" width="110" height="190" rx="14" fill="#0B1322" stroke="#6AA0FF" stroke-width="3"/><circle id="s9spin" cx="225" cy="425" r="20" fill="none" stroke="rgba(106,160,255,.6)" stroke-width="4" stroke-dasharray="64 28"/>
+            <rect x="420" y="342" width="280" height="40" rx="20" fill="rgba(123,138,165,.25)"/><text x="560" y="369" font-size="20" text-anchor="middle" fill="#B7C2D6">blank · loading JS…</text>
+            <rect id="s9csrbar" x="710" y="342" width="220" height="40" rx="20" fill="#6AA0FF" opacity="0.92"/><text x="820" y="369" font-size="22" text-anchor="middle" fill="#0F1729" font-family="Inter" font-weight="700">page fills in</text><text class="cap" x="960" y="369" font-size="23" fill="#6AA0FF">slower start · smooth after</text></g>
+        </svg>
+        <div class="sub it" id="s9note" style="font-family:'Fraunces'; font-size:34px; margin-top:6px; opacity:0; align-self:center;">Most big apps do <span class="ac" style="font-style:normal;">both.</span> A trade-off, not a winner.</div>
+      </div>
+
+      <!-- 10. ADDRESS PROBLEM (haystack) -->
+      <div class="scene" id="s10" data-name="10 · The address problem" data-start="370" data-duration="35" data-track-index="0">
+        <div class="kick" id="s10k">now: how does your phone find swiggy?</div>
+        <h1 id="s10t" style="font-size:74px;">Billions of computers. You know <span class="ac">one name.</span></h1>
+        <svg width="1500" height="420" viewBox="0 0 1500 420" style="overflow:visible; align-self:center; margin-top:14px;">
+          <g id="s10sea" fill="rgba(123,138,165,.32)">
+            <g id="s10dots">
+              <circle cx="60" cy="40" r="6"/><circle cx="180" cy="40" r="6"/><circle cx="300" cy="40" r="6"/><circle cx="420" cy="40" r="6"/><circle cx="560" cy="40" r="6"/><circle cx="940" cy="40" r="6"/><circle cx="1080" cy="40" r="6"/><circle cx="1200" cy="40" r="6"/><circle cx="1320" cy="40" r="6"/><circle cx="1440" cy="40" r="6"/>
+              <circle cx="60" cy="130" r="6"/><circle cx="180" cy="130" r="6"/><circle cx="320" cy="130" r="6"/><circle cx="460" cy="130" r="6"/><circle cx="1040" cy="130" r="6"/><circle cx="1200" cy="130" r="6"/><circle cx="1340" cy="130" r="6"/><circle cx="1440" cy="130" r="6"/>
+              <circle cx="60" cy="210" r="6"/><circle cx="200" cy="210" r="6"/><circle cx="340" cy="210" r="6"/><circle cx="1160" cy="210" r="6"/><circle cx="1300" cy="210" r="6"/><circle cx="1440" cy="210" r="6"/>
+              <circle cx="60" cy="290" r="6"/><circle cx="180" cy="290" r="6"/><circle cx="320" cy="290" r="6"/><circle cx="460" cy="290" r="6"/><circle cx="1040" cy="290" r="6"/><circle cx="1200" cy="290" r="6"/><circle cx="1340" cy="290" r="6"/><circle cx="1440" cy="290" r="6"/>
+              <circle cx="80" cy="372" r="6"/><circle cx="220" cy="372" r="6"/><circle cx="360" cy="372" r="6"/><circle cx="520" cy="372" r="6"/><circle cx="680" cy="372" r="6"/><circle cx="840" cy="372" r="6"/><circle cx="980" cy="372" r="6"/><circle cx="1120" cy="372" r="6"/><circle cx="1280" cy="372" r="6"/><circle cx="1420" cy="372" r="6"/>
+            </g>
+          </g>
+          <g id="s10target"><circle cx="750" cy="210" r="46" fill="rgba(59,123,255,.18)" stroke="#3B7BFF" stroke-width="3"/><use href="#i-globe" x="726" y="186" width="48" height="48"/></g>
+          <g id="s10flip" class="hideg"><rect x="540" y="320" width="420" height="74" rx="16" fill="var(--panel)" stroke="var(--hair)"/><text x="750" y="367" font-size="34" text-anchor="middle" font-family="JetBrains Mono"><tspan fill="#E6ECF5">swiggy.com</tspan><tspan fill="#3B7BFF"> → </tspan><tspan fill="#7B8AA5">?</tspan></text></g>
+        </svg>
+        <div class="sub" id="s10note" style="font-size:33px; margin-top:10px; opacity:0; align-self:center;">A name is easy to remember. The network only moves data to <span class="ac">numbers.</span></div>
+      </div>
+
+      <!-- 11. IP ADDRESS (contact card) -->
+      <div class="scene" id="s11" data-name="11 · IP address" data-start="405" data-duration="40" data-track-index="0">
+        <div class="kick" id="s11k">every server has a number</div>
+        <h1 id="s11t" style="font-size:80px;">Meet the <span class="ac">IP address.</span></h1>
+        <svg width="1200" height="360" viewBox="0 0 1200 360" style="overflow:visible; align-self:center; margin-top:24px;">
+          <g id="s11card"><rect x="300" y="40" width="600" height="280" rx="24" fill="url(#gcli)" stroke="rgba(59,123,255,.45)" stroke-width="2"/><text class="cap" x="350" y="100" font-size="24">CONTACT</text>
+            <use href="#i-globe" x="350" y="130" width="70" height="70"/><text class="ttl" x="450" y="160" font-size="40">swiggy.com</text><text class="cap" x="450" y="200" font-size="24">the name you remember</text>
+            <line x1="350" y1="232" x2="850" y2="232" stroke="var(--hair)"/><text class="cap" x="350" y="276" font-size="22">number</text><text x="490" y="280" font-size="40" fill="#6AA0FF" font-family="JetBrains Mono">142.250.193.4</text></g>
+        </svg>
+        <div class="sub" id="s11note" style="font-size:32px; margin-top:24px; opacity:0; align-self:center;">It's the server's <span class="ac">phone number.</span> (This is IPv4; newer IPv6 ones are far longer.)</div>
+      </div>
+
+      <!-- 12. DNS = PHONEBOOK (contacts list) -->
+      <div class="scene" id="s12" data-name="12 · DNS = phonebook" data-start="445" data-duration="45" data-track-index="0">
+        <div class="kick" id="s12k">names in, numbers out</div>
+        <h1 id="s12t" style="font-size:82px;">DNS is the internet's <span class="ac">phonebook.</span></h1>
+        <svg width="1200" height="420" viewBox="0 0 1200 420" style="overflow:visible; align-self:center; margin-top:16px;">
+          <rect x="250" y="20" width="700" height="380" rx="22" fill="var(--panel)" stroke="var(--hair)" stroke-width="2"/><text class="code" x="290" y="74" font-size="24">DNS · CONTACTS</text>
+          <g id="s12r1"><line x1="290" y1="100" x2="910" y2="100" stroke="var(--hair)"/><text class="ttl" x="290" y="146" font-size="30">zomato.com</text><text x="910" y="146" font-size="28" text-anchor="end" fill="#7B8AA5" font-family="JetBrains Mono">… . …</text></g>
+          <g id="s12r2"><rect x="266" y="170" width="668" height="70" rx="12" fill="var(--accent-soft)" stroke="rgba(59,123,255,.4)"/><text class="ttl" x="290" y="214" font-size="32" fill="#fff">swiggy.com</text><text x="910" y="214" font-size="30" text-anchor="end" fill="#6AA0FF" font-family="JetBrains Mono">142.250.193.4</text></g>
+          <g id="s12r3"><line x1="290" y1="270" x2="910" y2="270" stroke="var(--hair)"/><text class="ttl" x="290" y="316" font-size="30">irctc.co.in</text><text x="910" y="316" font-size="28" text-anchor="end" fill="#7B8AA5" font-family="JetBrains Mono">… . …</text></g>
+        </svg>
+        <div class="sub" id="s12sub" style="font-size:33px; margin-top:14px; opacity:0; align-self:center;">You remember the <span class="ac">name.</span> DNS remembers the <span class="ac">number.</span></div>
+      </div>
+
+      <!-- 13. DNS RELAY (HERO) -->
+      <div class="scene" id="s13" data-name="13 · The DNS relay ★" data-start="490" data-duration="60" data-track-index="0">
+        <div class="kick" id="s13k">// the dns lookup</div>
+        <h1 id="s13t" style="font-size:68px;">Finding the number is a <span class="ac">relay race.</span></h1>
+        <svg width="1740" height="540" viewBox="0 0 1740 540" style="overflow:visible; align-self:center; margin-top:14px;">
+          <path d="M150 210 H1590" stroke="rgba(123,138,165,.22)" stroke-width="3" stroke-dasharray="2 14" stroke-linecap="round"/>
+          <path id="s13prog" d="M150 210 H150" stroke="#3B7BFF" stroke-width="4" opacity="0.7"/>
+          <g id="s13n1" class="hideg"><circle id="s13r1" cx="160" cy="130" r="58" fill="none" stroke="#3B7BFF" stroke-width="3" opacity="0"/><circle cx="160" cy="130" r="52" fill="#16223C" stroke="#6AA0FF" stroke-width="3"/><use href="#i-phone" x="138" y="108" width="44" height="44"/><circle cx="198" cy="94" r="16" fill="#3B7BFF"/><text x="198" y="100" font-size="18" text-anchor="middle" fill="#fff">1</text><text class="ttl" x="160" y="300" font-size="24" text-anchor="middle">your device</text></g>
+          <g id="s13n2" class="hideg"><circle id="s13r2" cx="480" cy="130" r="58" fill="none" stroke="#3B7BFF" stroke-width="3" opacity="0"/><circle cx="480" cy="130" r="52" fill="#16223C" stroke="#6AA0FF" stroke-width="3"/><use href="#i-mag" x="458" y="108" width="44" height="44"/><circle cx="518" cy="94" r="16" fill="#3B7BFF"/><text x="518" y="100" font-size="18" text-anchor="middle" fill="#fff">2</text><text class="ttl" x="480" y="300" font-size="24" text-anchor="middle">resolver</text></g>
+          <g id="s13n3" class="hideg"><circle id="s13r3" cx="800" cy="130" r="58" fill="none" stroke="#3B7BFF" stroke-width="3" opacity="0"/><circle cx="800" cy="130" r="52" fill="#16223C" stroke="#6AA0FF" stroke-width="3"/><use href="#i-globe" x="778" y="108" width="44" height="44"/><circle cx="838" cy="94" r="16" fill="#3B7BFF"/><text x="838" y="100" font-size="18" text-anchor="middle" fill="#fff">3</text><text class="ttl" x="800" y="300" font-size="24" text-anchor="middle">root</text></g>
+          <g id="s13n4" class="hideg"><circle id="s13r4" cx="1120" cy="130" r="58" fill="none" stroke="#3B7BFF" stroke-width="3" opacity="0"/><circle cx="1120" cy="130" r="52" fill="#16223C" stroke="#6AA0FF" stroke-width="3"/><use href="#i-tag" x="1098" y="108" width="44" height="44"/><circle cx="1158" cy="94" r="16" fill="#3B7BFF"/><text x="1158" y="100" font-size="18" text-anchor="middle" fill="#fff">4</text><text class="ttl" x="1120" y="300" font-size="24" text-anchor="middle">.com (TLD)</text></g>
+          <g id="s13n5" class="hideg"><circle id="s13r5" cx="1480" cy="130" r="62" fill="none" stroke="#34D399" stroke-width="3" opacity="0"/><circle cx="1480" cy="130" r="54" fill="#16223C" stroke="#34D399" stroke-width="3"/><use href="#i-key" x="1456" y="106" width="48" height="48"/><circle cx="1520" cy="92" r="16" fill="#34D399"/><text x="1520" y="98" font-size="18" text-anchor="middle" fill="#0F1729">5</text><text class="ttl" x="1480" y="300" font-size="24" text-anchor="middle" fill="#34D399">authoritative</text></g>
+          <g id="s13b3" class="hideg"><rect x="722" y="36" width="156" height="42" rx="13" fill="#1B2A47" stroke="#6AA0FF" stroke-width="1.5"/><text x="800" y="63" font-size="19" text-anchor="middle" fill="#6AA0FF">ask .com →</text></g>
+          <g id="s13b4" class="hideg"><rect x="1042" y="36" width="156" height="42" rx="13" fill="#1B2A47" stroke="#6AA0FF" stroke-width="1.5"/><text x="1120" y="63" font-size="19" text-anchor="middle" fill="#6AA0FF">ask them →</text></g>
+          <circle id="s13halo" cx="160" cy="210" r="18" fill="#6AA0FF" opacity="0" filter="url(#soft)"/><circle class="pkt" id="s13baton" cx="160" cy="210" r="12" fill="#6AA0FF"/>
+          <g id="s13res" class="hideg"><rect x="560" y="400" width="620" height="110" rx="18" fill="rgba(106,160,255,.12)" stroke="#6AA0FF" stroke-width="2"/><use href="#i-flag" x="596" y="424" width="56" height="56"/><text class="ttl" x="680" y="448" font-size="24" fill="#6AA0FF">the answer races back ↩</text><text x="680" y="490" font-size="36" fill="#6AA0FF" font-family="JetBrains Mono">142.250.193.4</text></g>
+        </svg>
+        <div class="sub" id="s13sub" style="font-size:31px; margin-top:6px; opacity:0; align-self:center;">Root &amp; TLD don't know the address — they just say <span class="ac">"ask them next."</span></div>
+      </div>
+
+      <!-- 14. CACHE + TTL (gauge) -->
+      <div class="scene" id="s14" data-name="14 · DNS cache + TTL" data-start="550" data-duration="45" data-track-index="0">
+        <div class="kick" id="s14k">look it up once, remember it</div>
+        <h1 id="s14t" style="font-size:74px;">The second visit is <span class="ac">instant.</span></h1>
+        <svg width="1560" height="420" viewBox="0 0 1560 420" style="overflow:visible; align-self:center; margin-top:18px;">
+          <g id="s14cache"><rect x="20" y="60" width="720" height="300" rx="22" fill="url(#gcli)" stroke="rgba(52,211,153,.4)" stroke-width="2"/><text class="code" x="64" y="120" font-size="22" fill="#34D399">CACHED</text>
+            <circle cx="140" cy="220" r="46" fill="none" stroke="#34D399" stroke-width="4"/><path d="M122 220 l14 14 l24 -30" fill="none" stroke="#34D399" stroke-width="5" stroke-linecap="round"/>
+            <text class="ttl" x="230" y="210" font-size="34">device remembers</text><text class="cap" x="230" y="252" font-size="24">the number — no relay race next time</text></g>
+          <g id="s14ttl"><rect x="780" y="60" width="760" height="300" rx="22" fill="url(#gsrv)" stroke="rgba(59,123,255,.4)" stroke-width="2"/><text class="code" x="824" y="120" font-size="22" fill="#3B7BFF">TTL · THE TRADE-OFF</text>
+            <circle cx="920" cy="230" r="58" fill="none" stroke="var(--hair)" stroke-width="10"/><path id="s14arc" d="M920 172 A58 58 0 1 1 880 248" fill="none" stroke="#3B7BFF" stroke-width="10" stroke-linecap="round"/>
+            <text class="ttl" x="1030" y="200" font-size="30">Fast vs fresh</text><text class="cap" x="1030" y="244" font-size="23">long = fewer trips, slow to update.</text><text class="cap" x="1030" y="278" font-size="23">short = always fresh, more trips.</text></g>
+        </svg>
+        <div class="sub" id="s14note" style="font-size:32px; margin-top:10px; opacity:0; align-self:center;">A myth to drop: DNS only <span class="ac">finds the address.</span> It never loads the page itself.</div>
+      </div>
+
+      <!-- 15. HTTP INTRO (request/response · HERO) -->
+      <div class="scene" id="s15" data-name="15 · HTTP = shared language" data-start="595" data-duration="40" data-track-index="0">
+        <div class="kick" id="s15k">now they can talk</div>
+        <h1 id="s15t" style="font-size:78px;">HTTP is the <span class="ac">shared language.</span></h1>
+        <svg width="1500" height="340" viewBox="0 0 1500 340" style="overflow:visible; align-self:center; margin-top:14px;">
+          <g id="s15cli"><rect class="nbox" x="20" y="90" width="320" height="160" rx="18"/><use href="#i-phone" x="58" y="130" width="60" height="60"/><text class="ttl" x="200" y="180" font-size="32">client</text></g>
+          <g id="s15srv"><rect class="nboxlive" x="1160" y="90" width="320" height="160" rx="18"/><rect x="1190" y="120" width="120" height="34" rx="6" fill="none" stroke="#6AA0FF" stroke-width="2"/><circle cx="1208" cy="137" r="5" fill="#34D399"/><text class="ttl" x="1380" y="180" font-size="32" text-anchor="middle">server</text></g>
+          <path class="edge live" id="s15req" d="M340 140 H1160"/><g id="s15reqp" class="hideg"><rect x="650" y="116" width="200" height="44" rx="22" fill="#3B7BFF"/><text x="750" y="145" font-size="20" text-anchor="middle" fill="#fff" font-family="JetBrains Mono">GET /restaurants</text></g>
+          <path class="edge resp" id="s15res" d="M1160 210 H340"/><g id="s15resp" class="hideg"><rect x="690" y="188" width="120" height="44" rx="22" fill="#34D399"/><text x="750" y="217" font-size="20" text-anchor="middle" fill="#0F1729" font-family="JetBrains Mono">200 OK</text></g>
+        </svg>
+        <div class="sub" id="s15note" style="font-size:32px; margin-top:14px; opacity:0; align-self:center;">One ask, one answer — then it <span class="ac">forgets</span> you. (That matters in a minute.)</div>
+      </div>
+
+      <!-- 16. REQUEST ANATOMY (envelope) -->
+      <div class="scene" id="s16" data-name="16 · Anatomy of a request" data-start="635" data-duration="45" data-track-index="0">
+        <div class="kick" id="s16k">anatomy of a request</div>
+        <h1 id="s16t" style="font-size:76px;">What's actually <span class="ac">in</span> a request?</h1>
+        <svg width="1620" height="440" viewBox="0 0 1620 440" style="overflow:visible; align-self:center; margin-top:14px;">
+          <g id="s16env"><rect x="20" y="40" width="780" height="360" rx="18" fill="var(--panel)" stroke="#6AA0FF" stroke-width="2.5"/>
+            <g id="s16e1"><rect x="20" y="40" width="780" height="90" rx="18" fill="rgba(59,123,255,.12)"/><text class="cap" x="56" y="78" font-size="20">METHOD</text><text x="56" y="116" font-size="38" fill="#3B7BFF" font-family="JetBrains Mono">GET</text></g>
+            <g id="s16e2"><line x1="20" y1="130" x2="800" y2="130" stroke="var(--hair)"/><text class="cap" x="56" y="166" font-size="20">PATH</text><text x="56" y="204" font-size="34" fill="#E6ECF5" font-family="JetBrains Mono">/restaurants</text></g>
+            <g id="s16e3"><line x1="20" y1="220" x2="800" y2="220" stroke="var(--hair)"/><text class="cap" x="56" y="256" font-size="20">HEADERS</text><text x="56" y="294" font-size="28" fill="#B7C2D6" font-family="JetBrains Mono">who you are · what format</text></g>
+            <g id="s16e4"><line x1="20" y1="310" x2="800" y2="310" stroke="var(--hair)"/><text class="cap" x="56" y="346" font-size="20">BODY</text><text x="56" y="384" font-size="28" fill="#7B8AA5" font-family="JetBrains Mono">(data you send up)</text></g></g>
+          <g id="s16url" class="hideg"><text class="cap" x="900" y="150" font-size="26">the URL packs the address:</text>
+            <rect x="900" y="178" width="680" height="64" rx="12" fill="#0B1322" stroke="var(--hair)"/><text x="922" y="218" font-size="24" font-family="JetBrains Mono"><tspan fill="#34D399">https</tspan><tspan fill="#7B8AA5">://</tspan><tspan fill="#6AA0FF">swiggy.com</tspan><tspan fill="#E6ECF5">/restaurants</tspan><tspan fill="#F5B544">?city=hyderabad</tspan></text>
+            <text class="cap" x="922" y="288" font-size="22" fill="#34D399">scheme</text><text class="cap" x="1080" y="288" font-size="22" fill="#6AA0FF">host</text><text class="cap" x="1280" y="288" font-size="22" fill="#E6ECF5">path</text><text class="cap" x="1440" y="288" font-size="22" fill="#F5B544">query</text></g>
+        </svg>
+      </div>
+
+      <!-- 17. GET vs POST (two lanes · HERO) -->
+      <div class="scene" id="s17" data-name="17 · GET vs POST" data-start="680" data-duration="50" data-track-index="0">
+        <div class="kick" id="s17k">two everyday verbs</div>
+        <h1 id="s17t" style="font-size:80px;"><span class="ac">GET</span> reads. <span class="ac">POST</span> writes.</h1>
+        <svg width="1620" height="440" viewBox="0 0 1620 440" style="overflow:visible; align-self:center; margin-top:14px;">
+          <g id="s17get"><rect x="20" y="20" width="780" height="400" rx="22" fill="url(#gcli)" stroke="rgba(59,123,255,.4)" stroke-width="2"/><use href="#i-eye" x="56" y="56" width="72" height="72"/><text x="150" y="86" font-size="34" fill="#6AA0FF" font-family="JetBrains Mono">GET</text><text class="cap" x="150" y="120" font-size="24">/restaurants</text>
+            <text class="ttl" x="56" y="210" font-size="40">Browse the menu</text><text class="cap" x="56" y="262" font-size="26">just looks · changes nothing</text><text class="cap" x="56" y="302" font-size="26">safe to repeat · rides in the URL</text>
+            <rect x="56" y="338" width="690" height="56" rx="12" fill="#0B1322"/><text x="80" y="374" font-size="24" fill="#6AA0FF" font-family="JetBrains Mono">/restaurants?city=hyderabad</text></g>
+          <g id="s17post"><rect x="820" y="20" width="780" height="400" rx="22" fill="var(--panel)" stroke="var(--hair)" stroke-width="2"/><use href="#i-pen" x="856" y="56" width="72" height="72"/><text x="950" y="86" font-size="34" fill="#6AA0FF" font-family="JetBrains Mono">POST</text><text class="cap" x="950" y="120" font-size="24">/order</text>
+            <text class="ttl" x="856" y="210" font-size="40">Place the order</text><text class="cap" x="856" y="262" font-size="26">changes things on the server</text><text class="cap" x="856" y="302" font-size="26">data rides in the body, not the URL</text>
+            <rect x="856" y="338" width="690" height="56" rx="12" fill="#0B1322"/><text x="880" y="374" font-size="22" fill="#34D399" font-family="JetBrains Mono">{ items:[...], address:... }</text></g>
+        </svg>
+        <div class="sub" id="s17warn" style="font-size:32px; margin-top:8px; opacity:0; align-self:center;"><span class="sp">⚠</span> Send a POST twice → <span class="sp">two orders.</span> (We fix that in a later episode.)</div>
+      </div>
+
+      <!-- 18. HEADERS & COOKIES -->
+      <div class="scene" id="s18" data-name="18 · Headers & cookies" data-start="730" data-duration="45" data-track-index="0">
+        <div class="kick" id="s18k">how it remembers you (HTTP forgets!)</div>
+        <h1 id="s18t" style="font-size:78px;">The cookie is your <span class="ac">ID badge.</span></h1>
+        <svg width="1640" height="360" viewBox="0 0 1640 360" style="overflow:visible; align-self:center; margin-top:18px;">
+          <g id="s18a"><rect class="nbox" x="20" y="120" width="300" height="120" rx="16"/><use href="#i-phone" x="50" y="150" width="50" height="50"/><text class="ttl" x="190" y="170" font-size="28">you log in</text><text class="cap" x="190" y="206" font-size="22">POST /login</text></g>
+          <path class="edge live" id="s18e1" d="M320 180 H460"/>
+          <g id="s18b"><rect x="460" y="100" width="420" height="160" rx="16" fill="var(--accent-soft)" stroke="rgba(59,123,255,.45)"/><use href="#i-cookie" x="496" y="150" width="60" height="60"/><text class="cap" x="580" y="160" font-size="22" fill="#3B7BFF">server replies</text><text x="580" y="206" font-size="26" fill="#E6ECF5" font-family="JetBrains Mono">Set-Cookie: abc</text></g>
+          <path class="edge live" id="s18e2" d="M880 180 H1020"/>
+          <g id="s18c"><rect class="nbox" x="1020" y="100" width="420" height="160" rx="16"/><text class="cap" x="1056" y="156" font-size="22">every request carries</text><text x="1056" y="208" font-size="26" fill="#6AA0FF" font-family="JetBrains Mono">Cookie: abc</text></g>
+          <g id="s18d" class="hideg"><circle cx="1530" cy="180" r="50" fill="rgba(52,211,153,.14)" stroke="#34D399" stroke-width="3"/><path d="M1508 180 l14 14 l24 -30" fill="none" stroke="#34D399" stroke-width="6" stroke-linecap="round"/></g>
+        </svg>
+        <div class="sub" id="s18note" style="font-size:32px; margin-top:14px; opacity:0; align-self:center;">Headers are labels on every request. The login cookie says <span class="ac">"it's me again."</span></div>
+      </div>
+
+      <!-- 19. STATUS CODES (traffic light) -->
+      <div class="scene" id="s19" data-name="19 · Status codes" data-start="775" data-duration="45" data-track-index="0">
+        <div class="kick" id="s19k">how it went</div>
+        <h1 id="s19t" style="font-size:76px;">Every answer comes with a <span class="ac">code.</span></h1>
+        <svg width="1560" height="440" viewBox="0 0 1560 440" style="overflow:visible; align-self:center; margin-top:14px;">
+          <g id="s19light"><rect x="40" y="20" width="170" height="400" rx="30" fill="#0B1322" stroke="var(--hair)" stroke-width="2"/><circle id="s19g" cx="125" cy="110" r="52" fill="#34D399"/><circle id="s19y" cx="125" cy="230" r="52" fill="#1B2A47"/><circle id="s19rd" cx="125" cy="350" r="52" fill="#1B2A47"/></g>
+          <g id="s19c1"><rect x="280" y="20" width="1240" height="86" rx="14" fill="var(--panel)" stroke="var(--hair)" stroke-width="1.5" style="stroke:#34D399;"/><circle cx="340" cy="63" r="26" fill="rgba(52,211,153,.16)"/><path d="M328 63 l8 8 l16 -18" fill="none" stroke="#34D399" stroke-width="4" stroke-linecap="round"/><text x="400" y="76" font-size="40" fill="#34D399" font-family="JetBrains Mono">200</text><text class="ttl" x="560" y="74" font-size="32">OK — here's what you asked for</text></g>
+          <g id="s19c2"><rect x="280" y="126" width="1240" height="86" rx="14" fill="var(--panel)" stroke="#6AA0FF" stroke-width="1.5"/><circle cx="340" cy="169" r="26" fill="rgba(106,160,255,.16)"/><path d="M330 162 h14 v-6 l10 13 l-10 13 v-6 h-14 z" fill="#6AA0FF"/><text x="400" y="182" font-size="40" fill="#6AA0FF" font-family="JetBrains Mono">301</text><text class="ttl" x="560" y="180" font-size="32">Moved — follow the arrow</text></g>
+          <g id="s19c3"><rect x="280" y="232" width="1240" height="86" rx="14" fill="var(--panel)" stroke="var(--hair)" stroke-width="1.5"/><circle cx="340" cy="275" r="26" fill="rgba(123,138,165,.16)"/><path d="M330 265 l20 20 M350 265 l-20 20" stroke="#B7C2D6" stroke-width="4" stroke-linecap="round"/><text x="400" y="288" font-size="40" fill="#E6ECF5" font-family="JetBrains Mono">404</text><text class="ttl" x="560" y="286" font-size="32">Not found — your side</text></g>
+          <g id="s19c4"><rect x="280" y="338" width="1240" height="86" rx="14" fill="var(--panel)" stroke="#FF6B6B" stroke-width="1.5"/><circle cx="340" cy="381" r="26" fill="rgba(255,107,107,.16)"/><text x="340" y="394" font-size="34" text-anchor="middle" fill="#FF6B6B">!</text><text x="400" y="394" font-size="40" fill="#FF6B6B" font-family="JetBrains Mono">500</text><text class="ttl" x="560" y="392" font-size="32">Server error — their side</text></g>
+        </svg>
+        <div class="sub" id="s19note" style="font-size:32px; margin-top:8px; opacity:0; align-self:center;">Easy rule: <span class="ac">4-something = your fault, 5-something = the server's.</span></div>
+      </div>
+
+      <!-- 20. HTTPS (postcard vs envelope) -->
+      <div class="scene" id="s20" data-name="20 · HTTPS" data-start="820" data-duration="50" data-track-index="0">
+        <div class="kick" id="s20k">the s is for secure</div>
+        <h1 id="s20t" style="font-size:64px; max-width:1340px;">HTTP is a postcard. HTTPS is a <span class="ok">sealed envelope.</span></h1>
+        <svg width="1560" height="420" viewBox="0 0 1560 420" style="overflow:visible; align-self:center; margin-top:18px;">
+          <g id="s20post"><rect x="20" y="60" width="700" height="300" rx="18" fill="var(--panel)" stroke="rgba(255,107,107,.4)" stroke-width="2"/><text class="cap" x="64" y="116" font-size="22" fill="#FF6B6B">HTTP · readable by anyone</text><rect x="64" y="140" width="612" height="14" rx="5" fill="rgba(183,194,214,.4)"/><rect x="64" y="172" width="540" height="14" rx="5" fill="rgba(183,194,214,.35)"/><rect x="64" y="204" width="580" height="14" rx="5" fill="rgba(183,194,214,.3)"/><text x="370" y="300" font-size="26" text-anchor="middle" fill="#FF6B6B" font-family="JetBrains Mono">card · pay 4111 1111…</text></g>
+          <g id="s20env"><rect x="820" y="60" width="700" height="300" rx="18" fill="url(#gsrv)" stroke="#34D399" stroke-width="2.5"/><text class="cap" x="864" y="116" font-size="22" fill="#34D399">HTTPS · sealed &amp; scrambled</text><use href="#i-lock" x="1090" y="150" width="150" height="150"/><text x="1170" y="330" font-size="26" text-anchor="middle" fill="#34D399" font-family="JetBrains Mono">a8f3…9c2e…</text></g>
+        </svg>
+        <div class="sub" id="s20note" style="font-size:30px; margin-top:8px; opacity:0; align-self:center;">The padlock means <span class="ac">encrypted</span>, not <span class="sp">"trustworthy."</span> Scam sites can have one too.</div>
+      </div>
+
+      <!-- 21. WHOLE JOURNEY (HERO payoff) -->
+      <div class="scene" id="s21" data-name="21 · The whole journey ★" data-start="870" data-duration="55" data-track-index="0">
+        <div class="kick" id="s21k">the whole journey, end to end</div>
+        <h1 id="s21t" style="font-size:72px;">One tap on Swiggy. <span class="ac">Here's everything.</span></h1>
+        <svg width="1720" height="360" viewBox="0 0 1720 360" style="overflow:visible; align-self:center; margin-top:18px;">
+          <g id="s21_cli"><rect class="nbox" x="20" y="120" width="280" height="130" rx="16"/><use href="#i-phone" x="50" y="152" width="50" height="50"/><text class="ttl" x="170" y="200" font-size="26" text-anchor="middle">you tap</text></g>
+          <g id="s21_dns"><rect class="nbox" x="400" y="120" width="280" height="130" rx="16"/><use href="#i-mag" x="430" y="152" width="48" height="48"/><text class="code" x="560" y="180" font-size="20" text-anchor="middle">DNS</text><text class="cap" x="560" y="214" font-size="22" text-anchor="middle">find the IP</text></g>
+          <g id="s21_srv"><rect class="nboxlive" x="780" y="120" width="420" height="130" rx="16"/><use href="#i-lock" x="810" y="150" width="56" height="56"/><text class="code" x="1010" y="180" font-size="20" text-anchor="middle">SERVER · HTTPS</text><text class="cap" x="1010" y="214" font-size="22" text-anchor="middle">checks the rules</text></g>
+          <g id="s21_db"><rect class="nbox" x="1300" y="120" width="400" height="130" rx="16"/><g transform="translate(1330,150)"><ellipse cx="34" cy="10" rx="34" ry="9" fill="none" stroke="#6AA0FF" stroke-width="3"/><path d="M0 10 V52 a34 9 0 0 0 68 0 V10" fill="none" stroke="#6AA0FF" stroke-width="3"/></g><text class="cap" x="1500" y="200" font-size="24" text-anchor="middle">the real data</text></g>
+          <path class="edge live" id="s21e1" d="M300 185 H400"/><path class="edge live" id="s21e2" d="M680 185 H780"/><path class="edge live" id="s21e3" d="M1200 185 H1300"/>
+          <circle class="pkt" id="s21pkt" r="13" fill="#6AA0FF" cx="160" cy="185"/>
+        </svg>
+        <div class="sub" id="s21sub" style="font-size:33px; margin-top:18px; opacity:0; align-self:center;">Find the address, knock in the right language, get your answer back. That's the web.</div>
+      </div>
+
+      <!-- 22. RECAP + CLIFFHANGER -->
+      <div class="scene" id="s22" data-name="22 · Recap + cliffhanger" data-start="925" data-duration="45" data-track-index="0">
+        <div class="kick" id="s22k">recap</div>
+        <h1 id="s22t" style="font-size:84px;">Now you know what's <span class="ac">under the tap.</span></h1>
+        <svg width="1620" height="220" viewBox="0 0 1620 220" style="overflow:visible; align-self:center; margin-top:30px;">
+          <g id="s22r1"><rect class="nbox" x="0" y="20" width="300" height="180" rx="16"/><use href="#i-phone" x="36" y="50" width="44" height="44"/><text class="ttl" x="20" y="135" font-size="26">client ⇄ server</text><text class="cap" x="20" y="170" font-size="21">dining room &amp; kitchen</text></g>
+          <g id="s22r2"><rect class="nbox" x="328" y="20" width="300" height="180" rx="16"/><path d="M364 64 l24 -12 v22 c0 14 -10 22 -24 28 c-14 -6 -24 -14 -24 -28 v-22 Z" fill="rgba(59,123,255,.18)" stroke="#3B7BFF" stroke-width="2"/><text class="ttl" x="348" y="135" font-size="26">trust no client</text><text class="cap" x="348" y="170" font-size="21">server re-checks</text></g>
+          <g id="s22r3"><rect class="nbox" x="656" y="20" width="300" height="180" rx="16"/><use href="#i-mag" x="692" y="50" width="44" height="44"/><text class="ttl" x="676" y="135" font-size="26">DNS = phonebook</text><text class="cap" x="676" y="170" font-size="21">name → number</text></g>
+          <g id="s22r4"><rect class="nbox" x="984" y="20" width="300" height="180" rx="16"/><use href="#i-globe" x="1020" y="50" width="44" height="44"/><text class="ttl" x="1004" y="135" font-size="26">HTTP = language</text><text class="cap" x="1004" y="170" font-size="21">request &amp; response</text></g>
+          <g id="s22r5"><rect class="nbox" x="1312" y="20" width="300" height="180" rx="16" style="stroke:#34D399;"/><use href="#i-lock" x="1348" y="48" width="48" height="48"/><text class="ttl" x="1332" y="135" font-size="26">HTTPS = sealed</text><text class="cap" x="1332" y="170" font-size="21">encrypted in transit</text></g>
+        </svg>
+        <div class="nextline" id="s22next">All this travelling takes <span class="ac">time.</span> So how do we measure "fast"? &mdash; latency vs throughput, next.</div>
+      </div>
+    </div>
+
+    <div id="title"></div>
+    <div id="counter"></div>
+    <div id="hintbar">← → / space: navigate · F: fullscreen · 1–9: jump</div>
+    <script>
+      const scenes = Array.from(document.querySelectorAll('.scene'));
+      let i = 0;
+      function clamp(n){ return Math.max(0, Math.min(scenes.length - 1, n)); }
+      function show(n){
+        i = clamp(n);
+        scenes.forEach((s, k) => s.classList.toggle('active', k === i));
+        document.getElementById('counter').textContent = (i + 1) + ' / ' + scenes.length;
+        document.getElementById('title').textContent = scenes[i].dataset.name || '';
+        if (location.hash !== '#' + (i + 1)) history.replaceState(null, '', '#' + (i + 1));
+      }
+      function fit(){
+        const pad = 40;
+        const s = Math.min((window.innerWidth - pad) / 1920, (window.innerHeight - pad) / 1080);
+        document.getElementById('root').style.transform = 'scale(' + s + ')';
+      }
+      window.addEventListener('resize', fit);
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { show(i + 1); e.preventDefault(); }
+        else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { show(i - 1); e.preventDefault(); }
+        else if (e.key === 'Home') show(0);
+        else if (e.key === 'End') show(scenes.length - 1);
+        else if (e.key.toLowerCase() === 'f') { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+        else if (/^[1-9]$/.test(e.key)) show(parseInt(e.key, 10) - 1);
+      });
+      document.addEventListener('click', (e) => { if (e.target.closest('#hintbar')) return; show(i + 1); });
+      const start = parseInt((location.hash || '#1').slice(1), 10);
+      fit(); show(isNaN(start) ? 0 : start - 1);
+    </script>
+  </body>
+</html>
