@@ -1,33 +1,53 @@
 # Thumbnails — The Tech Intern · System Design series
 
-A reusable thumbnail system so every episode looks like the same series.
+A reusable thumbnail SYSTEM so every episode looks like the same series, while
+each one still depicts its own topic.
 
 ## The rule
-**Constant (never change — this is what makes the series recognizable):**
-the big **SYSTEM DESIGN** title, the client→server→database diagram, the
-`THE TECH INTERN // SYSTEM DESIGN` tag, and the navy/cyan/orange colours.
+**Constant (the series skin — never change):** the dark navy bg + grid + glows,
+the `EPISODE NN` badge, the corner brackets, the card+wire diagram styling, the
+teal/orange palette, the fonts, and the `THE TECH INTERN // SYSTEM DESIGN` tag.
 
-**Per-episode (the only things you change):** the episode number and the
-**topic line** (Ep 1 = "The Fundamentals", Ep 2 = "Client & Server", …).
+**Per-episode (make each one depict THAT episode):**
+- the **hero title** = the episode's topic, big (Ep1 = "SYSTEM DESIGN" because
+  it introduces system design; Ep2 = "DNS & HTTP"; etc.). Do NOT repeat
+  "SYSTEM DESIGN" as the hero on every episode — it's already in the bottom tag.
+- the **right-side diagram** = the thing the episode actually teaches (Ep1 =
+  client→server→database; Ep2 = the DNS lookup name→DNS→IP). Don't reuse the
+  same diagram every time.
+- the **topic line**, **micro hook**, and the ghost episode number.
 
-## Make a new one
+## Two ways to render
+**A) Bespoke per-episode file (preferred for episodes after the intro).**
+Copy an existing episode file, change the hero + diagram + text, render it:
 ```bash
-npm i -D puppeteer-core   # once
-
-node thumbnails/render.mjs \
-  --ep "02"  --lead "" --main "Client & Server" \
-  --micro "what really happens when you tap" \
-  --out assets/thumbnails/sd-ep02.png
+export PUPPETEER_EXECUTABLE_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+node thumbnails/render.mjs --file thumbnails/ep02.html \
+  --out assets/thumbnails/sd-ep02-dns-http.png
 ```
-Output is 2560×1440 (crops to YouTube's 1280×720).
 
-Flags: `--ep` episode label (becomes "EPISODE 02 …"), `--lead` small word before
-the topic (often "The" or empty), `--main` the bold topic, `--micro` one-line
-hook, `--out` PNG path. Chrome is auto-found, or set `PUPPETEER_EXECUTABLE_PATH`.
+**B) Generic template (quick text-only swap — used for Ep1).**
+`template.html` keeps the SYSTEM DESIGN hero + client/server/database diagram and
+only swaps text via flags:
+```bash
+node thumbnails/render.mjs --ep "01" --main "Introduction" \
+  --micro "what it is, and why it matters" \
+  --out assets/thumbnails/sd-ep01-introduction.png
+```
+Flags: `--ep`, `--lead`, `--main`, `--micro`, `--file` (html to render, defaults
+to template.html), `--out`. Output is 2560×1440 (crops to YouTube 1280×720).
+Needs `puppeteer-core` (devDep) + Chrome.
 
 ## Files
-- `template.html` — the design (edit here to change the look for ALL episodes)
-- `render.mjs` — fills the template and screenshots it to PNG
+- `template.html` — the series skin + the generic (text-swap) layout
+- `ep02.html` — Ep2's bespoke thumbnail (DNS & HTTP hero + DNS-lookup diagram)
+- `render.mjs` — fills + screenshots an html to PNG
 - `../assets/thumbnails/` — the rendered PNGs (committed, ready to upload)
 
-Episode 1: `assets/thumbnails/sd-ep01-introduction.png`.
+## Done so far
+- Ep1: `assets/thumbnails/sd-ep01-introduction.png`
+- Ep2: `assets/thumbnails/sd-ep02-dns-http.png`
+
+> Palette note: thumbnails use the series teal/orange; the *videos* use the
+> cobalt/navy "Engineer's Terminal" palette. Consistent within each set, not
+> across — worth aligning at some point.

@@ -22,7 +22,7 @@ const CHROME = process.env.PUPPETEER_EXECUTABLE_PATH
      .find(p => existsSync(p));
 if (!CHROME) { console.error('No Chrome found. Set PUPPETEER_EXECUTABLE_PATH.'); process.exit(1); }
 
-let html = readFileSync(join(__dirname, 'template.html'), 'utf8')
+let html = readFileSync(args.file ? resolve(process.cwd(), args.file) : join(__dirname, 'template.html'), 'utf8')
   .replaceAll('{{EP_BADGE}}', esc('EPISODE ' + (args.ep || '01')))
   .replaceAll('{{TOPIC_LEAD}}', esc(args.lead || ''))
   .replaceAll('{{TOPIC_MAIN}}', esc(args.main || 'Fundamentals'))
