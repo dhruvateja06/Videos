@@ -82,7 +82,7 @@
 
       <!-- 1. RECAP HOOK -->
       <div class="scene clip" id="s1" data-start="0" data-duration="40" data-track-index="0">
-        <div class="kick" id="s1k">Episode 02 · last time, on baby Instagram</div>
+        <div class="kick" id="s1k">welcome back · system design · episode 02</div>
         <h1 id="s1t" style="font-size:84px; max-width:1300px;">A request goes client → server → database. But <span class="ac">how?</span></h1>
         <svg width="1560" height="300" viewBox="0 0 1560 300" style="overflow:visible; align-self:center; margin-top:34px;">
           <path class="edge live" id="s1_e1" d="M400 130 H580"/><path class="edge live" id="s1_e2" d="M980 130 H1160"/>
@@ -115,7 +115,7 @@
           <g id="s3srv"><rect x="1020" y="20" width="660" height="520" rx="26" fill="url(#gsrv)" stroke="var(--hair)" stroke-width="2"/><text class="code" x="1060" y="76" font-size="22" letter-spacing="3" fill="#6AA0FF">SERVER</text><text class="ttl" x="1060" y="124" font-size="42">The kitchen</text>
             <rect x="1230" y="170" width="250" height="150" rx="12" fill="#0B1322" stroke="#6AA0FF" stroke-width="3"/><rect x="1252" y="190" width="206" height="28" rx="5" fill="none" stroke="#6AA0FF" stroke-width="2"/><circle cx="1268" cy="204" r="4" fill="#34D399"/><rect x="1252" y="228" width="206" height="28" rx="5" fill="none" stroke="#6AA0FF" stroke-width="2"/><circle cx="1268" cy="242" r="4" fill="#34D399"/><rect x="1252" y="266" width="206" height="28" rx="5" fill="none" stroke="#6AA0FF" stroke-width="2"/><circle cx="1268" cy="280" r="4" fill="#6AA0FF"/>
             <g transform="translate(1300,360)"><ellipse cx="54" cy="12" rx="54" ry="14" fill="none" stroke="#6AA0FF" stroke-width="2.5"/><path d="M0 12 V74 a54 14 0 0 0 108 0 V12" fill="none" stroke="#6AA0FF" stroke-width="2.5"/><path d="M0 43 a54 14 0 0 0 108 0" fill="none" stroke="#6AA0FF" stroke-width="2.5"/></g><text class="cap" x="1354" y="510" font-size="25" text-anchor="middle">cooks logic · guards the data</text></g>
-          <g id="s3api"><rect x="690" y="210" width="300" height="140" rx="20" fill="var(--accent-soft)" stroke="#3B7BFF" stroke-width="2"/><text class="code" x="840" y="262" font-size="26" text-anchor="middle">API</text><text class="cap" x="840" y="300" font-size="24" text-anchor="middle">the waiter</text><text x="840" y="186" font-size="20" text-anchor="middle" fill="#6AA0FF">request → ← response</text></g>
+          <g id="s3api"><rect x="680" y="180" width="320" height="200" rx="22" fill="var(--accent-soft)" stroke="#3B7BFF" stroke-width="2.5"/><text class="code" x="840" y="244" font-size="32" text-anchor="middle">API</text><text class="cap" x="840" y="288" font-size="28" text-anchor="middle">the waiter</text><text x="840" y="332" font-size="22" text-anchor="middle" fill="#6AA0FF">request ⇄ response</text></g>
         </svg>
       </div>
 
@@ -162,11 +162,11 @@
         <div class="kick" id="s6k">where does the data live?</div>
         <h1 id="s6t" style="font-size:76px;">The database is <span class="ac">always</span> server-side.</h1>
         <svg width="1620" height="500" viewBox="0 0 1620 500" style="overflow:visible; align-self:center; margin-top:14px;">
-          <g id="s6cli"><rect x="40" y="80" width="520" height="340" rx="22" fill="url(#gcli)" stroke="var(--hair)" stroke-width="2"/><text class="code" x="80" y="140" font-size="22">CLIENT HOLDS</text><rect x="80" y="170" width="440" height="200" rx="14" fill="#0B1322" stroke="rgba(106,160,255,.4)" stroke-dasharray="8 8"/><text class="ttl" x="300" y="265" font-size="34" text-anchor="middle">a temporary copy</text><text class="cap" x="300" y="305" font-size="24" text-anchor="middle">just what's on screen now</text></g>
+          <g id="s6cli"><rect x="40" y="80" width="520" height="340" rx="22" fill="url(#gcli)" stroke="var(--hair)" stroke-width="2"/><text class="code" x="80" y="140" font-size="22">CLIENT HOLDS</text><rect x="80" y="170" width="440" height="200" rx="14" fill="#0B1322" stroke="rgba(106,160,255,.4)" stroke-dasharray="8 8"/><text class="ttl" x="300" y="270" font-size="38" text-anchor="middle">a temporary copy</text><text class="cap" x="300" y="312" font-size="28" text-anchor="middle">just what's on screen now</text></g>
           <g id="s6arrow" class="hideg"><path d="M580 250 H760" class="edge live" style="opacity:1"/><text x="670" y="232" font-size="22" text-anchor="middle" fill="#6AA0FF">refresh →</text></g>
           <g id="s6srv"><rect x="780" y="80" width="800" height="340" rx="22" fill="url(#gsrv)" stroke="rgba(59,123,255,.45)" stroke-width="2"/><text class="code" x="820" y="140" font-size="22" fill="#3B7BFF">SERVER OWNS</text>
             <g transform="translate(900,180)"><ellipse cx="120" cy="18" rx="120" ry="22" fill="none" stroke="#6AA0FF" stroke-width="3"/><path d="M0 18 V150 a120 22 0 0 0 240 0 V18" fill="none" stroke="#6AA0FF" stroke-width="3"/><path d="M0 84 a120 22 0 0 0 240 0" fill="none" stroke="#6AA0FF" stroke-width="3"/></g>
-            <text class="ttl" x="1180" y="250" font-size="34">the real, permanent data</text><text class="cap" x="1180" y="290" font-size="24">the single source of truth</text></g>
+            <text class="ttl" x="1180" y="250" font-size="38">the real, permanent data</text><text class="cap" x="1180" y="294" font-size="28">the single source of truth</text></g>
         </svg>
         <div class="sub" id="s6note" style="font-size:33px; margin-top:14px; opacity:0; align-self:center;">Your phone is a <span class="ac">window</span> onto the data — not where it's kept.</div>
       </div>
@@ -208,13 +208,13 @@
         <svg width="1640" height="520" viewBox="0 0 1640 520" style="overflow:visible; align-self:center; margin-top:18px;">
           <text class="cap" x="420" y="34" font-size="24">time until you see the page →</text>
           <line x1="420" y1="54" x2="1600" y2="54" stroke="var(--hair)" stroke-width="2"/>
-          <g id="s9ssr"><text class="code" x="0" y="150" font-size="26" fill="#34D399">SSR</text><text class="cap" x="0" y="184" font-size="20">server builds it</text>
-            <rect x="170" y="100" width="110" height="190" rx="14" fill="#0B1322" stroke="#34D399" stroke-width="3"/><rect x="186" y="120" width="78" height="12" rx="4" fill="rgba(52,211,153,.5)"/><rect x="186" y="142" width="78" height="40" rx="6" fill="rgba(52,211,153,.28)"/><rect x="186" y="192" width="58" height="10" rx="3" fill="rgba(183,194,214,.4)"/>
-            <rect id="s9ssrbar" x="420" y="112" width="230" height="40" rx="20" fill="#34D399" opacity="0.92"/><text x="535" y="139" font-size="22" text-anchor="middle" fill="#0F1729" font-family="Inter" font-weight="700">page ready</text><text class="cap" x="680" y="139" font-size="23" fill="#34D399">fast first view · great for search</text></g>
-          <g id="s9csr"><text class="code" x="0" y="380" font-size="26" fill="#6AA0FF">CSR</text><text class="cap" x="0" y="414" font-size="20">browser builds it</text>
-            <rect x="170" y="330" width="110" height="190" rx="14" fill="#0B1322" stroke="#6AA0FF" stroke-width="3"/><circle id="s9spin" cx="225" cy="425" r="20" fill="none" stroke="rgba(106,160,255,.6)" stroke-width="4" stroke-dasharray="64 28"/>
-            <rect x="420" y="342" width="280" height="40" rx="20" fill="rgba(123,138,165,.25)"/><text x="560" y="369" font-size="20" text-anchor="middle" fill="#B7C2D6">blank · loading JS…</text>
-            <rect id="s9csrbar" x="710" y="342" width="220" height="40" rx="20" fill="#6AA0FF" opacity="0.92"/><text x="820" y="369" font-size="22" text-anchor="middle" fill="#0F1729" font-family="Inter" font-weight="700">page fills in</text><text class="cap" x="960" y="369" font-size="23" fill="#6AA0FF">slower start · smooth after</text></g>
+          <g id="s9ssr"><text class="code" x="40" y="150" font-size="32" fill="#34D399">SSR</text><text class="cap" x="40" y="184" font-size="22">server builds it</text>
+            <rect x="200" y="100" width="110" height="190" rx="14" fill="#0B1322" stroke="#34D399" stroke-width="3"/><rect x="216" y="120" width="78" height="12" rx="4" fill="rgba(52,211,153,.5)"/><rect x="216" y="142" width="78" height="40" rx="6" fill="rgba(52,211,153,.28)"/><rect x="216" y="192" width="58" height="10" rx="3" fill="rgba(183,194,214,.4)"/>
+            <rect id="s9ssrbar" x="440" y="112" width="230" height="40" rx="20" fill="#34D399" opacity="0.92"/><text x="555" y="139" font-size="22" text-anchor="middle" fill="#0F1729" font-family="Inter" font-weight="700">page ready</text><text class="cap" x="700" y="139" font-size="23" fill="#34D399">fast first view · great for search</text></g>
+          <g id="s9csr"><text class="code" x="40" y="380" font-size="32" fill="#6AA0FF">CSR</text><text class="cap" x="40" y="414" font-size="22">browser builds it</text>
+            <rect x="200" y="330" width="110" height="190" rx="14" fill="#0B1322" stroke="#6AA0FF" stroke-width="3"/><circle id="s9spin" cx="255" cy="425" r="20" fill="none" stroke="rgba(106,160,255,.6)" stroke-width="4" stroke-dasharray="64 28"/>
+            <rect x="440" y="342" width="280" height="40" rx="20" fill="rgba(123,138,165,.25)"/><text x="580" y="369" font-size="20" text-anchor="middle" fill="#B7C2D6">blank · loading JS…</text>
+            <rect id="s9csrbar" x="730" y="342" width="220" height="40" rx="20" fill="#6AA0FF" opacity="0.92"/><text x="840" y="369" font-size="22" text-anchor="middle" fill="#0F1729" font-family="Inter" font-weight="700">page fills in</text><text class="cap" x="980" y="369" font-size="23" fill="#6AA0FF">slower start · smooth after</text></g>
         </svg>
         <div class="sub it" id="s9note" style="font-family:'Fraunces'; font-size:34px; margin-top:6px; opacity:0; align-self:center;">Most big apps do <span class="ac" style="font-style:normal;">both.</span> A trade-off, not a winner.</div>
       </div>

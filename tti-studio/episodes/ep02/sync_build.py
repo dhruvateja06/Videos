@@ -35,8 +35,9 @@ HEAD_DUR = {"s1":1.0,"s22":1.0}
 
 BEATS = {
  "s1":[
-  ("Last time, we built a baby Instagram and found the big secret: every app is really just three pieces. A client, a server, and a database, passing a request back and forth.", ["s1k","s1t","s1_cli","s1_srv","s1_db"]),
-  ("But I skipped something sneaky. When your phone sends that request out, how does it even find the right server? Out of billions of computers?", ["s1q"]),
+  ("Hey, welcome back to The Tech Intern, system design. I'm Dhruva, and this is the show where we build huge apps from scratch, one box at a time.", ["s1k","s1t"]),
+  ("Last time, we built a baby Instagram, and we found the big secret: every app is really just three pieces. A client, a server, and a database, passing a request back and forth.", ["s1_cli","s1_srv","s1_db"]),
+  ("But I skipped something sneaky. When your phone sends that request out, how does it even find the right server? Out of billions of computers on the planet?", ["s1q"]),
   ("Tonight we crack those boxes open. What's actually inside client and server, and how they find and talk to each other. So let's order some food. Open Swiggy.", ["s1s"]),
  ],
  "s2":[
@@ -72,14 +73,14 @@ BEATS = {
   ("The server doesn't just believe it. It re-checks against its own data. The real price is two ninety-nine. Even if you tampered with the app, the kitchen has the final say. Always.", ["s7srv","s7v","s7note"]),
  ],
  "s8":[
-  ("So how do the dining room and the kitchen actually talk? Through a waiter. In tech, we call that waiter the API.", ["s8k","s8t","s8gate"]),
+  ("So how do the dining room and the kitchen actually talk? Through a waiter. In tech, we call that waiter an A-P-I. It stands for Application Programming Interface. Long name, simple job. It's the agreed-on way the client asks, and the server answers.", ["s8k","s8t","s8gate"]),
   ("And here's the neat part. The same kitchen can serve many dining rooms.", ["s8c1","s8c2","s8c3"]),
-  ("The iOS app, the Android app, the website. All different clients, all talking to one single backend, through that same waiter. Why build it this way? Three reasons. Security, so the rules live in one trusted place. Reuse, one backend for every app. And scale, so you can grow each side on its own.", ["s8srv","s8note"]),
+  ("The iOS app, the Android app, the website. All different clients, all talking to one single backend, through that same API. Why build it this way? Three reasons. Security, so the rules live in one trusted place. Reuse, one backend for every app. And scale, so you can grow each side on its own.", ["s8srv","s8note"]),
  ],
  "s9":[
   ("Quick question, but an important one. Who actually draws the page you see? There are two answers.", ["s9k","s9t"]),
-  ("Server-side rendering. The kitchen plates the whole dish and sends it out ready. The page shows up fast, and search engines love it. The catch: more work for the server every time.", ["s9ssr"]),
-  ("Client-side rendering. The kitchen sends raw ingredients and a recipe, and your phone cooks the page itself. Slower to show that first screen, but buttery smooth after. Most big apps do both. First screen from the server, everything after on the phone. A trade-off, not a winner.", ["s9csr","s9note"]),
+  ("Server-side rendering, S-S-R. The kitchen plates the whole dish and sends it out ready. The page shows up fast, and search engines love it. The catch: more work for the server every time.", ["s9ssr"]),
+  ("Client-side rendering, C-S-R. The kitchen sends raw ingredients and a recipe, and your phone cooks the page itself. Slower to show that first screen, but buttery smooth after. Most big apps do both. First screen from the server, everything after on the phone. A trade-off, not a winner.", ["s9csr","s9note"]),
  ],
  "s10":[
   ("Okay, question two. Your phone wants Swiggy's kitchen. But there are billions of computers out there.", ["s10k","s10t","s10target"]),
@@ -87,35 +88,35 @@ BEATS = {
   ("But the network doesn't move data to names. It moves data to numbers. So we have a little translation problem.", ["s10note"]),
  ],
  "s11":[
-  ("Because every server on the internet has a number. It's called an IP address.", ["s11k","s11t","s11card"]),
+  ("Because every server on the internet has a number. It's called an I-P address. I-P stands for Internet Protocol. Basically, it's a unique number that picks out one exact machine on the whole network.", ["s11k","s11t","s11card"]),
   ("Swiggy's might look like this. One-four-two, dot two-fifty, and so on.", []),
-  ("Think of it as the server's phone number. This shape is called IPv4. The newer IPv6 ones are much longer. But the idea is the same: a number that points to one exact machine.", ["s11note"]),
+  ("Think of it as the server's phone number. This shape is called IPv4. The newer IPv6 ones are much longer, but the idea is the same. A number that points to one exact machine.", ["s11note"]),
  ],
  "s12":[
-  ("So how do we get from the name to the number? With the internet's phonebook. It's called DNS.", ["s12k","s12t"]),
+  ("So how do we get from the name to the number? With the internet's phonebook. It's called D-N-S. That's short for Domain Name System. A domain is just a name like swiggy dot com. So Domain Name System literally means the system that looks up domain names.", ["s12k","s12t"]),
   ("You type swiggy dot com, and DNS finds the matching number. Just like tapping a saved contact and letting your phone dial it.", ["s12r1","s12r2","s12r3"]),
   ("You remember the name. DNS remembers the number. You never have to.", ["s12sub"]),
  ],
  "s13":[
   ("But that lookup isn't one quick step. It's more like a relay race, handing a question down the line.", ["s13k","s13t"]),
-  ("Your device checks first. Do I already have this saved? If not, it asks a helper called the resolver, who does the running around.", ["s13n1","s13n2"]),
+  ("Your device checks first. Do I already have this saved? If not, it asks a helper called the resolver. That's just another computer whose whole job is doing the running around for you.", ["s13n1","s13n2"]),
   ("The resolver asks a root server, who says, I don't know, but ask the dot-com people. The dot-com server says, ask Swiggy's own server. And that last one, the authoritative server, finally knows the number.", ["s13n3","s13n4","s13n5"]),
   ("It races all the way back. Root and dot-com never knew the address. They just point you to whoever's next.", ["s13sub"]),
  ],
  "s14":[
   ("Now, do you run that whole race every single time? No. The first time, yes. After that, your device just remembers the number.", ["s14k","s14t","s14cache"]),
   ("So the second visit is basically instant.", []),
-  ("How long should it remember before checking again? That's a setting called TTL, and it's a trade-off. Hold it a long time and you save trips, but you're slow to notice if the number changed. Short, and you're always fresh but doing more work. Oh, and one myth to kill: DNS only finds the address. It never loads the actual page.", ["s14ttl","s14note"]),
+  ("But here's the question. How long should it remember before checking again? That's controlled by a setting called T-T-L. T-T-L stands for Time To Live. Basically, how long should this answer be trusted before we check again? And it's a trade-off. Set it long, and you save trips, but if the number ever changes, you're slow to find out. Set it short, you're always fresh, but you do more work. Oh, and one myth to kill. DNS only finds the address. It never loads the actual page.", ["s14ttl","s14note"]),
  ],
  "s15":[
-  ("Right. We found the kitchen. Now the dining room and the kitchen need a shared language. That language is HTTP.", ["s15k","s15t","s15cli","s15srv"]),
+  ("Right. We found the kitchen. Now the dining room and the kitchen need a shared language. That language is H-T-T-P. Short for HyperText Transfer Protocol. Fancy name, simple thing. It's just the agreed-on rules for how a client asks for something and how a server answers.", ["s15k","s15t","s15cli","s15srv"]),
   ("Your phone sends a request. Get me the restaurants. The server sends back a response. Two hundred, OK, here they are.", ["s15req","s15res"]),
   ("One ask, one answer. And then it forgets you completely. HTTP keeps no memory between requests. Hold that thought. It matters in a minute.", ["s15note"]),
  ],
  "s16":[
   ("Let's open up that request. Four parts.", ["s16k","s16t","s16env"]),
-  ("The method, the verb, what you want done. The path, which thing you want. The headers, little labels like who you are. And the body, any data you're sending up.", []),
-  ("And the address itself, the URL, packs a lot in. The scheme, how to talk, https. The host, which server. The path, which page. And the query, extra options. Four colours, one line.", ["s16url"]),
+  ("The method. That's the verb, what you want done. The path. Which thing you want. The headers. Little labels attached to the request, like who you are or what format you can read. And the body. Any data you're sending up.", []),
+  ("And the address itself, the URL, short for Uniform Resource Locator, packs a lot in. The scheme, how to talk, like https. The host, which server. The path, which page. And the query, extra options. Four colours, one line.", ["s16url"]),
  ],
  "s17":[
   ("Of all those methods, two do most of the work. GET and POST.", ["s17k","s17t"]),
@@ -123,7 +124,7 @@ BEATS = {
   ("POST is for writing. Placing the order. It changes something on the server, and its data rides hidden in the body, not the URL. One warning. Send a POST twice, and you might place two orders. We'll fix that double-tap problem in a later episode.", ["s17post","s17warn"]),
  ],
  "s18":[
-  ("Remember how HTTP forgets you after every request? So how does the app keep you logged in? With a cookie. Think of it as an ID badge.", ["s18k","s18t","s18a"]),
+  ("Remember how HTTP forgets you after every request? So how does the app keep you logged in? With a cookie. A cookie is just a tiny note your browser stores for a website. Think of it as an ID badge.", ["s18k","s18t","s18a"]),
   ("You log in once. The server hands your browser a little token. Set-Cookie.", ["s18b"]),
   ("From then on, every request you send quietly carries that cookie. And the server goes, ah, it's you again. Still logged in. That's all a session cookie is. A badge that says it's me.", ["s18c","s18d","s18note"]),
  ],
@@ -133,7 +134,7 @@ BEATS = {
   ("Four-oh-four. Not found. That page doesn't exist, and that one's on your side. Five hundred. Server error. The kitchen itself broke. Easy way to remember: four-something is your fault, five-something is the server's.", ["s19c3","s19c4","s19note"]),
  ],
  "s20":[
-  ("One more letter. The S in HTTPS. Plain HTTP is like a postcard. Anyone who handles it on the way can read it. Your card number, right there in the open.", ["s20k","s20t","s20post"]),
+  ("One more letter. The S in H-T-T-P-S. It just stands for Secure. Plain HTTP is like a postcard. Anyone who handles it on the way can read it. Your card number, right there in the open.", ["s20k","s20t","s20post"]),
   ("HTTPS is a sealed envelope. Your phone and the server quietly agree on a secret, then scramble everything. To anyone in between, it's gibberish. That's the little padlock.", ["s20env"]),
   ("But careful. The padlock only means the line is encrypted. It does not mean the site is honest. Even scam sites can show a padlock.", ["s20note"]),
  ],
@@ -144,7 +145,7 @@ BEATS = {
  ],
  "s22":[
   ("And that's it. You now know what's happening under every single tap.", ["s22k","s22t"]),
-  ("A client and a server. The dining room and the kitchen. Never trust the client. DNS, the phonebook, turning names into numbers. HTTP, the shared language of request and response. And HTTPS, the sealed envelope.", ["s22r1","s22r2","s22r3","s22r4","s22r5"]),
+  ("A client and a server. The dining room and the kitchen. Never trust the client. DNS, the Domain Name System, turning names into numbers. HTTP, the HyperText Transfer Protocol, the shared language of request and response. And HTTPS, the sealed envelope.", ["s22r1","s22r2","s22r3","s22r4","s22r5"]),
   ("But notice. All of this took time. The request travelled, the relay raced, the data came back. So how do we measure fast? That's latency versus throughput, and that's next time. See you there.", ["s22next"]),
  ],
 }
