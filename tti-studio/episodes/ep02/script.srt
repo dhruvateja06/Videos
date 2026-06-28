@@ -1,1043 +1,1043 @@
 1
-00:00:00,000 --> 00:00:02,810
+00:00:00,000 --> 00:00:03,088
 Hey, welcome back to The Tech Intern, system design.
 
 2
-00:00:03,471 --> 00:00:08,719
+00:00:03,576 --> 00:00:09,125
 I'm Dhruva, and this is the show where we build huge apps from scratch, one box at a time.
 
 3
-00:00:09,288 --> 00:00:15,824
+00:00:09,613 --> 00:00:16,416
 Last time, we built a baby Instagram, and we found the big secret: every app is really just three pieces.
 
 4
-00:00:16,312 --> 00:00:20,399
+00:00:16,776 --> 00:00:21,281
 A client, a server, and a database, passing a request back and forth.
 
 5
-00:00:21,165 --> 00:00:22,825
+00:00:21,699 --> 00:00:23,289
 But I skipped something sneaky.
 
 6
-00:00:23,487 --> 00:00:27,759
+00:00:23,858 --> 00:00:27,631
 When your phone sends that request out, how does it even find the right server?
 
 7
-00:00:28,247 --> 00:00:30,255
+00:00:28,398 --> 00:00:30,639
 Out of billions of computers on the planet?
 
 8
-00:00:30,743 --> 00:00:32,415
-Tonight we crack those boxes open.
+00:00:31,208 --> 00:00:33,274
+Right, let's crack those boxes open.
 
 9
-00:00:32,833 --> 00:00:37,279
+00:00:33,692 --> 00:00:38,139
 What's actually inside client and server, and how they find and talk to each other.
 
 10
-00:00:37,848 --> 00:00:39,102
+00:00:38,708 --> 00:00:39,996
 So let's order some food.
 
 11
-00:00:39,671 --> 00:00:40,588
+00:00:40,101 --> 00:00:41,053
 Open Swiggy.
 
 12
-00:00:43,000 --> 00:00:45,264
-Everything tonight answers just two questions.
+00:00:43,000 --> 00:00:44,741
+It all comes down to two questions.
 
 13
-00:00:45,624 --> 00:00:46,007
+00:00:45,159 --> 00:00:45,543
 One.
 
 14
-00:00:46,495 --> 00:00:48,875
+00:00:46,111 --> 00:00:49,281
 What's really inside those words, client and server?
 
 15
-00:00:49,362 --> 00:00:51,858
+00:00:49,769 --> 00:00:52,567
 Who does what, and where does your data actually live?
 
 16
-00:00:52,520 --> 00:00:53,019
+00:00:53,333 --> 00:00:53,751
 Two.
 
 17
-00:00:53,437 --> 00:00:57,478
+00:00:54,053 --> 00:00:58,755
 How do they find each other across the whole internet, and how do they talk once they do?
 
 18
-00:00:57,965 --> 00:00:58,848
+00:00:59,324 --> 00:01:00,194
 Two questions.
 
 19
-00:00:58,987 --> 00:00:59,765
+00:01:00,310 --> 00:01:01,065
 Let's go.
 
 20
-00:01:02,000 --> 00:01:04,740
+00:01:03,000 --> 00:01:05,740
 Here's the one picture to hold in your head all episode.
 
 21
-00:01:05,309 --> 00:01:06,145
+00:01:06,309 --> 00:01:07,145
 A restaurant.
 
 22
-00:01:07,201 --> 00:01:08,664
+00:01:08,201 --> 00:01:09,664
 The dining room is the client.
 
 23
-00:01:09,024 --> 00:01:11,927
+00:01:10,024 --> 00:01:12,927
 It's where you sit, read the menu, and place your order.
 
 24
-00:01:12,588 --> 00:01:13,889
+00:01:13,588 --> 00:01:14,889
 Comfortable, friendly.
 
 25
-00:01:14,550 --> 00:01:16,489
+00:01:15,550 --> 00:01:17,489
 But no food is actually cooked there.
 
 26
-00:01:16,849 --> 00:01:18,161
+00:01:17,849 --> 00:01:19,161
 The kitchen is the server.
 
 27
-00:01:18,730 --> 00:01:24,628
+00:01:19,730 --> 00:01:25,628
 That's where the cooking happens, where the recipes live, and where the pantry, your data, is guarded.
 
 28
-00:01:25,197 --> 00:01:26,126
+00:01:26,197 --> 00:01:27,126
 You never see it.
 
 29
-00:01:26,892 --> 00:01:29,028
+00:01:27,892 --> 00:01:30,028
 And the waiter carrying orders between them?
 
 30
-00:01:29,597 --> 00:01:30,747
+00:01:30,597 --> 00:01:31,747
 We'll meet him soon.
 
 31
-00:01:33,000 --> 00:01:34,300
+00:01:34,000 --> 00:01:35,300
 So, the client.
 
 32
-00:01:34,718 --> 00:01:37,063
+00:01:35,718 --> 00:01:38,063
 That's your phone, running the Swiggy app.
 
 33
-00:01:37,551 --> 00:01:38,422
+00:01:38,551 --> 00:01:39,422
 The dining room.
 
 34
-00:01:38,909 --> 00:01:41,243
+00:01:39,909 --> 00:01:42,243
 Its whole job is the stuff you see and touch.
 
 35
-00:01:41,731 --> 00:01:42,892
+00:01:42,731 --> 00:01:43,892
 It shows you the screen.
 
 36
-00:01:43,461 --> 00:01:45,922
+00:01:44,461 --> 00:01:46,922
 The restaurants, the photos, the buttons.
 
 37
-00:01:46,410 --> 00:01:48,244
+00:01:47,410 --> 00:01:49,244
 It handles your taps and your typing.
 
 38
-00:01:48,603 --> 00:01:50,705
+00:01:49,603 --> 00:01:51,705
 Scrolling, searching, animating.
 
 39
-00:01:51,123 --> 00:01:54,292
+00:01:52,123 --> 00:01:55,292
 And when it needs something real, it asks the server.
 
 40
-00:01:54,652 --> 00:01:57,439
+00:01:55,652 --> 00:01:58,439
 But notice: it holds no real data of its own.
 
 41
-00:01:58,008 --> 00:01:59,795
+00:01:59,008 --> 00:02:00,795
 It's just showing you a copy.
 
 42
-00:02:02,000 --> 00:02:02,952
+00:02:03,000 --> 00:02:03,952
 Now the kitchen.
 
 43
-00:02:03,219 --> 00:02:03,974
+00:02:04,219 --> 00:02:04,974
 The server.
 
 44
-00:02:04,543 --> 00:02:09,488
+00:02:05,543 --> 00:02:10,488
 This is a powerful computer in a data centre, maybe a thousand kilometres away.
 
 45
-00:02:10,057 --> 00:02:12,066
+00:02:11,057 --> 00:02:13,066
 It runs the actual logic.
 
 46
-00:02:12,368 --> 00:02:13,831
+00:02:13,368 --> 00:02:14,831
 The brains of the whole thing.
 
 47
-00:02:14,249 --> 00:02:15,804
+00:02:15,249 --> 00:02:16,804
 It enforces the rules.
 
 48
-00:02:16,222 --> 00:02:17,604
+00:02:17,222 --> 00:02:18,604
 What's allowed, what isn't.
 
 49
-00:02:17,801 --> 00:02:19,032
+00:02:18,801 --> 00:02:20,032
 And it owns the data.
 
 50
-00:02:19,601 --> 00:02:24,848
+00:02:20,601 --> 00:02:25,848
 The database, where every restaurant, every order, every rupee actually lives.
 
 51
-00:02:25,615 --> 00:02:26,985
+00:02:26,615 --> 00:02:27,985
 The real source of truth.
 
 52
-00:02:29,000 --> 00:02:31,357
+00:02:30,000 --> 00:02:32,357
 Which brings up the most important idea here.
 
 53
-00:02:31,926 --> 00:02:34,062
+00:02:32,926 --> 00:02:35,062
 The database is always on the server side.
 
 54
-00:02:34,329 --> 00:02:35,107
+00:02:35,329 --> 00:02:36,107
 Always.
 
 55
-00:02:35,676 --> 00:02:38,044
+00:02:36,676 --> 00:02:39,044
 Your phone only ever holds a temporary copy.
 
 56
-00:02:38,613 --> 00:02:40,900
+00:02:39,613 --> 00:02:41,900
 Just what's on the screen this very second.
 
 57
-00:02:42,328 --> 00:02:44,789
+00:02:43,328 --> 00:02:45,789
 The real, permanent data lives on the server.
 
 58
-00:02:45,277 --> 00:02:49,096
+00:02:46,277 --> 00:02:50,096
 Pull to refresh, and the truth comes straight from the kitchen.
 
 59
-00:02:50,153 --> 00:02:53,659
+00:02:51,153 --> 00:02:54,659
 Your phone is a window onto the data, not where it's kept.
 
 60
-00:02:56,000 --> 00:02:58,786
+00:02:57,000 --> 00:02:59,786
 And that leads to the golden rule of system design.
 
 61
-00:02:59,204 --> 00:03:00,052
+00:03:00,204 --> 00:03:01,052
 Say it with me.
 
 62
-00:03:00,354 --> 00:03:01,631
+00:03:01,354 --> 00:03:02,631
 Never trust the client.
 
 63
-00:03:02,293 --> 00:03:02,722
+00:03:03,293 --> 00:03:03,722
 Why?
 
 64
-00:03:03,488 --> 00:03:05,416
+00:03:04,488 --> 00:03:06,416
 Because anyone can mess with their own phone.
 
 65
-00:03:06,310 --> 00:03:10,118
+00:03:07,310 --> 00:03:11,118
 Picture a hacked app that claims this order costs one rupee.
 
 66
-00:03:11,174 --> 00:03:12,951
+00:03:12,174 --> 00:03:13,951
 The server doesn't just believe it.
 
 67
-00:03:13,369 --> 00:03:15,261
+00:03:14,369 --> 00:03:16,261
 It re-checks against its own data.
 
 68
-00:03:15,830 --> 00:03:17,583
+00:03:16,830 --> 00:03:18,583
 The real price is two ninety-nine.
 
 69
-00:03:18,152 --> 00:03:21,635
+00:03:19,152 --> 00:03:22,635
 Even if you tampered with the app, the kitchen has the final say.
 
 70
-00:03:22,123 --> 00:03:22,889
+00:03:23,123 --> 00:03:23,889
 Always.
 
 71
-00:03:25,000 --> 00:03:27,415
+00:03:26,000 --> 00:03:28,415
 So how do the dining room and the kitchen actually talk?
 
 72
-00:03:28,077 --> 00:03:28,913
+00:03:29,077 --> 00:03:29,913
 Through a waiter.
 
 73
-00:03:29,331 --> 00:03:32,175
+00:03:30,331 --> 00:03:33,175
 In tech, we call that waiter an A-P-I.
 
 74
-00:03:32,593 --> 00:03:35,321
+00:03:33,593 --> 00:03:36,321
 It stands for Application Programming Interface.
 
 75
-00:03:35,809 --> 00:03:37,179
+00:03:36,809 --> 00:03:38,179
 Long name, simple job.
 
 76
-00:03:37,597 --> 00:03:41,370
+00:03:38,597 --> 00:03:42,370
 It's the agreed-on way the client asks, and the server answers.
 
 77
-00:03:41,939 --> 00:03:43,112
+00:03:42,939 --> 00:03:44,112
 And here's the neat part.
 
 78
-00:03:43,530 --> 00:03:45,596
+00:03:44,530 --> 00:03:46,596
 The same kitchen can serve many dining rooms.
 
 79
-00:03:46,084 --> 00:03:48,661
+00:03:47,084 --> 00:03:49,661
 The iOS app, the Android app, the website.
 
 80
-00:03:49,323 --> 00:03:53,479
+00:03:50,323 --> 00:03:54,479
 All different clients, all talking to one single backend, through that same API.
 
 81
-00:03:54,246 --> 00:03:55,267
+00:03:55,246 --> 00:03:56,267
 Why build it this way?
 
 82
-00:03:55,371 --> 00:03:56,382
+00:03:56,371 --> 00:03:57,382
 Three reasons.
 
 83
-00:03:56,950 --> 00:03:59,702
+00:03:57,950 --> 00:04:00,702
 Security, so the rules live in one trusted place.
 
 84
-00:04:00,468 --> 00:04:02,721
+00:04:01,468 --> 00:04:03,721
 Reuse, one backend for every app.
 
 85
-00:04:03,208 --> 00:04:05,820
+00:04:04,208 --> 00:04:06,820
 And scale, so you can grow each side on its own.
 
 86
-00:04:08,000 --> 00:04:09,869
+00:04:09,000 --> 00:04:10,869
 Quick question, but an important one.
 
 87
-00:04:10,438 --> 00:04:12,284
+00:04:11,438 --> 00:04:13,284
 Who actually draws the page you see?
 
 88
-00:04:12,644 --> 00:04:13,735
+00:04:13,644 --> 00:04:14,735
 There are two answers.
 
 89
-00:04:14,095 --> 00:04:16,255
+00:04:15,095 --> 00:04:17,255
 Server-side rendering, S-S-R.
 
 90
-00:04:16,916 --> 00:04:20,063
+00:04:17,916 --> 00:04:21,063
 The kitchen plates the whole dish and sends it out ready.
 
 91
-00:04:20,632 --> 00:04:23,395
+00:04:21,632 --> 00:04:24,395
 The page shows up fast, and search engines love it.
 
 92
-00:04:23,883 --> 00:04:26,797
+00:04:24,883 --> 00:04:27,797
 The catch: more work for the server every time.
 
 93
-00:04:27,366 --> 00:04:29,618
+00:04:28,366 --> 00:04:30,618
 Client-side rendering, C-S-R.
 
 94
-00:04:30,280 --> 00:04:34,901
+00:04:31,280 --> 00:04:35,901
 The kitchen sends raw ingredients and a recipe, and your phone cooks the page itself.
 
 95
-00:04:35,469 --> 00:04:39,440
+00:04:36,469 --> 00:04:40,440
 Slower to show that first screen, but buttery smooth after.
 
 96
-00:04:40,009 --> 00:04:41,367
+00:04:41,009 --> 00:04:42,367
 Most big apps do both.
 
 97
-00:04:41,727 --> 00:04:44,490
+00:04:42,727 --> 00:04:45,490
 First screen from the server, everything after on the phone.
 
 98
-00:04:45,152 --> 00:04:46,778
+00:04:46,152 --> 00:04:47,778
 A trade-off, not a winner.
 
 99
-00:04:49,000 --> 00:04:50,091
+00:04:50,000 --> 00:04:51,091
 Okay, question two.
 
 100
-00:04:50,509 --> 00:04:52,111
+00:04:51,509 --> 00:04:53,111
 Your phone wants Swiggy's kitchen.
 
 101
-00:04:52,599 --> 00:04:54,608
+00:04:53,599 --> 00:04:55,608
 But there are billions of computers out there.
 
 102
-00:04:55,026 --> 00:04:56,605
+00:04:56,026 --> 00:04:57,605
 And all your phone has is a name.
 
 103
-00:04:57,371 --> 00:04:58,346
+00:04:58,371 --> 00:04:59,346
 swiggy dot com.
 
 104
-00:04:58,764 --> 00:05:00,389
+00:04:59,764 --> 00:05:01,389
 A name is easy for you to remember.
 
 105
-00:05:00,958 --> 00:05:03,141
+00:05:01,958 --> 00:05:04,141
 But the network doesn't move data to names.
 
 106
-00:05:03,803 --> 00:05:05,335
+00:05:04,803 --> 00:05:06,335
 It moves data to numbers.
 
 107
-00:05:05,823 --> 00:05:07,762
+00:05:06,823 --> 00:05:08,762
 So we have a little translation problem.
 
 108
-00:05:10,000 --> 00:05:12,357
+00:05:11,000 --> 00:05:13,357
 Because every server on the internet has a number.
 
 109
-00:05:12,659 --> 00:05:14,481
+00:05:13,659 --> 00:05:15,481
 It's called an I-P address.
 
 110
-00:05:15,538 --> 00:05:17,663
+00:05:16,538 --> 00:05:18,663
 I-P stands for Internet Protocol.
 
 111
-00:05:18,231 --> 00:05:22,957
+00:05:19,231 --> 00:05:23,957
 Basically, it's a unique number that picks out one exact machine on the whole network.
 
 112
-00:05:23,444 --> 00:05:24,930
+00:05:24,444 --> 00:05:25,930
 Swiggy's might look like this.
 
 113
-00:05:25,592 --> 00:05:28,169
+00:05:26,592 --> 00:05:29,169
 One-four-two, dot two-fifty, and so on.
 
 114
-00:05:29,226 --> 00:05:31,118
+00:05:30,226 --> 00:05:32,118
 Think of it as the server's phone number.
 
 115
-00:05:31,687 --> 00:05:33,568
+00:05:32,687 --> 00:05:34,568
 This shape is called IPv4.
 
 116
-00:05:34,056 --> 00:05:37,539
+00:05:35,056 --> 00:05:38,539
 The newer IPv6 ones are much longer, but the idea is the same.
 
 117
-00:05:38,200 --> 00:05:40,604
+00:05:39,200 --> 00:05:41,604
 A number that points to one exact machine.
 
 118
-00:05:43,000 --> 00:05:45,067
+00:05:44,000 --> 00:05:46,067
 So how do we get from the name to the number?
 
 119
-00:05:45,635 --> 00:05:47,005
+00:05:46,635 --> 00:05:48,005
 With the internet's phonebook.
 
 120
-00:05:47,365 --> 00:05:48,573
+00:05:48,365 --> 00:05:49,573
 It's called D-N-S.
 
 121
-00:05:49,235 --> 00:05:51,324
+00:05:50,235 --> 00:05:52,324
 That's short for Domain Name System.
 
 122
-00:05:51,812 --> 00:05:54,308
+00:05:52,812 --> 00:05:55,308
 A domain is just a name like swiggy dot com.
 
 123
-00:05:55,074 --> 00:05:59,033
+00:05:56,074 --> 00:06:00,033
 So Domain Name System literally means the system that looks up domain names.
 
 124
-00:05:59,602 --> 00:06:03,015
+00:06:00,602 --> 00:06:04,015
 You type swiggy dot com, and DNS finds the matching number.
 
 125
-00:06:03,433 --> 00:06:06,870
+00:06:04,433 --> 00:06:07,870
 Just like tapping a saved contact and letting your phone dial it.
 
 126
-00:06:07,439 --> 00:06:08,426
+00:06:08,439 --> 00:06:09,426
 You remember the name.
 
 127
-00:06:08,995 --> 00:06:10,341
+00:06:09,995 --> 00:06:11,341
 DNS remembers the number.
 
 128
-00:06:10,539 --> 00:06:11,560
+00:06:11,539 --> 00:06:12,560
 You never have to.
 
 129
-00:06:14,000 --> 00:06:15,834
+00:06:15,000 --> 00:06:16,834
 But that lookup isn't one quick step.
 
 130
-00:06:16,496 --> 00:06:19,782
+00:06:17,496 --> 00:06:20,782
 It's more like a relay race, handing a question down the line.
 
 131
-00:06:20,444 --> 00:06:21,814
+00:06:21,444 --> 00:06:22,814
 Your device checks first.
 
 132
-00:06:22,475 --> 00:06:23,892
+00:06:23,475 --> 00:06:24,892
 Do I already have this saved?
 
 133
-00:06:24,461 --> 00:06:27,038
+00:06:25,461 --> 00:06:28,038
 If not, it asks a helper called the resolver.
 
 134
-00:06:27,700 --> 00:06:31,102
+00:06:28,700 --> 00:06:32,102
 That's just another computer whose whole job is doing the running around for you.
 
 135
-00:06:32,332 --> 00:06:37,406
+00:06:33,332 --> 00:06:38,406
 The resolver asks a root server, who says, I don't know, but ask the dot-com people.
 
 136
-00:06:38,637 --> 00:06:41,435
+00:06:39,637 --> 00:06:42,435
 The dot-com server says, ask Swiggy's own server.
 
 137
-00:06:42,003 --> 00:06:45,893
+00:06:43,003 --> 00:06:46,893
 And that last one, the authoritative server, finally knows the number.
 
 138
-00:06:46,310 --> 00:06:47,692
+00:06:47,310 --> 00:06:48,692
 It races all the way back.
 
 139
-00:06:48,458 --> 00:06:50,931
+00:06:49,458 --> 00:06:51,931
 Root and dot-com never knew the address.
 
 140
-00:06:51,419 --> 00:06:53,520
+00:06:52,419 --> 00:06:54,520
 They just point you to whoever's next.
 
 141
-00:06:56,000 --> 00:06:58,810
+00:06:57,000 --> 00:06:59,810
 Now, do you run that whole race every single time?
 
 142
-00:06:59,297 --> 00:06:59,750
+00:07:00,297 --> 00:07:00,750
 No.
 
 143
-00:07:00,168 --> 00:07:01,352
+00:07:01,168 --> 00:07:02,352
 The first time, yes.
 
 144
-00:07:01,840 --> 00:07:04,580
+00:07:02,840 --> 00:07:05,580
 After that, your device just remembers the number.
 
 145
-00:07:05,149 --> 00:07:07,598
+00:07:06,149 --> 00:07:08,598
 So the second visit is basically instant.
 
 146
-00:07:08,016 --> 00:07:09,201
+00:07:09,016 --> 00:07:10,201
 But here's the question.
 
 147
-00:07:09,862 --> 00:07:12,289
+00:07:10,862 --> 00:07:13,289
 How long should it remember before checking again?
 
 148
-00:07:12,858 --> 00:07:15,598
+00:07:13,858 --> 00:07:16,598
 That's controlled by a setting called T-T-L.
 
 149
-00:07:16,166 --> 00:07:18,059
+00:07:17,166 --> 00:07:19,059
 T-T-L stands for Time To Live.
 
 150
-00:07:18,628 --> 00:07:21,867
+00:07:19,628 --> 00:07:22,867
 Basically, how long should this answer be trusted before we check again?
 
 151
-00:07:22,529 --> 00:07:23,690
+00:07:23,529 --> 00:07:24,690
 And it's a trade-off.
 
 152
-00:07:24,352 --> 00:07:29,123
+00:07:25,352 --> 00:07:30,123
 Set it long, and you save trips, but if the number ever changes, you're slow to find out.
 
 153
-00:07:29,692 --> 00:07:33,059
+00:07:30,692 --> 00:07:34,059
 Set it short, you're always fresh, but you do more work.
 
 154
-00:07:33,477 --> 00:07:35,125
+00:07:34,477 --> 00:07:36,125
 Oh, and one myth to kill.
 
 155
-00:07:35,787 --> 00:07:37,424
+00:07:36,787 --> 00:07:38,424
 DNS only finds the address.
 
 156
-00:07:37,726 --> 00:07:39,560
+00:07:38,726 --> 00:07:40,560
 It never loads the actual page.
 
 157
-00:07:42,000 --> 00:07:42,534
+00:07:43,000 --> 00:07:43,534
 Right.
 
 158
-00:07:42,952 --> 00:07:43,997
+00:07:43,952 --> 00:07:44,997
 We found the kitchen.
 
 159
-00:07:44,264 --> 00:07:47,341
+00:07:45,264 --> 00:07:48,341
 Now the dining room and the kitchen need a shared language.
 
 160
-00:07:47,909 --> 00:07:50,406
+00:07:48,909 --> 00:07:51,406
 That language is H-T-T-P.
 
 161
-00:07:50,893 --> 00:07:53,970
+00:07:51,893 --> 00:07:54,970
 Short for HyperText Transfer Protocol.
 
 162
-00:07:55,201 --> 00:07:56,896
+00:07:56,201 --> 00:07:57,896
 Fancy name, simple thing.
 
 163
-00:07:57,383 --> 00:08:02,178
+00:07:58,383 --> 00:08:03,178
 It's just the agreed-on rules for how a client asks for something and how a server answers.
 
 164
-00:08:02,944 --> 00:08:04,697
+00:08:03,944 --> 00:08:05,697
 Your phone sends a request.
 
 165
-00:08:05,185 --> 00:08:06,485
+00:08:06,185 --> 00:08:07,485
 Get me the restaurants.
 
 166
-00:08:06,752 --> 00:08:08,621
+00:08:07,752 --> 00:08:09,621
 The server sends back a response.
 
 167
-00:08:09,039 --> 00:08:11,210
+00:08:10,039 --> 00:08:12,210
 Two hundred, OK, here they are.
 
 168
-00:08:11,698 --> 00:08:13,289
+00:08:12,698 --> 00:08:14,289
 One ask, one answer.
 
 169
-00:08:13,776 --> 00:08:15,460
+00:08:14,776 --> 00:08:16,460
 And then it forgets you completely.
 
 170
-00:08:15,878 --> 00:08:18,525
+00:08:16,878 --> 00:08:19,525
 HTTP keeps no memory between requests.
 
 171
-00:08:19,953 --> 00:08:20,801
+00:08:20,953 --> 00:08:21,801
 Hold that thought.
 
 172
-00:08:21,288 --> 00:08:22,589
+00:08:22,288 --> 00:08:23,589
 It matters in a minute.
 
 173
-00:08:25,000 --> 00:08:26,428
+00:08:26,000 --> 00:08:27,428
 Let's open up that request.
 
 174
-00:08:26,591 --> 00:08:27,415
+00:08:27,591 --> 00:08:28,415
 Four parts.
 
 175
-00:08:27,647 --> 00:08:28,239
+00:08:28,647 --> 00:08:29,239
 The method.
 
 176
-00:08:28,320 --> 00:08:30,399
+00:08:29,320 --> 00:08:31,399
 That's the verb, what you want done.
 
 177
-00:08:30,886 --> 00:08:31,548
+00:08:31,886 --> 00:08:32,548
 The path.
 
 178
-00:08:32,036 --> 00:08:33,104
+00:08:33,036 --> 00:08:34,104
 Which thing you want.
 
 179
-00:08:33,266 --> 00:08:34,079
+00:08:34,266 --> 00:08:35,079
 The headers.
 
 180
-00:08:34,845 --> 00:08:39,269
+00:08:35,845 --> 00:08:40,269
 Little labels attached to the request, like who you are or what format you can read.
 
 181
-00:08:39,629 --> 00:08:40,360
+00:08:40,629 --> 00:08:41,360
 And the body.
 
 182
-00:08:40,627 --> 00:08:41,928
+00:08:41,627 --> 00:08:42,928
 Any data you're sending up.
 
 183
-00:08:42,346 --> 00:08:47,164
+00:08:43,346 --> 00:08:48,164
 And the address itself, the URL, short for Uniform Resource Locator, packs a lot in.
 
 184
-00:08:48,592 --> 00:08:51,332
+00:08:49,592 --> 00:08:52,332
 The scheme, how to talk, like https.
 
 185
-00:08:51,599 --> 00:08:52,748
+00:08:52,599 --> 00:08:53,748
 The host, which server.
 
 186
-00:08:52,946 --> 00:08:54,049
+00:08:53,946 --> 00:08:55,049
 The path, which page.
 
 187
-00:08:54,617 --> 00:08:56,301
+00:08:55,617 --> 00:08:57,301
 And the query, extra options.
 
 188
-00:08:56,661 --> 00:08:58,066
+00:08:57,661 --> 00:08:59,066
 Four colours, one line.
 
 189
-00:09:00,000 --> 00:09:02,264
+00:09:01,000 --> 00:09:03,264
 Of all those methods, two do most of the work.
 
 190
-00:09:02,926 --> 00:09:04,005
+00:09:03,926 --> 00:09:05,005
 GET and POST.
 
 191
-00:09:04,423 --> 00:09:05,573
+00:09:05,423 --> 00:09:06,573
 GET is for reading.
 
 192
-00:09:06,060 --> 00:09:07,024
+00:09:07,060 --> 00:09:08,024
 Browsing the menu.
 
 193
-00:09:07,512 --> 00:09:11,169
+00:09:08,512 --> 00:09:12,169
 It only looks, it changes nothing, and it's safe to do again and again.
 
 194
-00:09:12,225 --> 00:09:15,291
+00:09:13,225 --> 00:09:16,291
 Its details ride right in the URL, so you can bookmark it.
 
 195
-00:09:15,709 --> 00:09:16,765
+00:09:16,709 --> 00:09:17,765
 POST is for writing.
 
 196
-00:09:17,183 --> 00:09:18,275
+00:09:18,183 --> 00:09:19,275
 Placing the order.
 
 197
-00:09:18,843 --> 00:09:24,486
+00:09:19,843 --> 00:09:25,486
 It changes something on the server, and its data rides hidden in the body, not the URL.
 
 198
-00:09:25,055 --> 00:09:25,763
+00:09:26,055 --> 00:09:26,763
 One warning.
 
 199
-00:09:26,529 --> 00:09:29,803
+00:09:27,529 --> 00:09:30,803
 Send a POST twice, and you might place two orders.
 
 200
-00:09:30,465 --> 00:09:33,251
+00:09:31,465 --> 00:09:34,251
 We'll fix that double-tap problem in a later episode.
 
 201
-00:09:35,000 --> 00:09:38,088
+00:09:36,000 --> 00:09:39,088
 Remember how HTTP forgets you after every request?
 
 202
-00:09:39,145 --> 00:09:41,246
+00:09:40,145 --> 00:09:42,246
 So how does the app keep you logged in?
 
 203
-00:09:41,606 --> 00:09:42,384
+00:09:42,606 --> 00:09:43,384
 With a cookie.
 
 204
-00:09:42,953 --> 00:09:46,146
+00:09:43,953 --> 00:09:47,146
 A cookie is just a tiny note your browser stores for a website.
 
 205
-00:09:46,633 --> 00:09:48,166
+00:09:47,633 --> 00:09:49,166
 Think of it as an ID badge.
 
 206
-00:09:48,827 --> 00:09:49,965
+00:09:49,827 --> 00:09:50,965
 You log in once.
 
 207
-00:09:50,383 --> 00:09:52,484
+00:09:51,383 --> 00:09:53,484
 The server hands your browser a little token.
 
 208
-00:09:53,053 --> 00:09:53,889
+00:09:54,053 --> 00:09:54,889
 Set-Cookie.
 
 209
-00:09:54,377 --> 00:09:58,092
+00:09:55,377 --> 00:09:59,092
 From then on, every request you send quietly carries that cookie.
 
 210
-00:09:58,661 --> 00:10:01,343
+00:09:59,661 --> 00:10:02,343
 And the server goes, ah, it's you again.
 
 211
-00:10:02,004 --> 00:10:02,968
+00:10:03,004 --> 00:10:03,968
 Still logged in.
 
 212
-00:10:03,537 --> 00:10:05,174
+00:10:04,537 --> 00:10:06,174
 That's all a session cookie is.
 
 213
-00:10:05,743 --> 00:10:07,368
+00:10:06,743 --> 00:10:08,368
 A badge that says it's me.
 
 214
-00:10:09,000 --> 00:10:12,611
+00:10:10,000 --> 00:10:13,611
 Every response also comes stamped with a status code.
 
 215
-00:10:13,272 --> 00:10:15,420
+00:10:14,272 --> 00:10:16,420
 A quick number telling you how it went.
 
 216
-00:10:16,187 --> 00:10:17,626
+00:10:17,187 --> 00:10:18,626
 Two hundred is green.
 
 217
-00:10:18,114 --> 00:10:19,820
+00:10:19,114 --> 00:10:20,820
 OK, here's what you asked for.
 
 218
-00:10:20,238 --> 00:10:21,817
+00:10:21,238 --> 00:10:22,817
 Three-oh-one is a redirect.
 
 219
-00:10:22,119 --> 00:10:23,826
+00:10:23,119 --> 00:10:24,826
 It moved, follow the arrow.
 
 220
-00:10:24,395 --> 00:10:25,347
+00:10:25,395 --> 00:10:26,347
 Four-oh-four.
 
 221
-00:10:25,544 --> 00:10:26,310
+00:10:26,544 --> 00:10:27,310
 Not found.
 
 222
-00:10:26,798 --> 00:10:29,700
+00:10:27,798 --> 00:10:30,700
 That page doesn't exist, and that one's on your side.
 
 223
-00:10:30,362 --> 00:10:31,187
+00:10:31,362 --> 00:10:32,187
 Five hundred.
 
 224
-00:10:31,546 --> 00:10:32,510
+00:10:32,546 --> 00:10:33,510
 Server error.
 
 225
-00:10:32,812 --> 00:10:34,252
+00:10:33,812 --> 00:10:35,252
 The kitchen itself broke.
 
 226
-00:10:34,913 --> 00:10:39,836
+00:10:35,913 --> 00:10:40,836
 Easy way to remember: four-something is your fault, five-something is the server's.
 
 227
-00:10:42,000 --> 00:10:42,813
+00:10:43,000 --> 00:10:43,813
 One more letter.
 
 228
-00:10:43,231 --> 00:10:45,030
+00:10:44,231 --> 00:10:46,030
 The S in H-T-T-P-S.
 
 229
-00:10:45,518 --> 00:10:47,108
+00:10:46,518 --> 00:10:48,108
 It just stands for Secure.
 
 230
-00:10:47,596 --> 00:10:49,349
+00:10:48,596 --> 00:10:50,349
 Plain HTTP is like a postcard.
 
 231
-00:10:49,767 --> 00:10:52,426
+00:10:50,767 --> 00:10:53,426
 Anyone who handles it on the way can read it.
 
 232
-00:10:52,913 --> 00:10:55,096
+00:10:53,913 --> 00:10:56,096
 Your card number, right there in the open.
 
 233
-00:10:55,584 --> 00:10:57,441
+00:10:56,584 --> 00:10:58,441
 HTTPS is a sealed envelope.
 
 234
-00:10:57,801 --> 00:11:02,028
+00:10:58,801 --> 00:11:03,028
 Your phone and the server quietly agree on a secret, then scramble everything.
 
 235
-00:11:02,515 --> 00:11:04,872
+00:11:03,515 --> 00:11:05,872
 To anyone in between, it's gibberish.
 
 236
-00:11:05,290 --> 00:11:06,509
+00:11:06,290 --> 00:11:07,509
 That's the little padlock.
 
 237
-00:11:07,078 --> 00:11:07,879
+00:11:08,078 --> 00:11:08,879
 But careful.
 
 238
-00:11:08,541 --> 00:11:10,700
+00:11:09,541 --> 00:11:11,700
 The padlock only means the line is encrypted.
 
 239
-00:11:11,269 --> 00:11:12,929
+00:11:12,269 --> 00:11:13,929
 It does not mean the site is honest.
 
 240
-00:11:13,498 --> 00:11:15,576
+00:11:14,498 --> 00:11:16,576
 Even scam sites can show a padlock.
 
 241
-00:11:18,000 --> 00:11:20,218
+00:11:19,000 --> 00:11:21,218
 Let's run the whole thing, start to finish.
 
 242
-00:11:21,274 --> 00:11:22,969
+00:11:22,274 --> 00:11:23,969
 You tap a restaurant on Swiggy.
 
 243
-00:11:23,457 --> 00:11:25,465
+00:11:24,457 --> 00:11:26,465
 First, DNS finds the server's number.
 
 244
-00:11:25,953 --> 00:11:33,801
+00:11:26,953 --> 00:11:34,801
 Then your phone sends a sealed HTTPS request to that server, which checks the rules and pulls the real data from its database.
 
 245
-00:11:34,370 --> 00:11:37,249
+00:11:35,370 --> 00:11:38,249
 The answer travels back, and the food appears on your screen.
 
 246
-00:11:37,667 --> 00:11:41,754
+00:11:38,667 --> 00:11:42,754
 Find the address, knock politely in the right language, get your answer.
 
 247
-00:11:42,416 --> 00:11:44,053
+00:11:43,416 --> 00:11:45,053
 That, honestly, is the whole web.
 
 248
-00:11:46,000 --> 00:11:46,789
+00:11:47,000 --> 00:11:47,789
 And that's it.
 
 249
-00:11:47,277 --> 00:11:49,599
+00:11:48,277 --> 00:11:50,599
 You now know what's happening under every single tap.
 
 250
-00:11:50,087 --> 00:11:51,317
+00:11:51,087 --> 00:11:52,317
 A client and a server.
 
 251
-00:11:51,735 --> 00:11:53,221
+00:11:52,735 --> 00:11:54,221
 The dining room and the kitchen.
 
 252
-00:11:53,790 --> 00:11:54,928
+00:11:54,790 --> 00:11:55,928
 Never trust the client.
 
 253
-00:11:55,416 --> 00:11:59,293
+00:11:56,416 --> 00:12:00,293
 DNS, the Domain Name System, turning names into numbers.
 
 254
-00:11:59,862 --> 00:12:05,401
+00:12:00,862 --> 00:12:06,401
 HTTP, the HyperText Transfer Protocol, the shared language of request and response.
 
 255
-00:12:06,457 --> 00:12:09,174
+00:12:07,457 --> 00:12:10,174
 And HTTPS, the sealed envelope.
 
 256
-00:12:09,940 --> 00:12:10,730
+00:12:10,940 --> 00:12:11,730
 But notice.
 
 257
-00:12:10,892 --> 00:12:12,053
+00:12:11,892 --> 00:12:13,053
 All of this took time.
 
 258
-00:12:12,819 --> 00:12:15,989
+00:12:13,819 --> 00:12:16,989
 The request travelled, the relay raced, the data came back.
 
 259
-00:12:16,558 --> 00:12:17,928
+00:12:17,558 --> 00:12:18,928
 So how do we measure fast?
 
 260
-00:12:18,032 --> 00:12:21,213
+00:12:19,032 --> 00:12:22,213
 That's latency versus throughput, and that's next time.
 
 261
-00:12:21,782 --> 00:12:22,595
+00:12:22,782 --> 00:12:23,595
 See you there.

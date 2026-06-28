@@ -19,10 +19,10 @@
 ▸ Hey, welcome back to The Tech Intern, system design. I'm Dhruva, and this is the show where we build huge apps from scratch, one box at a time.
 ▸ Last time, we built a baby Instagram, and we found the big secret: every app is really just three pieces. A client, a server, and a database, passing a request back and forth.
 ▸ But I skipped something sneaky. When your phone sends that request out, how does it even find the right server? Out of billions of computers on the planet?
-▸ Tonight we crack those boxes open. What's actually inside "client" and "server," and how they find and talk to each other. So let's order some food. Open Swiggy.
+▸ Right, let's crack those boxes open. What's actually inside "client" and "server," and how they find and talk to each other. So let's order some food. Open Swiggy.
 
 ## 2 · TWO QUESTIONS
-▸ Everything tonight answers just two questions.
+▸ It all comes down to two questions.
 ▸ One. What's really inside those words, "client" and "server"? Who does what, and where does your data actually live?
 ▸ Two. How do they find each other across the whole internet, and how do they talk once they do? Two questions. Let's go.
 

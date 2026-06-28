@@ -38,10 +38,10 @@ BEATS = {
   ("Hey, welcome back to The Tech Intern, system design. I'm Dhruva, and this is the show where we build huge apps from scratch, one box at a time.", ["s1k","s1t"]),
   ("Last time, we built a baby Instagram, and we found the big secret: every app is really just three pieces. A client, a server, and a database, passing a request back and forth.", ["s1_cli","s1_srv","s1_db"]),
   ("But I skipped something sneaky. When your phone sends that request out, how does it even find the right server? Out of billions of computers on the planet?", ["s1q"]),
-  ("Tonight we crack those boxes open. What's actually inside client and server, and how they find and talk to each other. So let's order some food. Open Swiggy.", ["s1s"]),
+  ("Right, let's crack those boxes open. What's actually inside client and server, and how they find and talk to each other. So let's order some food. Open Swiggy.", ["s1s"]),
  ],
  "s2":[
-  ("Everything tonight answers just two questions.", ["s2k","s2t"]),
+  ("It all comes down to two questions.", ["s2k","s2t"]),
   ("One. What's really inside those words, client and server? Who does what, and where does your data actually live?", ["s2q1"]),
   ("Two. How do they find each other across the whole internet, and how do they talk once they do? Two questions. Let's go.", ["s2q2"]),
  ],
