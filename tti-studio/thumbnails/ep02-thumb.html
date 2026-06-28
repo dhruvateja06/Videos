@@ -1,9 +1,10 @@
 <!doctype html>
 <!--
-  Ep02 thumbnail · System Design vertical
-  1920×1080 → upscales cleanly to 2560×1440 for YouTube hi-res
-  Variant 1: hero DNS relay diagram + big "DNS & HTTP" title
-  Render: hyperframes render . -c thumbnails/ep02-thumb.html --format png-sequence
+  Ep02 thumbnail v2 · System Design vertical
+  1920×1080 → renders at landscape-4k (3840×2160) for YouTube.
+  Concept: big "DNS & HTTP" title + ONE large readable visual —
+  a phone shooting a glowing beam to a far server (the "finding" metaphor).
+  Few elements, high contrast, legible at grid size.
 -->
 <html lang="en">
   <head>
@@ -12,7 +13,6 @@
     <style>
       @font-face { font-family:"Fraunces"; font-weight:600; src:url("../assets/fonts/fraunces-latin-600-normal.woff2") format("woff2"); }
       @font-face { font-family:"Inter"; font-weight:700; src:url("../assets/fonts/inter-latin-700-normal.woff2") format("woff2"); }
-      @font-face { font-family:"Inter"; font-weight:600; src:url("../assets/fonts/inter-latin-600-normal.woff2") format("woff2"); }
       @font-face { font-family:"JetBrains Mono"; font-weight:400; src:url("../assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); }
       :root{
         --paper:#0F1729; --panel:#16223C; --panel2:#1B2A47;
@@ -22,145 +22,107 @@
       *{ margin:0; padding:0; box-sizing:border-box; }
       html,body{ width:1920px; height:1080px; overflow:hidden; }
       body{ font-family:"Inter",sans-serif; background:var(--paper); }
-      #root{ position:relative; width:1920px; height:1080px; background:var(--paper); color:var(--ink); }
+      #root{ position:relative; width:1920px; height:1080px; background:#0C1322; color:var(--ink); }
 
-      /* ---- background ---- */
       #bg{ position:absolute; inset:0; overflow:hidden; z-index:0; }
       #bggrid{ position:absolute; left:-140px; top:-140px; width:2300px; height:1400px;
-        background-image:linear-gradient(rgba(123,138,165,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(123,138,165,.08) 1px,transparent 1px);
-        background-size:84px 84px; }
-      .glow{ position:absolute; border-radius:50%; filter:blur(110px); pointer-events:none; }
-      /* title-area bloom */
-      #glow_t{ width:1500px; height:1500px; left:210px; top:-460px;
-        background:radial-gradient(circle, rgba(59,123,255,.32), rgba(59,123,255,0) 60%); }
-      /* below-fold bloom toward authoritative node */
-      #glow_b{ width:900px; height:900px; left:1280px; top:560px;
-        background:radial-gradient(circle, rgba(52,211,153,.20), rgba(52,211,153,0) 60%); }
-      /* left vignette */
-      #glow_l{ width:800px; height:800px; left:-280px; top:240px;
-        background:radial-gradient(circle, rgba(106,160,255,.14), rgba(106,160,255,0) 60%); }
+        background-image:linear-gradient(rgba(123,138,165,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(123,138,165,.07) 1px,transparent 1px);
+        background-size:88px 88px; }
+      .glow{ position:absolute; border-radius:50%; filter:blur(120px); pointer-events:none; }
+      /* big cobalt bloom behind the right-side visual = depth + contrast */
+      #glow_r{ width:1300px; height:1300px; left:1180px; top:-260px;
+        background:radial-gradient(circle, rgba(59,123,255,.42), rgba(59,123,255,0) 60%); }
+      /* soft bloom behind title */
+      #glow_l{ width:1200px; height:1200px; left:-360px; top:-200px;
+        background:radial-gradient(circle, rgba(106,160,255,.16), rgba(106,160,255,0) 60%); }
+      /* green pop at the destination */
+      #glow_g{ width:760px; height:760px; left:1430px; top:80px;
+        background:radial-gradient(circle, rgba(52,211,153,.30), rgba(52,211,153,0) 60%); }
 
-      /* ---- frame chrome (subtle) ---- */
-      .hud{ position:absolute; left:64px; right:64px; top:52px; display:flex; justify-content:space-between; align-items:center; z-index:7;
-        font-family:"JetBrains Mono"; font-size:26px; letter-spacing:.20em; text-transform:uppercase; color:var(--muted); }
+      /* brand chrome */
+      .hud{ position:absolute; left:60px; right:60px; top:50px; display:flex; justify-content:space-between; align-items:center; z-index:8;
+        font-family:"JetBrains Mono"; font-size:27px; letter-spacing:.20em; text-transform:uppercase; color:var(--muted); }
       .hud .l span{ color:var(--accent); }
-      .hud .r{ color:var(--soft); font-weight:400; font-size:30px; letter-spacing:.18em; }
-      #hudline{ position:absolute; left:64px; right:64px; top:104px; height:1px; background:var(--hair); z-index:7; }
-      .bracket{ position:absolute; width:46px; height:46px; z-index:7; border-color:var(--accent); border-style:solid; border-width:0; }
-      #brTL{ left:32px; top:32px; border-left-width:3px; border-top-width:3px; }
-      #brTR{ right:32px; top:32px; border-right-width:3px; border-top-width:3px; }
-      #brBL{ left:32px; bottom:32px; border-left-width:3px; border-bottom-width:3px; }
-      #brBR{ right:32px; bottom:32px; border-right-width:3px; border-bottom-width:3px; }
+      .hud .r{ color:var(--soft); }
+      .bracket{ position:absolute; width:52px; height:52px; z-index:8; border-color:var(--accent); border-style:solid; border-width:0; }
+      #brTL{ left:34px; top:34px; border-left-width:4px; border-top-width:4px; }
+      #brTR{ right:34px; top:34px; border-right-width:4px; border-top-width:4px; }
+      #brBL{ left:34px; bottom:34px; border-left-width:4px; border-bottom-width:4px; }
+      #brBR{ right:34px; bottom:34px; border-right-width:4px; border-bottom-width:4px; }
 
-      /* ---- title ---- */
-      .stage{ position:absolute; inset:0; z-index:5; padding:150px 96px 60px 96px; display:flex; flex-direction:column; }
-      .eyebrow{ font-family:"JetBrains Mono"; font-size:32px; letter-spacing:.32em; text-transform:uppercase; color:var(--accent-bright); margin-bottom:8px; }
-      .eyebrow:before{ content:"// "; color:var(--muted); }
-      h1{ font-family:"Fraunces"; font-weight:600; color:#fff; line-height:0.94; letter-spacing:-.022em; font-size:300px; margin-top:6px; text-shadow:0 0 60px rgba(59,123,255,.25); }
+      /* title */
+      .title{ position:absolute; left:96px; top:300px; z-index:6; }
+      .eyebrow{ font-family:"JetBrains Mono"; font-size:34px; letter-spacing:.26em; text-transform:uppercase; color:var(--accent-bright); margin-bottom:20px; }
+      h1{ font-family:"Fraunces"; font-weight:600; color:#fff; line-height:0.92; letter-spacing:-.02em; font-size:300px;
+        text-shadow:0 6px 50px rgba(59,123,255,.35); }
       h1 .amp{ color:var(--accent); font-style:italic; }
-      h1 .ac{ color:var(--accent-bright); }
-      .sub{ font-family:"Inter"; font-weight:700; font-size:48px; letter-spacing:.16em; text-transform:uppercase; color:var(--soft); margin-top:18px; }
-      .sub .ac{ color:var(--accent-bright); }
-
-      /* ---- length pill ---- */
-      .pill{ position:absolute; right:90px; top:188px; font-family:"JetBrains Mono"; font-size:26px; letter-spacing:.10em; color:var(--accent-bright);
-        background:rgba(59,123,255,.10); border:1.5px solid rgba(106,160,255,.45); border-radius:999px; padding:14px 28px; z-index:7; }
-
-      /* ---- hero diagram (DNS relay) ---- */
-      #diagram{ margin-top:34px; align-self:center; }
-      svg text{ font-family:"JetBrains Mono"; fill:var(--soft); }
-      .ttl{ font-family:"Inter"; font-weight:700; fill:var(--ink); }
-      .badge{ font-family:"JetBrains Mono"; fill:#fff; font-weight:400; }
-
-      /* ---- bottom right cliff hook ---- */
-      .hook{ position:absolute; left:96px; bottom:64px; max-width:840px; z-index:7;
-        font-family:"Fraunces"; font-style:italic; font-weight:400; font-size:36px; color:var(--soft); }
-      .hook .ac{ color:var(--accent); font-style:normal; font-weight:600; }
-      .label{ position:absolute; right:96px; bottom:64px; z-index:7;
-        font-family:"JetBrains Mono"; font-size:24px; letter-spacing:.12em; color:var(--muted); text-transform:uppercase; }
-      .label b{ color:var(--accent-bright); font-weight:400; }
+      .qline{ font-family:"Inter"; font-weight:700; font-size:54px; line-height:1.12; color:var(--soft); margin-top:40px; max-width:900px; }
+      .qline .ac{ color:var(--accent-bright); }
     </style>
   </head>
   <body>
     <div id="root" data-composition-id="ep02thumb" data-start="0" data-duration="1" data-width="1920" data-height="1080">
 
       <svg width="0" height="0" style="position:absolute"><defs>
-        <filter id="soft"><feGaussianBlur stdDeviation="10"/></filter>
-        <symbol id="i-phone" viewBox="0 0 48 48"><rect x="15" y="6" width="18" height="36" rx="4" fill="none" stroke="#6AA0FF" stroke-width="3.5"/><line x1="21" y1="37" x2="27" y2="37" stroke="#6AA0FF" stroke-width="3.5"/></symbol>
-        <symbol id="i-mag" viewBox="0 0 48 48"><circle cx="21" cy="21" r="13" fill="none" stroke="#6AA0FF" stroke-width="3.5"/><line x1="31" y1="31" x2="40" y2="40" stroke="#6AA0FF" stroke-width="3.5" stroke-linecap="round"/></symbol>
-        <symbol id="i-globe" viewBox="0 0 48 48"><circle cx="24" cy="24" r="16" fill="none" stroke="#6AA0FF" stroke-width="3.5"/><ellipse cx="24" cy="24" rx="7" ry="16" fill="none" stroke="#6AA0FF" stroke-width="3"/><line x1="8" y1="24" x2="40" y2="24" stroke="#6AA0FF" stroke-width="3"/></symbol>
-        <symbol id="i-tag" viewBox="0 0 48 48"><path d="M8 8 H26 L40 22 L26 36 L8 36 Z" fill="none" stroke="#6AA0FF" stroke-width="3.5" stroke-linejoin="round"/><circle cx="16" cy="20" r="3" fill="#6AA0FF"/></symbol>
-        <symbol id="i-key" viewBox="0 0 48 48"><circle cx="16" cy="20" r="9" fill="none" stroke="#34D399" stroke-width="3.5"/><path d="M23 24 L40 41 M34 35 L30 39 M38 39 L35 42" stroke="#34D399" stroke-width="3.5" fill="none" stroke-linecap="round"/></symbol>
+        <filter id="blur" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="14"/></filter>
+        <linearGradient id="beam" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stop-color="#3B7BFF"/><stop offset="0.6" stop-color="#6AA0FF"/><stop offset="1" stop-color="#34D399"/>
+        </linearGradient>
+        <linearGradient id="food1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B7BFF"/><stop offset="1" stop-color="#6AA0FF"/></linearGradient>
+        <linearGradient id="food2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#3B7BFF"/></linearGradient>
       </defs></svg>
 
       <div id="bg">
         <div id="bggrid"></div>
-        <div class="glow" id="glow_t"></div>
-        <div class="glow" id="glow_b"></div>
         <div class="glow" id="glow_l"></div>
+        <div class="glow" id="glow_r"></div>
+        <div class="glow" id="glow_g"></div>
       </div>
 
-      <div class="hud"><div class="l">THE TECH INTERN <span>// SYSTEM DESIGN</span></div><div class="r">S1 · E02</div></div>
-      <div id="hudline"></div>
+      <div class="hud"><div class="l">THE TECH INTERN <span>// SYSTEM DESIGN</span></div><div class="r">EP 02</div></div>
       <div class="bracket" id="brTL"></div><div class="bracket" id="brTR"></div>
       <div class="bracket" id="brBL"></div><div class="bracket" id="brBR"></div>
 
-      <div class="pill">13-min explainer</div>
-
-      <div class="stage">
+      <div class="title">
         <div class="eyebrow">how your phone finds the server</div>
-        <h1>DNS <span class="amp">&amp;</span> <span class="ac">HTTP</span></h1>
-        <div class="sub">CLIENT &middot; SERVER &middot; <span class="ac">THE WHOLE JOURNEY</span></div>
-
-        <!-- DNS relay race · the proof under the title -->
-        <svg id="diagram" width="1640" height="240" viewBox="0 0 1640 240" style="overflow:visible;">
-          <!-- track -->
-          <path d="M90 130 H1550" stroke="rgba(123,138,165,.3)" stroke-width="3" stroke-dasharray="2 16" stroke-linecap="round"/>
-          <!-- progress (traversed) -->
-          <path d="M90 130 H940" stroke="#3B7BFF" stroke-width="5" opacity="0.85"/>
-          <!-- baton halo (frozen mid-flight between TLD and authoritative) -->
-          <circle cx="940" cy="130" r="34" fill="#6AA0FF" opacity="0.45" filter="url(#soft)"/>
-          <circle cx="940" cy="130" r="16" fill="#6AA0FF"/>
-          <!-- baton speed lines -->
-          <line x1="870" y1="118" x2="908" y2="120" stroke="rgba(106,160,255,.7)" stroke-width="3" stroke-linecap="round"/>
-          <line x1="850" y1="138" x2="900" y2="138" stroke="rgba(106,160,255,.5)" stroke-width="3" stroke-linecap="round"/>
-          <line x1="870" y1="156" x2="908" y2="148" stroke="rgba(106,160,255,.4)" stroke-width="3" stroke-linecap="round"/>
-
-          <!-- station 1 · device -->
-          <g><circle cx="100" cy="130" r="58" fill="#16223C" stroke="#6AA0FF" stroke-width="3"/>
-            <use href="#i-phone" x="76" y="106" width="48" height="48"/>
-            <circle cx="140" cy="92" r="18" fill="#3B7BFF"/><text x="140" y="100" font-size="22" text-anchor="middle" fill="#fff" class="badge">1</text></g>
-          <!-- station 2 · resolver -->
-          <g><circle cx="380" cy="130" r="58" fill="#16223C" stroke="#6AA0FF" stroke-width="3"/>
-            <use href="#i-mag" x="356" y="106" width="48" height="48"/>
-            <circle cx="420" cy="92" r="18" fill="#3B7BFF"/><text x="420" y="100" font-size="22" text-anchor="middle" fill="#fff" class="badge">2</text></g>
-          <!-- station 3 · root -->
-          <g><circle cx="660" cy="130" r="58" fill="#16223C" stroke="#6AA0FF" stroke-width="3"/>
-            <use href="#i-globe" x="636" y="106" width="48" height="48"/>
-            <circle cx="700" cy="92" r="18" fill="#3B7BFF"/><text x="700" y="100" font-size="22" text-anchor="middle" fill="#fff" class="badge">3</text></g>
-          <!-- station 4 · TLD .com -->
-          <g><circle cx="940" cy="130" r="62" fill="#1B2A47" stroke="#6AA0FF" stroke-width="3"/>
-            <use href="#i-tag" x="916" y="106" width="48" height="48"/>
-            <circle cx="980" cy="92" r="18" fill="#3B7BFF"/><text x="980" y="100" font-size="22" text-anchor="middle" fill="#fff" class="badge">4</text></g>
-          <!-- station 5 · authoritative (target — green glow) -->
-          <g>
-            <circle cx="1240" cy="130" r="78" fill="none" stroke="#34D399" stroke-width="2" opacity="0.45" filter="url(#soft)"/>
-            <circle cx="1240" cy="130" r="62" fill="#16223C" stroke="#34D399" stroke-width="3"/>
-            <use href="#i-key" x="1215" y="105" width="50" height="50"/>
-            <circle cx="1280" cy="90" r="18" fill="#34D399"/><text x="1280" y="98" font-size="22" text-anchor="middle" fill="#0F1729" class="badge">5</text>
-          </g>
-
-          <!-- answer racing back (green dotted curve) -->
-          <path d="M1240 200 C 1000 200, 800 220, 600 200" stroke="#34D399" stroke-width="3" stroke-dasharray="4 10" stroke-linecap="round" fill="none" opacity="0.7"/>
-          <!-- result tag floating to the right -->
-          <g>
-            <rect x="1380" y="60" width="220" height="64" rx="14" fill="rgba(52,211,153,.12)" stroke="#34D399" stroke-width="2"/>
-            <text x="1490" y="103" font-size="26" text-anchor="middle" fill="#34D399" font-family="JetBrains Mono" letter-spacing="1">142.250…</text>
-          </g>
-          <line x1="1300" y1="100" x2="1380" y2="92" stroke="#34D399" stroke-width="2" opacity="0.6"/>
-        </svg>
+        <h1>DNS <span class="amp">&amp;</span> HTTP</h1>
+        <div class="qline">Out of <span class="ac">a billion</span> computers — in half a second.</div>
       </div>
 
+      <!-- ONE big visual: phone, glowing beam, server -->
+      <svg width="900" height="1080" viewBox="0 0 900 1080" style="position:absolute; right:0; top:0; z-index:5; overflow:visible;">
+        <!-- glowing beam (under-glow + bright core) -->
+        <path d="M250 760 C 430 560, 470 420, 660 300" stroke="url(#beam)" stroke-width="34" fill="none" stroke-linecap="round" opacity="0.35" filter="url(#blur)"/>
+        <path d="M250 760 C 430 560, 470 420, 660 300" stroke="url(#beam)" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="2 26"/>
+        <!-- travelling packet, frozen near the server -->
+        <circle cx="612" cy="332" r="30" fill="#6AA0FF" opacity="0.4" filter="url(#blur)"/>
+        <circle cx="612" cy="332" r="15" fill="#9CC2FF"/>
+
+        <!-- PHONE (big, lower-left of the visual zone) -->
+        <g>
+          <rect x="70" y="540" width="300" height="470" rx="44" fill="#0B1322" stroke="#6AA0FF" stroke-width="5"/>
+          <rect x="70" y="540" width="300" height="470" rx="44" fill="none" stroke="rgba(59,123,255,.30)" stroke-width="14"/>
+          <text x="104" y="600" font-size="26" fill="#B7C2D6" font-family="JetBrains Mono">9:41</text>
+          <text x="104" y="652" font-size="36" fill="#fff" font-family="Inter" font-weight="700">Swiggy</text>
+          <rect x="104" y="676" width="232" height="44" rx="22" fill="#16223C" stroke="var(--hair)"/>
+          <rect x="104" y="742" width="232" height="104" rx="14" fill="#111c33" stroke="var(--hair)"/>
+          <rect x="120" y="758" width="72" height="72" rx="10" fill="url(#food1)"/>
+          <rect x="208" y="766" width="112" height="16" rx="5" fill="#E6ECF5"/><rect x="208" y="794" width="78" height="14" rx="5" fill="#7B8AA5"/>
+          <rect x="104" y="864" width="232" height="104" rx="14" fill="#111c33" stroke="var(--hair)"/>
+          <rect x="120" y="880" width="72" height="72" rx="10" fill="url(#food2)"/>
+          <rect x="208" y="888" width="112" height="16" rx="5" fill="#E6ECF5"/><rect x="208" y="916" width="78" height="14" rx="5" fill="#7B8AA5"/>
+        </g>
+
+        <!-- SERVER (big, upper-right, green-glow = found) -->
+        <g>
+          <circle cx="660" cy="300" r="142" fill="none" stroke="#34D399" stroke-width="3" opacity="0.5" filter="url(#blur)"/>
+          <rect x="540" y="186" width="240" height="228" rx="26" fill="#101b30" stroke="#34D399" stroke-width="5"/>
+          <rect x="572" y="222" width="176" height="46" rx="9" fill="none" stroke="#6AA0FF" stroke-width="3"/><circle cx="596" cy="245" r="8" fill="#34D399"/>
+          <rect x="572" y="284" width="176" height="46" rx="9" fill="none" stroke="#6AA0FF" stroke-width="3"/><circle cx="596" cy="307" r="8" fill="#34D399"/>
+          <rect x="572" y="346" width="176" height="46" rx="9" fill="none" stroke="#6AA0FF" stroke-width="3"/><circle cx="596" cy="369" r="8" fill="#6AA0FF"/>
+          <text x="660" y="166" font-size="26" fill="#34D399" font-family="JetBrains Mono" text-anchor="middle" letter-spacing="2">SERVER</text>
+        </g>
+      </svg>
     </div>
   </body>
 </html>
