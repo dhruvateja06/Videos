@@ -22,7 +22,7 @@
 | **Tags** | see "Tags" below |
 | **Playlist** | The Tech Intern — System Design (season 1) |
 | **Captions** | Upload `script.srt` (already word-synced to narration) |
-| **Thumbnail** | render `thumbnails/ep02-thumb.png` (spec below) |
+| **Thumbnail** | `assets/thumbnails/sd-ep02-dns-http.png` (rendered from the series template — see §5) |
 
 ---
 
@@ -139,34 +139,31 @@ system design, system design for beginners, system design tutorial, system desig
 
 ---
 
-## 5 · Thumbnail spec
+## 5 · Thumbnail
 
-**Concept:** keep the channel-wide template (so the series is recognizable on
-your channel page) and only change the per-episode hook and number. From
-`docs/STYLE.md` § Thumbnails:
+Rendered from the **reusable series template** so every episode matches
+(constant: SYSTEM DESIGN title + client→server→database flow + brand tag +
+the teal/orange series colours; per-episode: only the number + topic line).
 
-| Element | Spec |
-|---|---|
-| Canvas | 1280×720 rendered @2x (so 2560×1440) |
-| Background | `#0F1729` (paper) with the dot grid + a soft cobalt bloom |
-| Series mark | `THE TECH INTERN // SYSTEM DESIGN` HUD bar (constant) |
-| Big title | **`DNS & HTTP`** — Fraunces 600, ~360px, cobalt `#3B7BFF` on cobalt bloom |
-| Subline | "how your phone finds the server" — Inter 700 uppercase, 56px, `#B7C2D6` |
-| Episode # | **`EP 02`** — JetBrains Mono, 72px, top-right, `#7B8AA5` |
-| Hero motif | A simplified version of the **DNS relay** (5 numbered nodes on a dashed track), animated baton frozen mid-flight — recognizable to anyone who watched the video, intriguing to anyone who hasn't |
-| Right-side hook badge | small cobalt pill: **`13-min explainer`** to communicate length up front |
-| Safe zone | Keep all hooks ≥80px from each edge (mobile crop trims ~6%) |
+**File:** `assets/thumbnails/sd-ep02-dns-http.png` (2560×1440, crops to 1280×720)
 
-**Two thumbnail variants to A/B test:**
+**Regenerate / tweak:**
+```bash
+cd tti-studio
+export PUPPETEER_EXECUTABLE_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+node thumbnails/render.mjs --ep "02" --lead "" --main "DNS & HTTP" \
+  --micro "how your phone finds the server" \
+  --out assets/thumbnails/sd-ep02-dns-http.png
+```
 
-1. **Hero diagram** — the DNS relay race I just described. Tech audience, conveys depth.
-2. **The question** — a giant phone mockup tapping a Swiggy card with a glowing arrow shooting up into the network with `?` at the end. More click-y, slightly less "serious."
+Edit `thumbnails/template.html` to change the look for ALL episodes; see
+`thumbnails/README.md`.
 
-There's already a `thumbnails/` folder template in the repo per `STYLE.md` —
-when you're ready I can write `thumbnails/ep02-thumb.html` to render either
-variant at 2560×1440 PNG.
+> Note: the thumbnail template uses the series' teal/orange palette, while the
+> *videos* use the cobalt/navy "Engineer's Terminal" palette. They're internally
+> consistent (all thumbnails match each other; all videos match each other) but
+> not with each other — worth aligning at some point.
 
----
 
 ## 6 · End screen (last 20 seconds)
 
