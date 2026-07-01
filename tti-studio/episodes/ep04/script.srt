@@ -1,0 +1,387 @@
+1
+00:00:00,000 --> 00:00:03,564
+Somewhere in Bangalore, a Swiggy engineer is staring at a dashboard.
+
+2
+00:00:04,249 --> 00:00:13,108
+Numbers are scrolling past — twelve thousand something, forty-five milliseconds, eight-twenty milliseconds, ninety-nine point nine nine percent.
+
+3
+00:00:13,793 --> 00:00:15,848
+To you and me, that's noise.
+
+4
+00:00:16,126 --> 00:00:20,236
+To this engineer, it's the entire health of the system, at a glance.
+
+5
+00:00:20,666 --> 00:00:27,492
+So what do these numbers actually mean, and how does one glance tell you if everything's fine, or about to fall over?
+
+6
+00:00:29,000 --> 00:00:34,631
+Here's the trap: a single number, with no vocabulary around it, doesn't tell you anything.
+
+7
+00:00:35,130 --> 00:00:37,127
+"820" — is that good?
+
+8
+00:00:37,626 --> 00:00:38,102
+Bad?
+
+9
+00:00:38,253 --> 00:00:39,217
+Milliseconds?
+
+10
+00:00:39,368 --> 00:00:40,157
+Requests?
+
+11
+00:00:40,250 --> 00:00:41,121
+You can't tell.
+
+12
+00:00:41,620 --> 00:00:44,662
+The vocabulary is what turns a number into a diagnosis.
+
+13
+00:00:45,091 --> 00:00:46,694
+That's what this episode gives you.
+
+14
+00:00:49,000 --> 00:00:55,049
+You already met two of these numbers last episode, so this is just a reminder, not a re-teach.
+
+15
+00:00:55,850 --> 00:00:59,461
+qps: how many requests the system handles every second.
+
+16
+00:00:59,960 --> 00:01:06,903
+p50 and p99: how long a request takes, for the typical user and for the unlucky one-in-a-hundred.
+
+17
+00:01:07,495 --> 00:01:12,870
+Today we go one level deeper on both, and we add a third number that neither of them tells you.
+
+18
+00:01:15,000 --> 00:01:24,242
+First correction: "a lakh people opened the app" and "the server is handling a lakh requests a second" are not the same sentence.
+
+19
+00:01:25,333 --> 00:01:28,444
+A hundred thousand people can have Swiggy open right now.
+
+20
+00:01:29,036 --> 00:01:34,354
+But most of them are just staring at the menu, deciding between biryani and butter chicken.
+
+21
+00:01:34,853 --> 00:01:39,299
+They're not hitting the server every second, they're idle, most of the time.
+
+22
+00:01:39,984 --> 00:01:46,080
+Only the ones actually tapping, searching, ordering, refreshing, generate real requests.
+
+23
+00:01:46,765 --> 00:01:52,070
+That gap between "people online" and "requests per second" is called think time.
+
+24
+00:01:52,871 --> 00:01:58,107
+So a hundred thousand concurrent users might only produce two thousand qps.
+
+25
+00:01:58,699 --> 00:02:06,315
+Confusing the two is how people wildly overestimate, or underestimate, what a server actually needs to handle.
+
+26
+00:02:08,000 --> 00:02:11,065
+Second new idea: it's not enough to know your qps.
+
+27
+00:02:11,495 --> 00:02:13,909
+What matters is how close you are to the edge.
+
+28
+00:02:14,409 --> 00:02:22,188
+If your system can handle ten thousand qps and you're sitting at two thousand, you have headroom, plenty of room before anything breaks.
+
+29
+00:02:22,559 --> 00:02:25,566
+At seventy-five hundred, you're getting close.
+
+30
+00:02:26,251 --> 00:02:29,862
+Response times start creeping up even before you hit the ceiling.
+
+31
+00:02:30,547 --> 00:02:41,158
+Cross the ceiling, and it's not a graceful slowdown, queues start forming, and things that used to take milliseconds start taking seconds.
+
+32
+00:02:43,000 --> 00:02:45,775
+Now the third number, the one from the cliffhanger.
+
+33
+00:02:46,460 --> 00:02:50,303
+Engineers promise reliability using something called "nines.
+
+34
+00:02:50,303 --> 00:02:52,497
+" Ninety-nine percent uptime.
+
+35
+00:02:52,996 --> 00:02:54,227
+Ninety-nine point nine.
+
+36
+00:02:54,656 --> 00:02:56,142
+Ninety-nine point nine nine.
+
+37
+00:02:56,572 --> 00:02:58,395
+Ninety-nine point nine nine nine.
+
+38
+00:02:58,894 --> 00:03:01,170
+Every extra nine sounds like a rounding error.
+
+39
+00:03:01,669 --> 00:03:04,177
+It is absolutely not one, and here's why.
+
+40
+00:03:06,000 --> 00:03:11,642
+Let's translate percentages into something you can actually feel: minutes and hours a year.
+
+41
+00:03:12,235 --> 00:03:18,992
+Ninety-nine percent uptime sounds great, until you realize it allows three point six five days of downtime a year.
+
+42
+00:03:19,793 --> 00:03:24,819
+That's a whole long weekend of "the app is down," spread across the calendar.
+
+43
+00:03:25,319 --> 00:03:32,029
+Add one nine, ninety-nine point nine percent, and that shrinks to eight point seven six hours a year.
+
+44
+00:03:32,621 --> 00:03:35,919
+Better, but still an entire workday of outages.
+
+45
+00:03:36,348 --> 00:03:41,073
+Add another nine and you're down to fifty-two minutes a year, total.
+
+46
+00:03:41,875 --> 00:03:44,359
+One more nine, and you're at five minutes a year.
+
+47
+00:03:45,160 --> 00:03:49,015
+Five minutes, across the entire year, for every outage combined.
+
+48
+00:03:49,816 --> 00:03:53,693
+Each nine you add is roughly a ten-times reduction in allowed downtime.
+
+49
+00:03:56,000 --> 00:04:03,790
+Here's why this isn't just a trivia stat, because some systems literally cannot tolerate the outage a "lower" nine allows.
+
+50
+00:04:04,882 --> 00:04:13,195
+Every UPI payment in India, from paying an auto driver to a business settling lakhs, runs through this rail.
+
+51
+00:04:13,880 --> 00:04:20,451
+NPCI, the body that runs UPI, mandates ninety-nine point nine nine percent uptime for banks on the network.
+
+52
+00:04:21,136 --> 00:04:29,461
+Not ninety-nine percent, that extra two nines is the difference between "rare glitch" and "money stuck mid-transfer during peak hours, at scale.
+
+53
+00:04:29,461 --> 00:04:36,334
+" Three point six five days of a payment rail being unreliable would be a national story.
+
+54
+00:04:37,263 --> 00:04:39,445
+Fifty-two minutes a year is survivable.
+
+55
+00:04:39,945 --> 00:04:46,063
+That gap is exactly why the nines matter here, they're a design requirement, not a stat you round off.
+
+56
+00:04:48,000 --> 00:04:50,601
+So why doesn't everyone just build for five nines?
+
+57
+00:04:51,402 --> 00:04:54,142
+Because each extra nine gets brutally more expensive.
+
+58
+00:04:54,734 --> 00:05:00,725
+Going from ninety-nine to ninety-nine point nine might mean better monitoring and a faster on-call process.
+
+59
+00:05:01,526 --> 00:05:10,407
+Going from ninety-nine point nine nine to five nines can mean an entire second data centre, standing by, just for the days everything else fails at once.
+
+60
+00:05:10,999 --> 00:05:13,379
+The reliability curve is steep at the top.
+
+61
+00:05:13,971 --> 00:05:18,557
+Chasing the last nine is often the most expensive engineering work a company ever does.
+
+62
+00:05:21,000 --> 00:05:27,594
+One more piece of vocabulary, because you'll hear these three constantly: SLA, SLO, and SLI.
+
+63
+00:05:28,279 --> 00:05:29,975
+SLA, service level agreement.
+
+64
+00:05:30,567 --> 00:05:35,153
+The promise made externally, often with a penalty attached if it's broken.
+
+65
+00:05:35,954 --> 00:05:37,765
+SLO, service level objective.
+
+66
+00:05:38,450 --> 00:05:46,809
+The internal bar the engineering team actually aims for, usually stricter than the SLA, so there's a safety margin.
+
+67
+00:05:47,610 --> 00:05:49,990
+SLI, service level indicator.
+
+68
+00:05:50,420 --> 00:05:55,296
+The real number being measured right now, that tells you whether you're meeting the SLO.
+
+69
+00:05:55,888 --> 00:05:57,386
+The SLI is reality.
+
+70
+00:05:58,071 --> 00:05:59,894
+The SLO is the internal goal.
+
+71
+00:06:00,393 --> 00:06:02,564
+The SLA is what you promised the world.
+
+72
+00:06:05,000 --> 00:06:09,702
+Let's go back to that dashboard from the start of the episode, except now you can actually read it.
+
+73
+00:06:10,132 --> 00:06:15,751
+Twelve thousand qps, that's the load, and you now know to check it against the ceiling for headroom.
+
+74
+00:06:16,552 --> 00:06:23,785
+Forty-five milliseconds typical, eight-twenty for the unlucky one percent, that's the felt experience.
+
+75
+00:06:24,284 --> 00:06:29,126
+Ninety-nine point nine nine percent, that's the promise being kept, or broken.
+
+76
+00:06:29,718 --> 00:06:30,577
+Three numbers.
+
+77
+00:06:31,169 --> 00:06:32,191
+Five seconds.
+
+78
+00:06:32,562 --> 00:06:34,629
+The entire health of the system.
+
+79
+00:06:37,000 --> 00:06:38,149
+Let's put it to work.
+
+80
+00:06:38,521 --> 00:06:43,560
+Same 8pm Swiggy rush from last episode, but now watch the numbers, not just the chaos.
+
+81
+00:06:44,152 --> 00:06:47,089
+qps climbs toward the ceiling, headroom is disappearing.
+
+82
+00:06:47,890 --> 00:06:54,716
+p99 latency, which was already the "unlucky" number, spikes hard, now even more people are having a bad time.
+
+83
+00:06:55,309 --> 00:07:04,109
+And because this outage is dragging on, the month's uptime number is dropping in real time, eating into the whole year's downtime budget in one evening.
+
+84
+00:07:04,794 --> 00:07:07,244
+An engineer watching this doesn't need to guess.
+
+85
+00:07:07,836 --> 00:07:12,805
+The vocabulary tells them exactly what's happening and how bad it is, instantly.
+
+86
+00:07:15,000 --> 00:07:21,095
+Here's the trade-off this episode lands on: more nines isn't free, and it isn't always worth it.
+
+87
+00:07:21,687 --> 00:07:27,156
+An internal analytics dashboard breaking for twenty minutes a month is annoying, not a crisis.
+
+88
+00:07:27,527 --> 00:07:30,790
+A payment system breaking for the same twenty minutes is a headline.
+
+89
+00:07:31,289 --> 00:07:35,434
+The right number of nines depends entirely on what breaks if you don't have them.
+
+90
+00:07:37,000 --> 00:07:39,194
+Three numbers, one vocabulary.
+
+91
+00:07:39,786 --> 00:07:43,188
+qps: how much load the system is under, right now.
+
+92
+00:07:43,780 --> 00:07:49,620
+p50 and p99: how the request feels, for the typical user, and for the unlucky one.
+
+93
+00:07:50,119 --> 00:07:55,158
+And nines: the promise being kept, measured in minutes of downtime a year.
+
+94
+00:07:57,000 --> 00:08:01,389
+But here's the thing, knowing these numbers doesn't fix anything by itself.
+
+95
+00:08:01,981 --> 00:08:03,850
+They just tell you that something's wrong.
+
+96
+00:08:04,651 --> 00:08:07,704
+So what do you actually do when the numbers say you're out of room?
+
+97
+00:08:08,981 --> 00:08:16,923
+Next episode: the load balancer, the waiter who decides which kitchen gets your order, so that no single cook ever gets buried.
