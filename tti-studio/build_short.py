@@ -166,10 +166,10 @@ BEATS = {
     ("Three numbers. Three different problems. Three different fixes.", ["cta"]),
 ],
 "ep04": [
-    ("A Swiggy engineer in Bangalore stares at a dashboard.", ["hook_eng"]),
+    ("A Swiggy engineer in Bangalore stares at a dashboard.", ["hook_dash", "hook_eng"]),
     ("Numbers everywhere — but which ones actually matter?", ["hook_q"]),
     ("Two you already know: qps, and p50 versus p99.", ["recap_tag", "recap_headline"]),
-    ("But here's a mistake almost everyone makes — a lakh users online isn't a lakh requests a second.", ["recap_mistake"]),
+    ("But here's a mistake almost everyone makes — a lakh users online isn't a lakh requests a second.", ["recap_dots", "recap_mistake"]),
     ("Most people are just staring at the menu.", ["recap_sub"]),
     ("What actually matters is headroom — how close you are to the ceiling before everything breaks.", ["head_tag", "head_headline"]),
     ("Two thousand out of ten thousand qps? Plenty of room.", ["head_room"]),
@@ -406,6 +406,30 @@ body{{width:1080px;height:1920px;overflow:hidden;background:var(--navy);font-fam
 .ep-badge{{display:inline-flex;background:linear-gradient(180deg,#FF7A3C,#F2540E);
   color:#fff;font-family:"JetBrains Mono";font-size:26px;letter-spacing:.2em;
   padding:14px 28px;border-radius:10px;opacity:0;margin-bottom:48px;z-index:1;}}
+/* dashboard mockup (hook + payoff bookend) */
+.dash-console{{width:100%;background:linear-gradient(160deg,#0d1928,#0a1420);
+  border:2px solid rgba(59,123,255,.35);border-radius:24px;padding:36px 26px;opacity:0;z-index:1;}}
+.dash-hdr{{font-family:"JetBrains Mono";font-size:20px;color:var(--muted);
+  letter-spacing:.1em;margin-bottom:26px;}}
+.dash-row{{display:flex;gap:14px;}}
+.dash-stat{{flex:1;min-width:0;background:rgba(59,123,255,.06);border:2px solid rgba(59,123,255,.35);
+  border-radius:16px;padding:22px 10px;text-align:center;}}
+.dash-stat.ok{{border-color:rgba(52,211,153,.5);}}
+.dash-stat .dl{{font-family:"JetBrains Mono";font-size:18px;color:var(--cobalt);letter-spacing:.04em;margin-bottom:10px;}}
+.dash-stat.ok .dl{{color:#34D399;}}
+.dash-stat .dv{{font-size:34px;font-weight:700;color:var(--text);}}
+/* crowd of dots (concurrent users) */
+.dot-crowd{{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;width:100%;opacity:0;z-index:1;}}
+.dot-crowd .dot{{width:16px;height:16px;border-radius:50%;background:rgba(106,160,255,.22);}}
+.dot-crowd .dot.hot{{background:#6AA0FF;box-shadow:0 0 12px rgba(106,160,255,.7);}}
+/* staircase (nines) */
+.stair{{width:100%;display:flex;flex-direction:column;gap:20px;align-items:flex-start;z-index:1;}}
+.stair-step{{display:flex;align-items:center;gap:20px;opacity:0;}}
+.stair-step .bar{{height:52px;border-radius:12px;background:rgba(123,138,165,.18);
+  display:flex;align-items:center;padding:0 22px;font-family:"JetBrains Mono";font-size:26px;color:var(--muted);}}
+.stair-step.hi .bar{{background:linear-gradient(90deg,#1c3050,#20406e);border:2px solid rgba(59,123,255,.6);color:var(--cobalt2);}}
+.stair-step .lbl{{font-size:32px;font-weight:700;color:var(--text);}}
+.stair-step.hi .lbl{{color:#6AA0FF;}}
 </style>
 <script src="{GSAP_PATH}"></script>
 </head>
@@ -873,15 +897,28 @@ def build_comp_ep04(rev, total):
     t_recap = r("recap_tag"); t_head = r("head_tag"); t_nine = r("nine_tag")
     t_upi   = r("upi_tag");   t_trade = r("trade_tag"); t_final = r("final_tag")
 
+    dots_html = "".join(
+        f'<div class="dot{" hot" if i in (7,23,41,58,72,89,101) else ""}"></div>'
+        for i in range(112)
+    )
+
     html = _comp_head("short_ep04", total)
-    html += """
+    html += f"""
   <!-- SC1: HOOK -->
   <div class="sc" id="sc1">
     <div class="ghost-bg">?</div>
-    <div class="hook-label" id="hook_eng" style="font-size:64px;">A Swiggy engineer<br>in Bangalore stares<br>at a dashboard.</div>
+    <div class="dash-console" id="hook_dash">
+      <div class="dash-hdr">// LIVE · SWIGGY-PROD-01</div>
+      <div class="dash-row">
+        <div class="dash-stat"><div class="dl">QPS</div><div class="dv">12,000</div></div>
+        <div class="dash-stat"><div class="dl">LATENCY</div><div class="dv">45/820ms</div></div>
+        <div class="dash-stat ok"><div class="dl">UPTIME</div><div class="dv">99.99%</div></div>
+      </div>
+    </div>
+    <div class="hook-label" id="hook_eng" style="font-size:48px;">A Swiggy engineer<br>in Bangalore stares at this.</div>
     <div class="node-card" id="hook_q">
       <div class="nc-label">NUMBERS EVERYWHERE</div>
-      <div class="nc-val" style="font-size:48px;">which ones actually matter?</div>
+      <div class="nc-val" style="font-size:44px;">which ones actually matter?</div>
     </div>
   </div>
 
@@ -889,12 +926,17 @@ def build_comp_ep04(rev, total):
   <div class="sc" id="sc2">
     <div class="ghost-bg">qps</div>
     <div class="sc-tag" id="recap_tag">Two you already know</div>
-    <div class="sc-headline" id="recap_headline">qps · <span class="hi">p50</span> · <span class="hi">p99</span></div>
+    <div class="h-chain" id="recap_chain">
+      <div class="h-node"><div class="hl">QPS</div><div class="hv">📊</div></div>
+      <div class="h-node"><div class="hl">P50</div><div class="hv">⏱</div></div>
+      <div class="h-node og"><div class="hl">P99</div><div class="hv">🎯</div></div>
+    </div>
+    <div class="dot-crowd" id="recap_dots">{dots_html}</div>
     <div class="node-card orange" id="recap_mistake">
       <div class="nc-label">THE MISTAKE ALMOST EVERYONE MAKES</div>
-      <div class="nc-val" style="font-size:40px;">1,00,000 online ≠<br>1,00,000 requests/sec</div>
+      <div class="nc-val" style="font-size:38px;">1,00,000 online ≠<br>1,00,000 requests/sec</div>
     </div>
-    <div class="sc-sub" id="recap_sub" style="opacity:1;font-size:30px;text-align:center;">most people are just staring at the menu</div>
+    <div class="sc-sub" id="recap_sub" style="opacity:1;font-size:28px;text-align:center;">most people are just staring at the menu</div>
   </div>
 
   <!-- SC3: HEADROOM -->
@@ -902,9 +944,13 @@ def build_comp_ep04(rev, total):
     <div class="ghost-bg">10K</div>
     <div class="sc-tag" id="head_tag">Headroom</div>
     <div class="sc-headline" id="head_headline">How close<br>to the <span class="hi">ceiling?</span></div>
-    <div class="stat-row" id="head_room">
-      <span class="sn">2,000</span><span class="sv">/ 10,000 qps</span><span class="sd">plenty of room</span>
-    </div>
+    <svg width="520" height="300" viewBox="0 0 520 300" id="head_room" style="overflow:visible;">
+      <path d="M60 250 A 200 200 0 0 1 460 250" fill="none" stroke="rgba(123,138,165,.2)" stroke-width="30" stroke-linecap="round"/>
+      <path d="M60 250 A 200 200 0 0 1 205 62" fill="none" stroke="#34D399" stroke-width="30" stroke-linecap="round"/>
+      <line x1="260" y1="250" x2="165" y2="128" stroke="#e8eeff" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="260" cy="250" r="15" fill="#e8eeff"/>
+      <text x="260" y="292" font-size="32" text-anchor="middle" fill="#e8eeff" font-family="JetBrains Mono">2,000 / 10,000 qps</text>
+    </svg>
     <div class="node-card orange" id="head_break">
       <div class="nc-label">CROSS IT</div>
       <div class="nc-val" style="font-size:40px;">queues form ·<br>ms become seconds</div>
@@ -916,11 +962,9 @@ def build_comp_ep04(rev, total):
     <div class="ghost-bg">99.99</div>
     <div class="sc-tag" id="nine_tag">The third number: nines</div>
     <div class="sc-headline" id="nine_headline" style="font-size:104px;">"Nines"</div>
-    <div class="stat-row" id="nine_99">
-      <span class="sn">99%</span><span class="sv">3.65 days</span><span class="sd">down / year</span>
-    </div>
-    <div class="stat-row" id="nine_9999" style="border-color:rgba(59,123,255,.65);">
-      <span class="sn" style="color:#6AA0FF;">99.99%</span><span class="sv">52 minutes</span><span class="sd">down / year</span>
+    <div class="stair">
+      <div class="stair-step" id="nine_99"><div class="bar" style="width:280px;">99%</div><div class="lbl">3.65 days / year</div></div>
+      <div class="stair-step hi" id="nine_9999"><div class="bar" style="width:420px;">99.99%</div><div class="lbl">52 minutes / year</div></div>
     </div>
   </div>
 
@@ -928,13 +972,18 @@ def build_comp_ep04(rev, total):
   <div class="sc" id="sc5">
     <div class="ghost-bg">Rs</div>
     <div class="sc-tag" id="upi_tag">Real world: UPI</div>
-    <div class="node-card" id="upi_card">
-      <div class="nc-label">NPCI MANDATES</div>
-      <div class="nc-val" style="font-size:52px;">99.99% uptime</div>
+    <div class="h-chain" id="upi_card">
+      <div class="h-node"><div class="hl">YOU</div><div class="hv">📱</div></div>
+      <div class="h-arrow" style="opacity:1;">→</div>
+      <div class="h-node"><div class="hl">BANK</div><div class="hv">🏦</div></div>
+      <div class="h-arrow" style="opacity:1;">→</div>
+      <div class="h-node og"><div class="hl">NPCI</div><div class="hv">🏛️</div></div>
+      <div class="h-arrow" style="opacity:1;">→</div>
+      <div class="h-node"><div class="hl">BANK</div><div class="hv">🏦</div></div>
     </div>
     <div class="node-card orange" id="upi_no">
       <div class="nc-label">MONEY STUCK MID-TRANSFER</div>
-      <div class="nc-val" style="font-size:44px;">isn't a rounding error</div>
+      <div class="nc-val" style="font-size:40px;">isn't a rounding error</div>
     </div>
     <div class="cta-sub" id="upi_story" style="opacity:1;">it's a national story</div>
   </div>
@@ -945,11 +994,11 @@ def build_comp_ep04(rev, total):
     <div class="sc-headline" id="trade_tag" style="font-size:88px;">More nines<br>isn't always <span class="hi">worth it.</span></div>
     <div class="split">
       <div class="split-half" id="trade_lo">
-        <div class="sh-label">INTERNAL DASHBOARD · 20 MIN DOWN</div>
+        <div class="sh-label">📊 INTERNAL DASHBOARD · 20 MIN DOWN</div>
         <div class="sh-val" style="font-size:48px;">annoying</div>
       </div>
       <div class="split-half orange" id="trade_hi">
-        <div class="sh-label">PAYMENT SYSTEM · 20 MIN DOWN</div>
+        <div class="sh-label">💳 PAYMENT SYSTEM · 20 MIN DOWN</div>
         <div class="sh-val" style="font-size:48px;">a headline</div>
       </div>
     </div>
@@ -959,11 +1008,15 @@ def build_comp_ep04(rev, total):
   <div class="sc" id="sc7">
     <div class="ghost-bg">3</div>
     <div class="sc-tag" id="final_tag">Back to that dashboard</div>
-    <div class="sc-headline" id="final_headline" style="font-size:96px;">qps · p50/p99 · nines</div>
-    <div class="node-card" id="final_card">
-      <div class="nc-label">THREE NUMBERS · FIVE SECONDS</div>
-      <div class="nc-val" style="font-size:42px;">the entire health<br>of the system</div>
+    <div class="dash-console" id="final_card">
+      <div class="dash-hdr">// LIVE · SWIGGY-PROD-01</div>
+      <div class="dash-row">
+        <div class="dash-stat ok"><div class="dl">QPS</div><div class="dv">12,000</div></div>
+        <div class="dash-stat ok"><div class="dl">LATENCY</div><div class="dv">45/820ms</div></div>
+        <div class="dash-stat ok"><div class="dl">UPTIME</div><div class="dv">99.99%</div></div>
+      </div>
     </div>
+    <div class="sc-headline" id="final_headline" style="font-size:76px;">qps · p50/p99 · nines</div>
     <div class="sc-sub" id="final_caveat" style="opacity:1;font-size:28px;text-align:center;">but knowing them doesn't fix anything</div>
     <div class="cta-sub" id="cta">Next: the load balancer</div>
   </div>
@@ -974,30 +1027,34 @@ def build_comp_ep04(rev, total):
         'const tl = gsap.timeline({paused: true});',
         'gsap.set("#sc1",{opacity:1});',
         # SC1
+        _pop("hook_dash",   r("hook_dash"),   0.6),
         _rise("hook_eng",   r("hook_eng"),    0.45),
         _rise("hook_q",     r("hook_q"),      0.4),
         # SC2 recap + mistake
         _scene_out("sc1", t_recap), _scene_in("sc2","sw1", t_recap),
         _slide("recap_tag",      r("recap_tag"),      -40, 0.35),
-        _pop("recap_headline",   r("recap_headline"),   0.55),
+        f'tl.fromTo("#recap_chain .h-node",{{opacity:0,scale:0.8}},{{opacity:1,scale:1,stagger:0.12,duration:0.35,ease:"back.out(1.6)"}},{_f(r("recap_headline"))});',
+        f'tl.set("#recap_dots",{{opacity:1}},{_f(r("recap_dots"))});',
+        f'tl.fromTo("#recap_dots .dot",{{opacity:0,scale:0}},{{opacity:1,scale:1,stagger:0.006,duration:0.25,ease:"back.out(1.4)"}},{_f(r("recap_dots"))});',
         _rise("recap_mistake",   r("recap_mistake"),    0.4),
         _fade("recap_sub",       r("recap_sub"),        0.4),
         # SC3 headroom
         _scene_out("sc2", t_head), _scene_in("sc3","sw2", t_head),
         _slide("head_tag",      r("head_tag"),      -40, 0.35),
         _rise("head_headline",  r("head_headline"),   0.45),
-        _rise("head_room",      r("head_room"),       0.4),
+        _pop("head_room",       r("head_room"),       0.6),
         _rise("head_break",     r("head_break"),      0.4),
         # SC4 nines
         _scene_out("sc3", t_nine), _scene_in("sc4","sw3", t_nine),
         _slide("nine_tag",      r("nine_tag"),      -40, 0.35),
         _pop("nine_headline",   r("nine_headline"),   0.55),
-        _rise("nine_99",        r("nine_99"),         0.4),
-        _rise("nine_9999",      r("nine_9999"),       0.4),
+        _grow_x("nine_99",      r("nine_99"),         0.35),
+        _grow_x("nine_9999",    r("nine_9999"),       0.4),
         # SC5 UPI
         _scene_out("sc4", t_upi), _scene_in("sc5","sw4", t_upi),
         _slide("upi_tag",   r("upi_tag"),   -40, 0.35),
         _rise("upi_card",   r("upi_card"),   0.4),
+        f'tl.fromTo("#upi_card .h-node",{{opacity:0,scale:0.8}},{{opacity:1,scale:1,stagger:0.1,duration:0.3,ease:"back.out(1.6)"}},{_f(r("upi_card"))});',
         _rise("upi_no",     r("upi_no"),     0.4),
         _fade("upi_story",  r("upi_story"),  0.4),
         # SC6 trade-off
@@ -1008,8 +1065,8 @@ def build_comp_ep04(rev, total):
         # SC7 final recap + cta
         _scene_out("sc6", t_final), _scene_in("sc7","sw6", t_final),
         _slide("final_tag",      r("final_tag"),      -40, 0.35),
-        _pop("final_headline",   r("final_headline"),   0.55),
-        _rise("final_card",      r("final_card"),       0.4),
+        _pop("final_card",       r("final_card"),       0.6),
+        _rise("final_headline",  r("final_headline"),   0.45),
         _fade("final_caveat",    r("final_caveat"),     0.4),
         _fade("cta",             r("cta"),              0.5),
         'window.__timelines["short_ep04"] = tl;',
