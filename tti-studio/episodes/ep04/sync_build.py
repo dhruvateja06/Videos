@@ -34,8 +34,9 @@ HEAD_DUR = {"s1":1.0}
 BEATS = {
  "s1":[
   ("Somewhere in Bangalore, a Swiggy engineer is staring at a dashboard.", ["s1k","s1t"]),
-  ("Numbers are scrolling past — twelve thousand something, forty-five milliseconds, eight-twenty milliseconds, ninety-nine point nine nine percent.", ["s1-frame"]),
-  ("To you and me, that's noise. To this engineer, it's the entire health of the system, at a glance.", ["s1-blocks"]),
+  ("Numbers are scrolling past —", ["s1-frame"]),
+  ("twelve thousand something, forty-five milliseconds, eight-twenty milliseconds, ninety-nine point nine nine percent.", ["s1-blocks"]),
+  ("To you and me, that's noise. To this engineer, it's the entire health of the system, at a glance.", []),
   ("So what do these numbers actually mean, and how does one glance tell you if everything's fine, or about to fall over?", ["s1-person","s1sub"]),
  ],
  "s2":[
@@ -64,7 +65,10 @@ BEATS = {
  ],
  "s6":[
   ("Now the third number, the one from the cliffhanger. Engineers promise reliability using something called \"nines.\"", ["s6k","s6t"]),
-  ("Ninety-nine percent uptime. Ninety-nine point nine. Ninety-nine point nine nine. Ninety-nine point nine nine nine.", ["s6-r1","s6-r2","s6-r3","s6-r4"]),
+  ("Ninety-nine percent uptime.", ["s6-r1"]),
+  ("Ninety-nine point nine.", ["s6-r2"]),
+  ("Ninety-nine point nine nine.", ["s6-r3"]),
+  ("Ninety-nine point nine nine nine.", ["s6-r4"]),
   ("Every extra nine sounds like a rounding error. It is absolutely not one, and here's why.", ["s6sub"]),
  ],
  "s7":[
@@ -157,8 +161,8 @@ SFX_KIT = {
  "whoosh": ("short subtle clean UI transition whoosh, soft quick swoosh, no music", 0.8, 0.16),
  "zip":    ("short soft digital data blip, quick electronic UI tick zip, subtle, no music", 0.7, 0.18),
  "chime":  ("soft positive confirmation chime, gentle success ding, warm short, no music", 0.9, 0.20),
- "riser":  ("rising tension synth swell, building pressure riser, subtle escalating whoosh, no drums, no music", 2.2, 0.14),
- "swell":  ("warm sustained ambient pad swell, soft resolution tone, gentle synth bloom, no drums, no music", 2.5, 0.12),
+ "riser":  ("rising tension synth swell, building pressure riser, subtle escalating whoosh, no drums, no music", 18, 0.14),
+ "swell":  ("warm sustained ambient pad swell, soft resolution tone, gentle synth bloom, no drums, no music", 15, 0.12),
 }
 
 def ffdur(p):
@@ -292,59 +296,71 @@ def build_timeline(starts, durs, data):
     return "\n".join(L) + "\n"
 
 def sfx_cues(starts, data):
+    """Each cue is (name, time, gain, dur_override). dur_override is None for
+    one-shot sounds (whoosh/zip/chime — play their natural length). riser/swell
+    ALWAYS get an explicit dur_override sized to the actual gap they need to
+    bridge (to the next resolving beat, or to the scene end) — never the raw
+    SFX_KIT sample length, which is a short base clip meant to be trimmed."""
     def R(sid,sel): return starts[sid] + data[sid]["reveal"].get(sel, HEAD_BASE)
+    def scene_end(sid): return starts[sid] + math.ceil(data[sid]["clip_dur"] + TAIL_PAD)
     g = {k:v[2] for k,v in SFX_KIT.items()}
-    cues = [("whoosh", max(starts[sid]-0.2,0), g["whoosh"]) for sid in SCENES[1:]]
-    # s1: whoosh on dashboard frame, zip x3 on number blocks, riser under final line
-    cues.append(("whoosh", R("s1","s1-frame"), g["whoosh"]))
+    cues = [("whoosh", max(starts[sid]-0.2,0), g["whoosh"], None) for sid in SCENES[1:]]
+    # s1: whoosh on dashboard frame, zip x3 on number blocks, riser building into s2's cut
+    cues.append(("whoosh", R("s1","s1-frame"), g["whoosh"], None))
     t1b = R("s1","s1-blocks")
-    cues += [("zip", t1b+i*0.3, g["zip"]) for i in range(3)]
-    cues.append(("riser", R("s1","s1-person"), g["riser"]))
+    cues += [("zip", t1b+i*0.3, g["zip"], None) for i in range(3)]
+    t1r = R("s1","s1-person")
+    cues.append(("riser", t1r, g["riser"], min(scene_end("s1")+0.5-t1r, 18)))
     # s2: zip on bare number
-    cues.append(("zip", R("s2","s2-num"), g["zip"]))
+    cues.append(("zip", R("s2","s2-num"), g["zip"], None))
     # s3: zip on each card
-    cues.append(("zip", R("s3","s3-qps"), g["zip"])); cues.append(("zip", R("s3","s3-p"), g["zip"]))
+    cues.append(("zip", R("s3","s3-qps"), g["zip"], None)); cues.append(("zip", R("s3","s3-p"), g["zip"], None))
     # s4: zip on users grid, zip x4 on active packets, chime on conv label
-    cues.append(("zip", R("s4","s4-grid"), g["zip"]))
+    cues.append(("zip", R("s4","s4-grid"), g["zip"], None))
     t4d = starts["s4"] + data["s4"]["reveal"].get("s4-dim", data["s4"]["reveal"].get("s4-server", HEAD_BASE))
-    cues += [("zip", t4d+2+i*0.25, g["zip"]) for i in range(4)]
-    cues.append(("chime", R("s4","s4-conv"), g["chime"]))
-    # s5: zip on gauge, riser green->amber, chime(sharp) into red
-    cues.append(("zip", R("s5","s5-arc-green"), g["zip"]))
-    cues.append(("riser", R("s5","s5-arc-amber"), g["riser"]))
-    cues.append(("chime", R("s5","s5-arc-red"), g["chime"]))
-    # s6: zip on each rung
-    for sel in ["s6-r1","s6-r2","s6-r3","s6-r4"]: cues.append(("zip", R("s6",sel), g["zip"]))
-    # s7: zip on rows 1-3, chime on row4, swell under glow
-    for sel in ["s7-row1","s7-row2","s7-row3"]: cues.append(("zip", R("s7",sel), g["zip"]))
-    cues.append(("chime", R("s7","s7-row4"), g["chime"]))
-    cues.append(("swell", R("s7","s7-row4")+3, g["swell"]))
+    cues += [("zip", t4d+2+i*0.25, g["zip"], None) for i in range(4)]
+    cues.append(("chime", R("s4","s4-conv"), g["chime"], None))
+    # s5: zip on gauge, riser green->amber resolving into the chime at red
+    cues.append(("zip", R("s5","s5-arc-green"), g["zip"], None))
+    t5r = R("s5","s5-arc-green"); t5c = R("s5","s5-arc-red")
+    cues.append(("riser", t5r, g["riser"], min(t5c-t5r, 18)))
+    cues.append(("chime", t5c, g["chime"], None))
+    # s6: zip on each rung (now individually word-synced)
+    for sel in ["s6-r1","s6-r2","s6-r3","s6-r4"]: cues.append(("zip", R("s6",sel), g["zip"], None))
+    # s7: zip on rows 1-3, chime on row4, swell under the glow (through scene end)
+    for sel in ["s7-row1","s7-row2","s7-row3"]: cues.append(("zip", R("s7",sel), g["zip"], None))
+    cues.append(("chime", R("s7","s7-row4"), g["chime"], None))
+    t7s = R("s7","s7-row4")+3
+    cues.append(("swell", t7s, g["swell"], min(scene_end("s7")-t7s, 15)))
     # s8: zip on coin hops, chime on badge
     t8 = R("s8","s8-flow")
-    cues.append(("zip", t8+3, g["zip"])); cues.append(("zip", t8+4, g["zip"]))
-    cues.append(("chime", R("s8","s8-badge"), g["chime"]))
+    cues.append(("zip", t8+3, g["zip"], None)); cues.append(("zip", t8+4, g["zip"], None))
+    cues.append(("chime", R("s8","s8-badge"), g["chime"], None))
     # s9: zip on curve, chime on label
-    cues.append(("zip", R("s9","s9-curve"), g["zip"]))
-    cues.append(("chime", R("s9","s9-label"), g["chime"]))
+    cues.append(("zip", R("s9","s9-curve"), g["zip"], None))
+    cues.append(("chime", R("s9","s9-label"), g["chime"], None))
     # s10: zip on each card, chime on nesting (sub line)
-    for sel in ["s10-sla","s10-slo","s10-sli"]: cues.append(("zip", R("s10",sel), g["zip"]))
-    cues.append(("chime", R("s10","s10sub"), g["chime"]))
+    for sel in ["s10-sla","s10-slo","s10-sli"]: cues.append(("zip", R("s10",sel), g["zip"], None))
+    cues.append(("chime", R("s10","s10sub"), g["chime"], None))
     # s11: zip on each highlight, chime on makes-sense moment
-    for sel in ["s11-qps","s11-lat","s11-nines"]: cues.append(("zip", R("s11",sel), g["zip"]))
-    cues.append(("chime", R("s11","s11-nines")+2, g["chime"]))
-    # s12: riser under qps climb, zip on p99 spike, chime(alarmed) on nines flicker
-    cues.append(("riser", R("s12","s12-qps"), g["riser"]))
-    cues.append(("zip", R("s12","s12-p99"), g["zip"]))
-    cues.append(("chime", R("s12","s12-nines"), g["chime"]))
+    for sel in ["s11-qps","s11-lat","s11-nines"]: cues.append(("zip", R("s11",sel), g["zip"], None))
+    cues.append(("chime", R("s11","s11-nines")+2, g["chime"], None))
+    # s12: riser under qps climb, building through the scene, resolving into the chime
+    t12r = R("s12","s12-qps"); t12c = R("s12","s12-nines")
+    cues.append(("riser", t12r, g["riser"], min(t12c-t12r, 18)))
+    cues.append(("zip", R("s12","s12-p99"), g["zip"], None))
+    cues.append(("chime", t12c, g["chime"], None))
     # s13: zip on each panel, chime on payment-rail
-    cues.append(("zip", R("s13","s13-left"), g["zip"])); cues.append(("zip", R("s13","s13-right"), g["zip"]))
-    cues.append(("chime", R("s13","s13-right")+1, g["chime"]))
-    # s14: zip on each recap card, swell under settle
-    for sel in ["s14-qps","s14-p","s14-nines"]: cues.append(("zip", R("s14",sel), g["zip"]))
-    cues.append(("swell", R("s14","s14-nines")+1, g["swell"]))
-    # s15: whoosh on flatline, riser under fork (deliberately unresolved)
-    cues.append(("whoosh", R("s15","s15-alert"), g["whoosh"]))
-    cues.append(("riser", R("s15","s15-fork"), g["riser"]))
+    cues.append(("zip", R("s13","s13-left"), g["zip"], None)); cues.append(("zip", R("s13","s13-right"), g["zip"], None))
+    cues.append(("chime", R("s13","s13-right")+1, g["chime"], None))
+    # s14: zip on each recap card, swell under settle (through scene end)
+    for sel in ["s14-qps","s14-p","s14-nines"]: cues.append(("zip", R("s14",sel), g["zip"], None))
+    t14s = R("s14","s14-nines")+1
+    cues.append(("swell", t14s, g["swell"], min(scene_end("s14")-t14s, 15)))
+    # s15: whoosh on flatline, riser under fork — deliberately unresolved, cut off by episode end
+    cues.append(("whoosh", R("s15","s15-alert"), g["whoosh"], None))
+    t15r = R("s15","s15-fork")
+    cues.append(("riser", t15r, g["riser"], min(scene_end("s15")-t15r, 18)))
     return cues
 
 def _ts(t):
@@ -391,9 +407,10 @@ def build_audio(starts, total, data, out):
     for sid in SCENES:
         inputs += ["-i", str(CACHE/f"{sid}.mp3")]; ms = starts[sid]*1000
         fp.append(f"[{idx}:a]aformat=sample_rates=44100:channel_layouts=stereo,adelay={ms}|{ms}[v{idx}]"); mix.append(f"[v{idx}]"); idx+=1
-    for name,t,gain in sfx_cues(starts, data):
+    for name,t,gain,dur in sfx_cues(starts, data):
         inputs += ["-i", str(SFXD/f"{name}.mp3")]; ms=int(round(t*1000))
-        fp.append(f"[{idx}:a]aformat=sample_rates=44100:channel_layouts=stereo,volume={gain},adelay={ms}|{ms}[x{idx}]"); mix.append(f"[x{idx}]"); idx+=1
+        trim = f"atrim=0:{dur},afade=t=out:st={max(dur-1,0)}:d=1," if dur else ""
+        fp.append(f"[{idx}:a]{trim}aformat=sample_rates=44100:channel_layouts=stereo,volume={gain},adelay={ms}|{ms}[x{idx}]"); mix.append(f"[x{idx}]"); idx+=1
     fp.append(f"{''.join(mix)}amix=inputs={len(mix)}:duration=first:normalize=0[out]")
     subprocess.run(["ffmpeg","-y"]+inputs+["-filter_complex",";".join(fp),"-map","[out]","-c:a","aac","-b:a","192k","-t",str(total),out], check=True, capture_output=True)
     print(f"  ✓ {out}")
