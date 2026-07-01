@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+      :root{ --paper:#0F1729; --panel:#16223C; --panel2:#1B2A47; --ink:#E6ECF5; --soft:#B7C2D6; --muted:#7B8AA5; --hair:rgba(123,138,165,.22); --accent:#3B7BFF; --accent-bright:#6AA0FF; --accent-soft:rgba(59,123,255,.14); --spike:#FF6B6B; --ok:#34D399; }
+      *{ margin:0; padding:0; box-sizing:border-box; }
+      html,body{ width:1920px; height:1080px; overflow:hidden; }
+      body{ font-family:"Inter",sans-serif; background:var(--paper); }
+      #root{ position:relative; width:1920px; height:1080px; background:var(--paper); color:var(--ink); }
+      #bg{ position:absolute; inset:0; overflow:hidden; z-index:0; }
+      #bggrid{ position:absolute; left:-140px; top:-140px; width:2300px; height:1400px; background-image:linear-gradient(rgba(123,138,165,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(123,138,165,.06) 1px,transparent 1px); background-size:72px 72px; }
+      .glow{ position:absolute; border-radius:50%; filter:blur(80px); }
+      #glow1{ width:1100px; height:1100px; left:900px; top:-340px; background:radial-gradient(circle,rgba(59,123,255,.20),rgba(59,123,255,0) 70%); }
+      #glow2{ width:820px; height:820px; left:-320px; top:600px; background:radial-gradient(circle,rgba(106,160,255,.13),rgba(106,160,255,0) 70%); }
+      #flow{ position:absolute; inset:0; z-index:1; pointer-events:none; }
+      .hud{ position:absolute; left:64px; right:64px; top:52px; display:flex; justify-content:space-between; align-items:center; z-index:7; font-family:"JetBrains Mono"; font-size:22px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
+      .hud .l span{ color:var(--accent); }
+      #hudline{ position:absolute; left:64px; right:64px; top:94px; height:1px; background:var(--hair); z-index:7; transform-origin:left; }
+      .bracket{ position:absolute; width:34px; height:34px; z-index:7; }
+      #brTL{ left:30px; top:30px; border-left:2px solid var(--hair); border-top:2px solid var(--hair);} #brTR{ right:30px; top:30px; border-right:2px solid var(--hair); border-top:2px solid var(--hair);}
+      #brBL{ left:30px; bottom:30px; border-left:2px solid var(--hair); border-bottom:2px solid var(--hair);} #brBR{ right:30px; bottom:30px; border-right:2px solid var(--hair); border-bottom:2px solid var(--hair);}
+      #sweep{ position:absolute; top:-60px; bottom:-60px; left:0; width:340px; opacity:0; z-index:20; pointer-events:none; background:linear-gradient(90deg, rgba(59,123,255,0) 0%, rgba(106,160,255,.5) 50%, rgba(59,123,255,0) 100%); transform:skewX(-10deg); }
+      .scene{ position:absolute; inset:0; opacity:0; z-index:2; padding:158px 110px 92px 110px; display:flex; flex-direction:column; justify-content:center; }
+      .kick{ font-family:"JetBrains Mono"; font-size:26px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:18px; }
+      .kick:before{ content:"// "; color:var(--muted); }
+      h1{ font-family:"Fraunces"; font-weight:600; color:var(--ink); line-height:1.05; letter-spacing:-.012em; }
+      .sub{ color:var(--soft); font-family:"Inter"; }
+      .ac{ color:var(--accent); } .acb{ color:var(--accent-bright); } .sp{ color:var(--spike); } .ok{ color:var(--ok); }
+      .mono{ font-family:"JetBrains Mono"; } .it{ font-style:italic; }
+      .nextline{ font-family:"Fraunces"; font-style:italic; font-size:40px; color:var(--soft); margin-top:44px; opacity:0; } .nextline .ac{ font-style:normal; }
+      svg text{ font-family:"JetBrains Mono"; fill:var(--soft); }
+      svg .ttl{ font-family:"Inter"; font-weight:700; fill:var(--ink); }
+      svg .cap{ font-family:"Inter"; font-weight:400; fill:var(--soft); }
+      svg .code{ font-family:"JetBrains Mono"; fill:var(--accent); }
+      svg .edge{ stroke:var(--hair); stroke-width:3; fill:none; opacity:0; } svg .edge.live{ stroke:var(--accent); } svg .edge.resp{ stroke:var(--accent-bright); stroke-dasharray:2 10; stroke-linecap:round; }
+      svg .nbox{ fill:var(--panel); stroke:var(--hair); stroke-width:2; } svg .nboxlive{ fill:var(--panel); stroke:var(--accent); stroke-width:2.5; }
+      svg .pkt{ opacity:0; }
+      .hideg{ opacity:0; }
+
+      /* deck overrides */
+      .scene { display:none !important; opacity:1 !important; }
+      .scene.active { display:flex !important; }
+      .hideg { opacity:1 !important; }
+      #flow { display:none; }
+      #counter{ position:fixed; right:18px; bottom:14px; font-family:"JetBrains Mono"; font-size:14px; color:#5b6b85; z-index:50; }
+      #title{ position:fixed; left:18px; bottom:14px; font-family:"JetBrains Mono"; font-size:14px; color:#5b6b85; z-index:50; }
+      #hintbar{ position:fixed; left:50%; transform:translateX(-50%); bottom:12px; font-family:"JetBrains Mono"; font-size:12px; color:#3f4d63; z-index:50; }
+      html,body{ height:100% !important; min-height:100vh; }
+      body{ display:flex; align-items:center; justify-content:center; background:#070b14; }
+      #root{ transform-origin:center center; }
+
+      /* chapter tag + progress dots */
+      .chapter-tag { position:fixed; right:84px; top:52px; font-family:"JetBrains Mono"; font-size:18px; color:var(--muted); letter-spacing:.14em; text-transform:uppercase; z-index:50; }
+      .progress-dots { position:fixed; bottom:36px; left:50%; transform:translateX(-50%); display:flex; gap:10px; z-index:50; }
+      .progress-dots .dot { width:8px; height:8px; border-radius:50%; background:rgba(123,138,165,.3); }
+      .progress-dots .dot.active { background:var(--accent); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="sdep03full" data-start="0" data-duration="660" data-width="1920" data-height="1080">
+      <svg width="0" height="0" style="position:absolute"><defs>
+        <filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+        <linearGradient id="gcli" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B2A47"/><stop offset="1" stop-color="#16223C"/></linearGradient>
+        <linearGradient id="gsrv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16223C"/><stop offset="1" stop-color="#111c33"/></linearGradient>
+        <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6AA0FF" stop-opacity="0"/><stop offset="0.5" stop-color="#6AA0FF" stop-opacity="0.22"/><stop offset="1" stop-color="#6AA0FF" stop-opacity="0"/></linearGradient>
+        <linearGradient id="gspike" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(255,107,107,.18)"/><stop offset="1" stop-color="rgba(255,107,107,.06)"/></linearGradient>
+        <linearGradient id="gok" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(52,211,153,.18)"/><stop offset="1" stop-color="rgba(52,211,153,.06)"/></linearGradient>
+        <!-- symbols from ep02 -->
+        <symbol id="i-phone" viewBox="0 0 48 48"><rect x="15" y="6" width="18" height="36" rx="4" fill="none" stroke="#6AA0FF" stroke-width="3.5"/><line x1="21" y1="37" x2="27" y2="37" stroke="#6AA0FF" stroke-width="3.5"/></symbol>
+        <symbol id="i-mag" viewBox="0 0 48 48"><circle cx="21" cy="21" r="13" fill="none" stroke="#6AA0FF" stroke-width="3.5"/><line x1="31" y1="31" x2="40" y2="40" stroke="#6AA0FF" stroke-width="3.5" stroke-linecap="round"/></symbol>
+        <symbol id="i-globe" viewBox="0 0 48 48"><circle cx="24" cy="24" r="16" fill="none" stroke="#6AA0FF" stroke-width="3.5"/><ellipse cx="24" cy="24" rx="7" ry="16" fill="none" stroke="#6AA0FF" stroke-width="3"/><line x1="8" y1="24" x2="40" y2="24" stroke="#6AA0FF" stroke-width="3"/></symbol>
+        <symbol id="i-tag" viewBox="0 0 48 48"><path d="M8 8 H26 L40 22 L26 36 L8 36 Z" fill="none" stroke="#6AA0FF" stroke-width="3.5" stroke-linejoin="round"/><circle cx="16" cy="20" r="3" fill="#6AA0FF"/></symbol>
+        <symbol id="i-key" viewBox="0 0 48 48"><circle cx="16" cy="20" r="9" fill="none" stroke="#34D399" stroke-width="3.5"/><path d="M23 24 L40 41 M34 35 L30 39 M38 39 L35 42" stroke="#34D399" stroke-width="3.5" fill="none" stroke-linecap="round"/></symbol>
+        <symbol id="i-flag" viewBox="0 0 48 48"><line x1="12" y1="6" x2="12" y2="42" stroke="#34D399" stroke-width="3.5"/><path d="M12 8 H36 L30 16 L36 24 H12 Z" fill="#34D399" opacity="0.85"/></symbol>
+        <symbol id="i-eye" viewBox="0 0 48 48"><path d="M4 24 C 14 8, 34 8, 44 24 C 34 40, 14 40, 4 24 Z" fill="none" stroke="#6AA0FF" stroke-width="3.2"/><circle cx="24" cy="24" r="7" fill="none" stroke="#6AA0FF" stroke-width="3.2"/></symbol>
+        <symbol id="i-pen" viewBox="0 0 48 48"><path d="M8 40 L10 30 L32 8 L40 16 L18 38 Z" fill="none" stroke="#6AA0FF" stroke-width="3.2" stroke-linejoin="round"/><line x1="28" y1="12" x2="36" y2="20" stroke="#6AA0FF" stroke-width="3.2"/></symbol>
+        <symbol id="i-lock" viewBox="0 0 100 100"><rect x="26" y="44" width="48" height="40" rx="7" fill="none" stroke="#34D399" stroke-width="5"/><path d="M36 44 V32 a14 14 0 0 1 28 0 V44" fill="none" stroke="#34D399" stroke-width="5"/><circle cx="50" cy="62" r="5" fill="#34D399"/></symbol>
+        <symbol id="i-cookie" viewBox="0 0 48 48"><path d="M24 6 a18 18 0 1 0 18 18 a7 7 0 0 1 -7 -7 a6 6 0 0 1 -6 -6 a18 18 0 0 0 -5 -5 Z" fill="none" stroke="#6AA0FF" stroke-width="3"/><circle cx="18" cy="22" r="2.5" fill="#6AA0FF"/><circle cx="28" cy="30" r="2.5" fill="#6AA0FF"/><circle cx="30" cy="18" r="2" fill="#6AA0FF"/></symbol>
+        <!-- new symbols for ep03 -->
+        <symbol id="i-clock" viewBox="0 0 48 48"><circle cx="24" cy="24" r="18" fill="none" stroke="#6AA0FF" stroke-width="3"/><line x1="24" y1="24" x2="15" y2="14" stroke="#6AA0FF" stroke-width="3" stroke-linecap="round"/><line x1="24" y1="24" x2="24" y2="12" stroke="#6AA0FF" stroke-width="3" stroke-linecap="round"/></symbol>
+        <symbol id="i-gear" viewBox="0 0 48 48"><circle cx="24" cy="24" r="8" fill="none" stroke="#6AA0FF" stroke-width="3"/><path d="M24 6 L26 10 L28 10 L30 6 L34 8 L33 12 L35 14 L39 13 L41 17 L38 20 L38 22 L42 24 L41 28 L37 28 L36 30 L39 34 L36 37 L32 35 L30 36 L30 42 L26 42 L24 38 L22 38 L20 42 L16 41 L16 37 L14 35 L10 37 L7 34 L10 30 L9 28 L5 27 L6 23 L10 22 L10 20 L7 17 L9 13 L13 14 L15 12 L14 8 L18 6 L20 10 L22 10 Z" fill="none" stroke="#6AA0FF" stroke-width="2.2" stroke-linejoin="round"/></symbol>
+        <symbol id="i-db" viewBox="0 0 48 48"><ellipse cx="24" cy="12" rx="16" ry="6" fill="none" stroke="#6AA0FF" stroke-width="3"/><path d="M8 12 V36 a16 6 0 0 0 32 0 V12" fill="none" stroke="#6AA0FF" stroke-width="3"/><path d="M8 20 a16 6 0 0 0 32 0" fill="none" stroke="#6AA0FF" stroke-width="3"/><path d="M8 28 a16 6 0 0 0 32 0" fill="none" stroke="#6AA0FF" stroke-width="3"/></symbol>
+        <symbol id="i-car" viewBox="0 0 48 48"><path d="M6 30 L10 20 L16 16 L32 16 L38 20 L42 30 L42 36 L6 36 Z" fill="none" stroke="#6AA0FF" stroke-width="3" stroke-linejoin="round"/><circle cx="14" cy="36" r="4" fill="none" stroke="#6AA0FF" stroke-width="3"/><circle cx="34" cy="36" r="4" fill="none" stroke="#6AA0FF" stroke-width="3"/><line x1="16" y1="16" x2="14" y2="26" stroke="#6AA0FF" stroke-width="2"/><line x1="32" y1="16" x2="34" y2="26" stroke="#6AA0FF" stroke-width="2"/></symbol>
+      </defs></svg>
+
+      <div id="bg"><div id="bggrid"></div><div class="glow" id="glow1"></div><div class="glow" id="glow2"></div></div>
+      <svg id="flow" width="1920" height="1080" viewBox="0 0 1920 1080">
+        <g stroke="rgba(106,160,255,.08)" stroke-width="1.5" fill="none"><path d="M-50 220 H1980"/><path d="M-50 540 H1980"/><path d="M-50 860 H1980"/><path d="M300 -50 V1140"/><path d="M1620 -50 V1140"/></g>
+      </svg>
+      <div class="hud"><div class="l">THE TECH INTERN <span>// SYSTEM DESIGN</span></div><div class="r">S1 · E03</div></div>
+      <div id="hudline"></div>
+      <div class="bracket" id="brTL"></div><div class="bracket" id="brTR"></div><div class="bracket" id="brBL"></div><div class="bracket" id="brBR"></div>
+      <div id="sweep"></div>
+
+      <!-- S1: The 8pm crush -->
+      <div class="scene" id="s1" data-name="1 · The 8pm crush" data-chapter="HOOK" data-start="0" data-duration="40" data-track-index="0">
+        <div class="kick">the 8pm swiggy rush</div>
+        <h1 style="font-size:82px; max-width:1300px;">It's 8pm on a Friday. <span class="ac">Half of Mumbai just opened Swiggy.</span></h1>
+        <svg width="1620" height="360" viewBox="0 0 1620 360" style="overflow:visible; align-self:center; margin-top:28px;">
+          <!-- clock zone -->
+          <circle cx="140" cy="180" r="90" fill="none" stroke="#6AA0FF" stroke-width="4"/>
+          <!-- hour hand to 8 o'clock: 8*30=240deg from 12, so pointing bottom-left: dx=sin(240)*60, dy=-cos(240)*60 -->
+          <line x1="140" y1="180" x2="110" y2="232" stroke="#6AA0FF" stroke-width="4" stroke-linecap="round"/>
+          <!-- minute hand pointing up -->
+          <line x1="140" y1="180" x2="140" y2="122" stroke="#6AA0FF" stroke-width="3" stroke-linecap="round"/>
+          <text x="140" y="298" font-size="26" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">8:00 PM</text>
+          <!-- phone cloud -->
+          <use href="#i-phone" x="260" y="50" width="44" height="44"/>
+          <use href="#i-phone" x="320" y="30" width="50" height="50"/>
+          <use href="#i-phone" x="390" y="55" width="40" height="40"/>
+          <use href="#i-phone" x="450" y="35" width="48" height="48"/>
+          <use href="#i-phone" x="520" y="52" width="42" height="42"/>
+          <use href="#i-phone" x="580" y="28" width="46" height="46"/>
+          <use href="#i-phone" x="640" y="50" width="38" height="38"/>
+          <use href="#i-phone" x="700" y="38" width="50" height="50"/>
+          <use href="#i-phone" x="280" y="130" width="46" height="46"/>
+          <use href="#i-phone" x="360" y="120" width="42" height="42"/>
+          <use href="#i-phone" x="430" y="140" width="48" height="48"/>
+          <use href="#i-phone" x="510" y="128" width="44" height="44"/>
+          <use href="#i-phone" x="590" y="138" width="40" height="40"/>
+          <use href="#i-phone" x="660" y="120" width="48" height="48"/>
+          <use href="#i-phone" x="730" y="130" width="44" height="44"/>
+          <use href="#i-phone" x="800" y="46" width="36" height="36"/>
+          <!-- arrows from cluster to server -->
+          <path d="M860 90 L1040 170" stroke="#6AA0FF" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+          <path d="M860 160 L1040 180" stroke="#6AA0FF" stroke-width="2" fill="none"/>
+          <path d="M860 210 L1040 192" stroke="#6AA0FF" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+          <!-- server circle -->
+          <circle cx="1100" cy="180" r="52" fill="#16223C" stroke="#FF6B6B" stroke-width="3"/>
+          <use href="#i-globe" x="1076" y="156" width="48" height="48"/>
+          <text x="1100" y="134" font-size="22" text-anchor="middle" fill="#FF6B6B" font-family="JetBrains Mono">SERVER</text>
+          <text x="1100" y="264" font-size="32" text-anchor="middle" fill="#FF6B6B" font-family="Inter" font-weight="700">1,00,000 orders</text>
+        </svg>
+        <div class="sub" style="font-size:34px; margin-top:18px;">The app slows. Some orders fail. <span class="sp">What just happened — and why?</span></div>
+      </div>
+
+      <!-- S2: Three questions -->
+      <div class="scene" id="s2" data-name="2 · Three questions" data-chapter="HOOK" data-start="40" data-duration="40" data-track-index="0">
+        <div class="kick">three very different problems · same friday night</div>
+        <h1 style="font-size:82px;">"The app is slow" means <span class="ac">three different things.</span></h1>
+        <svg width="1620" height="320" viewBox="0 0 1620 320" style="overflow:visible; align-self:center; margin-top:28px;">
+          <!-- Card 1: Latency -->
+          <rect x="20" y="20" width="500" height="280" rx="24" fill="url(#gcli)" stroke="rgba(59,123,255,.4)" stroke-width="2"/>
+          <text x="64" y="142" font-size="110" fill="rgba(106,160,255,.18)" font-family="Fraunces" font-weight="600">01</text>
+          <text class="ttl" x="64" y="210" font-size="30">How long does ONE order take?</text>
+          <text x="64" y="256" font-size="24" fill="#6AA0FF" font-family="JetBrains Mono">latency</text>
+          <!-- Card 2: Throughput -->
+          <rect x="560" y="20" width="500" height="280" rx="24" fill="url(#gcli)" stroke="rgba(59,123,255,.4)" stroke-width="2"/>
+          <text x="604" y="142" font-size="110" fill="rgba(106,160,255,.18)" font-family="Fraunces" font-weight="600">02</text>
+          <text class="ttl" x="604" y="210" font-size="30">How many orders per second?</text>
+          <text x="604" y="256" font-size="24" fill="#6AA0FF" font-family="JetBrains Mono">throughput</text>
+          <!-- Card 3: Bandwidth -->
+          <rect x="1100" y="20" width="500" height="280" rx="24" fill="url(#gcli)" stroke="rgba(59,123,255,.4)" stroke-width="2"/>
+          <text x="1144" y="142" font-size="110" fill="rgba(106,160,255,.18)" font-family="Fraunces" font-weight="600">03</text>
+          <text class="ttl" x="1144" y="210" font-size="30">How wide is the pipe?</text>
+          <text x="1144" y="256" font-size="24" fill="#6AA0FF" font-family="JetBrains Mono">bandwidth</text>
+        </svg>
+      </div>
+
+      <!-- S3: Latency hero -->
+      <div class="scene" id="s3" data-name="3 · Latency (hero)" data-chapter="LATENCY" data-start="80" data-duration="55" data-track-index="0">
+        <div class="kick">latency · how long one round trip takes</div>
+        <h1 style="font-size:80px;">Latency <span class="ac">(how long one order takes, door to door)</span></h1>
+        <svg width="1700" height="380" viewBox="0 0 1700 380" style="overflow:visible; align-self:center; margin-top:22px;">
+          <!-- CLIENT box -->
+          <rect class="nbox" x="20" y="100" width="260" height="130" rx="18"/>
+          <use href="#i-phone" x="46" y="120" width="44" height="44"/>
+          <text class="code" x="150" y="125" font-size="20" text-anchor="middle">CLIENT</text>
+          <text class="ttl" x="150" y="165" font-size="26" text-anchor="middle">your phone</text>
+          <!-- SERVER box -->
+          <rect class="nbox" x="480" y="100" width="260" height="130" rx="18"/>
+          <use href="#i-globe" x="506" y="120" width="44" height="44"/>
+          <text class="code" x="610" y="125" font-size="20" text-anchor="middle">SERVER</text>
+          <text class="ttl" x="610" y="165" font-size="26" text-anchor="middle">Swiggy app</text>
+          <!-- DB box -->
+          <rect class="nbox" x="940" y="100" width="260" height="130" rx="18"/>
+          <use href="#i-db" x="966" y="116" width="44" height="44"/>
+          <text class="code" x="1070" y="125" font-size="20" text-anchor="middle">DATABASE</text>
+          <text class="ttl" x="1070" y="165" font-size="26" text-anchor="middle">orders, menus</text>
+          <!-- SERVER2 (return) box -->
+          <rect class="nbox" x="1400" y="100" width="260" height="130" rx="18"/>
+          <use href="#i-globe" x="1426" y="120" width="44" height="44"/>
+          <text class="code" x="1530" y="125" font-size="20" text-anchor="middle">SERVER</text>
+          <text class="ttl" x="1530" y="165" font-size="26" text-anchor="middle">sends response</text>
+          <!-- Forward edges -->
+          <path class="edge live" d="M280 165 H480"/>
+          <path class="edge live" d="M740 165 H940"/>
+          <path class="edge live" d="M1200 165 H1400"/>
+          <!-- Return edge -->
+          <path d="M1400 200 Q 960 290, 280 200" stroke="#6AA0FF" stroke-width="2" fill="none" stroke-dasharray="6 8"/>
+          <!-- Packet dot -->
+          <circle r="11" fill="#6AA0FF" cx="280" cy="165"/>
+          <!-- Hop annotations -->
+          <text x="370" y="90" font-size="26" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">+12 ms</text>
+          <text x="830" y="90" font-size="26" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">+40 ms</text>
+          <text x="1290" y="90" font-size="26" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">+8 ms</text>
+          <text x="840" y="272" font-size="22" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">+5 ms</text>
+          <!-- Total panel -->
+          <rect x="1420" y="260" width="240" height="70" rx="14" fill="var(--accent-soft)" stroke="#3B7BFF"/>
+          <text x="1540" y="305" font-size="38" text-anchor="middle" fill="#3B7BFF" font-family="JetBrains Mono">= 65 ms</text>
+        </svg>
+        <div class="sub" style="font-size:34px; margin-top:18px;">One person. One tap. <span class="ac">65 milliseconds</span> later — the screen updates.</div>
+      </div>
+
+      <!-- S4: What makes latency worse -->
+      <div class="scene" id="s4" data-name="4 · What makes latency worse" data-chapter="LATENCY" data-start="135" data-duration="50" data-track-index="0">
+        <div class="kick">what makes that 65ms become 8,000ms?</div>
+        <h1 style="font-size:82px;">Three things push <span class="ac">latency up.</span></h1>
+        <svg width="1620" height="440" viewBox="0 0 1620 440" style="overflow:visible; align-self:center; margin-top:20px;">
+          <!-- Card 1: Network distance -->
+          <rect x="20" y="20" width="490" height="380" rx="22" fill="var(--panel)" stroke="var(--hair)"/>
+          <use href="#i-globe" x="199" y="50" width="72" height="72"/>
+          <text class="ttl" x="255" y="165" font-size="34" text-anchor="middle">Network distance</text>
+          <text x="255" y="205" font-size="24" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">+80 ms</text>
+          <text class="cap" x="255" y="242" font-size="22" text-anchor="middle">Mumbai → London signal</text>
+          <path d="M60 320 Q 255 240, 450 320" stroke="#6AA0FF" stroke-width="2" fill="none" stroke-dasharray="6 6"/>
+          <!-- Card 2: Server processing -->
+          <rect x="565" y="20" width="490" height="380" rx="22" fill="var(--panel)" stroke="var(--hair)"/>
+          <use href="#i-gear" x="744" y="50" width="72" height="72"/>
+          <text class="ttl" x="810" y="165" font-size="34" text-anchor="middle">Server processing</text>
+          <text x="810" y="205" font-size="24" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">N × calculations</text>
+          <text class="cap" x="810" y="242" font-size="22" text-anchor="middle">Discounts, surge, availability</text>
+          <!-- process steps -->
+          <rect x="680" y="280" width="260" height="28" rx="6" fill="var(--panel2)" stroke="#6AA0FF" stroke-width="1.5"/>
+          <rect x="680" y="316" width="200" height="28" rx="6" fill="var(--panel2)" stroke="var(--hair)"/>
+          <rect x="680" y="352" width="230" height="28" rx="6" fill="var(--panel2)" stroke="var(--hair)"/>
+          <!-- Card 3: Database bottleneck -->
+          <rect x="1110" y="20" width="490" height="380" rx="22" fill="var(--panel)" stroke="var(--hair)"/>
+          <use href="#i-db" x="1319" y="50" width="72" height="72"/>
+          <text class="ttl" x="1355" y="165" font-size="34" text-anchor="middle">Missing index</text>
+          <text x="1355" y="205" font-size="24" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">Full table scan</text>
+          <text class="cap" x="1355" y="242" font-size="22" text-anchor="middle">Worst offender — always</text>
+          <!-- scan indicator: rows + bracket -->
+          <line x1="1185" y1="278" x2="1185" y2="390" stroke="#FF6B6B" stroke-width="2"/>
+          <line x1="1185" y1="278" x2="1195" y2="278" stroke="#FF6B6B" stroke-width="2"/>
+          <line x1="1185" y1="390" x2="1195" y2="390" stroke="#FF6B6B" stroke-width="2"/>
+          <rect x="1205" y="282" width="130" height="16" rx="4" fill="var(--panel2)" stroke="var(--hair)"/>
+          <rect x="1205" y="304" width="130" height="16" rx="4" fill="var(--panel2)" stroke="var(--hair)"/>
+          <rect x="1205" y="326" width="130" height="16" rx="4" fill="var(--panel2)" stroke="var(--hair)"/>
+          <rect x="1205" y="348" width="130" height="16" rx="4" fill="rgba(255,107,107,.18)" stroke="#FF6B6B"/>
+          <rect x="1205" y="370" width="130" height="16" rx="4" fill="rgba(255,107,107,.18)" stroke="#FF6B6B"/>
+        </svg>
+        <div class="sub" style="font-size:33px; margin-top:18px;">Distance is physics. Processing is code. <span class="sp">The database is usually the culprit.</span></div>
+      </div>
+
+      <!-- S5: Throughput hero -->
+      <div class="scene" id="s5" data-name="5 · Throughput (hero)" data-chapter="THROUGHPUT" data-start="185" data-duration="50" data-track-index="0">
+        <div class="kick">throughput · orders per second</div>
+        <h1 style="font-size:80px;">Throughput <span class="ac">(how many orders per second)</span></h1>
+        <svg width="1620" height="420" viewBox="0 0 1620 420" style="overflow:visible; align-self:center; margin-top:22px;">
+          <!-- Pipe 1: 1 qps -->
+          <text x="80" y="88" font-size="32" text-anchor="end" fill="#6AA0FF" font-family="JetBrains Mono">1 qps</text>
+          <rect x="100" y="54" width="900" height="70" rx="35" fill="var(--panel)" stroke="#3B7BFF" stroke-width="2"/>
+          <circle cx="200" cy="89" r="8" fill="#6AA0FF"/>
+          <circle cx="380" cy="89" r="8" fill="#6AA0FF"/>
+          <circle cx="560" cy="89" r="8" fill="#6AA0FF"/>
+          <text x="1030" y="96" font-size="26" fill="var(--soft)" font-family="Inter">1 order/sec</text>
+          <!-- Pipe 2: 100 qps -->
+          <text x="80" y="228" font-size="32" text-anchor="end" fill="#6AA0FF" font-family="JetBrains Mono">100 qps</text>
+          <rect x="100" y="178" width="900" height="100" rx="50" fill="var(--panel)" stroke="#3B7BFF" stroke-width="2"/>
+          <circle cx="160" cy="228" r="8" fill="#6AA0FF"/><circle cx="240" cy="228" r="8" fill="#6AA0FF"/><circle cx="320" cy="228" r="8" fill="#6AA0FF"/>
+          <circle cx="400" cy="228" r="8" fill="#6AA0FF"/><circle cx="480" cy="228" r="8" fill="#6AA0FF"/><circle cx="560" cy="228" r="8" fill="#6AA0FF"/>
+          <circle cx="640" cy="228" r="8" fill="#6AA0FF"/><circle cx="720" cy="228" r="8" fill="#6AA0FF"/>
+          <text x="1030" y="236" font-size="26" fill="var(--soft)" font-family="Inter">100 orders/sec</text>
+          <!-- Pipe 3: 10k qps -->
+          <text x="80" y="390" font-size="30" text-anchor="end" fill="#34D399" font-family="JetBrains Mono">10k qps</text>
+          <rect x="100" y="316" width="900" height="120" rx="60" fill="var(--panel)" stroke="#34D399" stroke-width="2"/>
+          <circle cx="140" cy="376" r="7" fill="#34D399"/><circle cx="200" cy="376" r="7" fill="#34D399"/><circle cx="260" cy="376" r="7" fill="#34D399"/>
+          <circle cx="320" cy="376" r="7" fill="#34D399"/><circle cx="380" cy="376" r="7" fill="#34D399"/><circle cx="440" cy="376" r="7" fill="#34D399"/>
+          <circle cx="500" cy="376" r="7" fill="#34D399"/><circle cx="560" cy="376" r="7" fill="#34D399"/><circle cx="620" cy="376" r="7" fill="#34D399"/>
+          <circle cx="680" cy="376" r="7" fill="#34D399"/><circle cx="740" cy="376" r="7" fill="#34D399"/><circle cx="800" cy="376" r="7" fill="#34D399"/>
+          <circle cx="860" cy="376" r="7" fill="#34D399"/><circle cx="920" cy="376" r="7" fill="#34D399"/><circle cx="980" cy="376" r="7" fill="#34D399"/>
+          <text x="1030" y="384" font-size="32" fill="#34D399" font-family="Inter" font-weight="700">10k orders/sec</text>
+          <!-- Right side counter -->
+          <rect x="1160" y="30" width="420" height="360" rx="22" fill="var(--accent-soft)" stroke="#3B7BFF"/>
+          <text x="1370" y="100" font-size="20" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">THROUGHPUT</text>
+          <text x="1370" y="220" font-size="72" text-anchor="middle" fill="#3B7BFF" font-family="JetBrains Mono">10,000</text>
+          <text x="1370" y="280" font-size="36" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">qps</text>
+        </svg>
+        <div class="sub" style="font-size:34px; margin-top:18px;">The pipe didn't get faster. <span class="ac">We added more pipes.</span> That's throughput.</div>
+      </div>
+
+      <!-- S6: The kitchen analogy -->
+      <div class="scene" id="s6" data-name="6 · The kitchen analogy" data-chapter="THROUGHPUT" data-start="235" data-duration="45" data-track-index="0">
+        <div class="kick">the kitchen · season metaphor, introduced here</div>
+        <h1 style="font-size:80px;">The kitchen can make <span class="ac">50 rotis an hour.</span> Hungry or not.</h1>
+        <svg width="1620" height="460" viewBox="0 0 1620 460" style="overflow:visible; align-self:center; margin-top:14px;">
+          <!-- Single cook left zone -->
+          <text x="380" y="60" font-size="20" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">1 COOK</text>
+          <!-- stick figure cook -->
+          <circle cx="380" cy="120" r="36" fill="none" stroke="#6AA0FF" stroke-width="3"/>
+          <path d="M380 156 L380 260 M340 185 L420 185 M380 260 L350 360 M380 260 L410 360" stroke="#6AA0FF" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <!-- kitchen station -->
+          <rect x="280" y="375" width="200" height="55" rx="12" fill="var(--panel)" stroke="var(--hair)"/>
+          <!-- arrow right -->
+          <path d="M480 228 L580 228" stroke="#6AA0FF" stroke-width="2.5" fill="none"/>
+          <polygon points="580,222 592,228 580,234" fill="#6AA0FF"/>
+          <text x="536" y="220" font-size="22" text-anchor="middle" fill="var(--soft)" font-family="Inter">1 order / min</text>
+          <!-- Four cooks right zone -->
+          <text x="1060" y="60" font-size="20" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">4 COOKS</text>
+          <circle cx="880" cy="120" r="28" fill="none" stroke="#6AA0FF" stroke-width="3"/>
+          <path d="M880 148 L880 230 M856 170 L904 170 M880 230 L860 310 M880 230 L900 310" stroke="#6AA0FF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <circle cx="1000" cy="120" r="28" fill="none" stroke="#6AA0FF" stroke-width="3"/>
+          <path d="M1000 148 L1000 230 M976 170 L1024 170 M1000 230 L980 310 M1000 230 L1020 310" stroke="#6AA0FF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <circle cx="1120" cy="120" r="28" fill="none" stroke="#6AA0FF" stroke-width="3"/>
+          <path d="M1120 148 L1120 230 M1096 170 L1144 170 M1120 230 L1100 310 M1120 230 L1140 310" stroke="#6AA0FF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <circle cx="1240" cy="120" r="28" fill="none" stroke="#6AA0FF" stroke-width="3"/>
+          <path d="M1240 148 L1240 230 M1216 170 L1264 170 M1240 230 L1220 310 M1240 230 L1260 310" stroke="#6AA0FF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <!-- arrow right from 4 cooks -->
+          <path d="M1300 228 L1420 228" stroke="#34D399" stroke-width="2.5" fill="none"/>
+          <polygon points="1420,222 1432,228 1420,234" fill="#34D399"/>
+          <text x="1360" y="220" font-size="22" text-anchor="middle" fill="#34D399" font-family="Inter">4 orders / min</text>
+          <!-- Bottom banner -->
+          <rect x="20" y="408" width="1580" height="50" rx="12" fill="var(--accent-soft)" stroke="rgba(59,123,255,.4)"/>
+          <text x="810" y="439" font-size="22" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">kitchen size = bandwidth · cook speed = latency · number of cooks = throughput</text>
+        </svg>
+      </div>
+
+      <!-- S7: Bandwidth -->
+      <div class="scene" id="s7" data-name="7 · Bandwidth" data-chapter="BANDWIDTH" data-start="280" data-duration="45" data-track-index="0">
+        <div class="kick">bandwidth · the width of the pipe</div>
+        <h1 style="font-size:82px;">Bandwidth is <span class="ac">how wide the pipe is.</span></h1>
+        <svg width="1620" height="460" viewBox="0 0 1620 460" style="overflow:visible; align-self:center; margin-top:14px;">
+          <!-- Left: narrow pipe / text request -->
+          <rect x="20" y="20" width="730" height="430" rx="22" fill="url(#gcli)" stroke="var(--hair)"/>
+          <text x="40" y="72" font-size="22" fill="#6AA0FF" font-family="JetBrains Mono">JIO 4G</text>
+          <text x="40" y="104" font-size="22" fill="var(--soft)" font-family="Inter">25 Mbps bandwidth</text>
+          <rect x="80" y="175" width="580" height="55" rx="27" fill="var(--panel)" stroke="#6AA0FF" stroke-width="2"/>
+          <circle cx="140" cy="202" r="8" fill="#6AA0FF"/>
+          <text x="390" y="152" font-size="24" text-anchor="middle" fill="var(--soft)" font-family="Inter">&lt; 1 KB request</text>
+          <!-- checkmark / ok -->
+          <text x="390" y="300" font-size="28" text-anchor="middle" fill="#34D399" font-family="Inter" font-weight="700">✓ passes easily</text>
+          <path d="M200 202 L630 202" stroke="#6AA0FF" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
+          <!-- Right: wide pipe / 4K stream -->
+          <rect x="870" y="20" width="730" height="430" rx="22" fill="url(#gcli)" stroke="rgba(255,107,107,.4)"/>
+          <text x="890" y="72" font-size="22" fill="#FF6B6B" font-family="JetBrains Mono">YOUTUBE 4K</text>
+          <text x="890" y="104" font-size="22" fill="#FF6B6B" font-family="Inter">15 Mbps per stream</text>
+          <rect x="930" y="155" width="580" height="120" rx="60" fill="var(--panel)" stroke="#FF6B6B" stroke-width="2"/>
+          <!-- large data block barely fitting -->
+          <rect x="940" y="166" width="200" height="98" rx="8" fill="rgba(255,107,107,.25)" stroke="#FF6B6B"/>
+          <text x="1040" y="222" font-size="20" text-anchor="middle" fill="#FF6B6B" font-family="Inter">4K data block</text>
+          <text x="1235" y="330" font-size="26" text-anchor="middle" fill="#FF6B6B" font-family="Inter">32M viewers × 15 Mbps = 480 Tbps total</text>
+        </svg>
+        <div class="sub" style="font-size:33px; margin-top:18px;">Latency = how fast. Throughput = how many. Bandwidth = <span class="ac">how much at once.</span></div>
+      </div>
+
+      <!-- S8: Latency ≠ throughput -->
+      <div class="scene" id="s8" data-name="8 · Latency ≠ throughput (hero)" data-chapter="THE TENSION" data-start="325" data-duration="55" data-track-index="0">
+        <div class="kick">the one thing people mix up · 8pm vs 3am</div>
+        <h1 style="font-size:76px;">High throughput. High latency. <span class="ac">Both at once.</span> They're independent.</h1>
+        <svg width="1620" height="440" viewBox="0 0 1620 440" style="overflow:visible; align-self:center; margin-top:14px;">
+          <!-- Left panel: 8PM FRIDAY - rush hour -->
+          <rect x="20" y="20" width="760" height="400" rx="22" fill="url(#gspike)" stroke="rgba(255,107,107,.5)" stroke-width="2"/>
+          <text x="50" y="70" font-size="22" fill="#FF6B6B" font-family="JetBrains Mono">8PM FRIDAY · HIGHWAY</text>
+          <!-- Road -->
+          <rect x="60" y="148" width="680" height="90" rx="8" fill="var(--panel)" stroke="var(--hair)"/>
+          <!-- Road markings -->
+          <line x1="100" y1="193" x2="700" y2="193" stroke="rgba(123,138,165,.3)" stroke-width="2" stroke-dasharray="20 10"/>
+          <!-- Cars bumper to bumper -->
+          <use href="#i-car" x="70" y="158" width="60" height="40"/>
+          <use href="#i-car" x="190" y="158" width="60" height="40"/>
+          <use href="#i-car" x="310" y="158" width="60" height="40"/>
+          <use href="#i-car" x="430" y="158" width="60" height="40"/>
+          <use href="#i-car" x="550" y="158" width="60" height="40"/>
+          <!-- brake lights -->
+          <circle cx="182" cy="178" r="5" fill="#FF6B6B" opacity="0.9"/>
+          <circle cx="302" cy="178" r="5" fill="#FF6B6B" opacity="0.9"/>
+          <circle cx="422" cy="178" r="5" fill="#FF6B6B" opacity="0.9"/>
+          <circle cx="542" cy="178" r="5" fill="#FF6B6B" opacity="0.9"/>
+          <text x="400" y="285" font-size="28" text-anchor="middle" fill="#FF6B6B" font-family="Inter" font-weight="700">HIGH THROUGHPUT</text>
+          <text x="400" y="325" font-size="28" text-anchor="middle" fill="#FF6B6B" font-family="Inter" font-weight="700">HIGH LATENCY</text>
+          <text x="400" y="365" font-size="24" text-anchor="middle" fill="var(--soft)" font-family="Inter">many requests — each one slow</text>
+          <!-- Right panel: 3AM - empty highway -->
+          <rect x="840" y="20" width="760" height="400" rx="22" fill="url(#gok)" stroke="rgba(52,211,153,.5)" stroke-width="2"/>
+          <text x="870" y="70" font-size="22" fill="#34D399" font-family="JetBrains Mono">3AM · SAME HIGHWAY</text>
+          <!-- Road -->
+          <rect x="880" y="148" width="680" height="90" rx="8" fill="var(--panel)" stroke="var(--hair)"/>
+          <line x1="920" y1="193" x2="1520" y2="193" stroke="rgba(123,138,165,.3)" stroke-width="2" stroke-dasharray="20 10"/>
+          <!-- ONE car speeding -->
+          <use href="#i-car" x="1400" y="153" width="80" height="50"/>
+          <!-- speed lines -->
+          <line x1="1395" y1="168" x2="1350" y2="168" stroke="#34D399" stroke-width="2.5"/>
+          <line x1="1393" y1="178" x2="1340" y2="178" stroke="#34D399" stroke-width="2"/>
+          <line x1="1395" y1="188" x2="1355" y2="188" stroke="#34D399" stroke-width="1.5"/>
+          <text x="1220" y="285" font-size="28" text-anchor="middle" fill="#34D399" font-family="Inter" font-weight="700">LOW THROUGHPUT</text>
+          <text x="1220" y="325" font-size="28" text-anchor="middle" fill="#34D399" font-family="Inter" font-weight="700">LOW LATENCY</text>
+          <text x="1220" y="365" font-size="24" text-anchor="middle" fill="var(--soft)" font-family="Inter">few requests — each one instant</text>
+        </svg>
+        <div class="sub" style="font-size:33px; margin-top:14px;">IRCTC Tatkal at 10am: <span class="sp">thousands queuing, each waiting 20 seconds.</span> High load, terrible latency.</div>
+      </div>
+
+      <!-- S9: p50, p99, qps -->
+      <div class="scene" id="s9" data-name="9 · p50 · p99 · qps" data-chapter="THE NUMBERS" data-start="380" data-duration="50" data-track-index="0">
+        <div class="kick">the two numbers every engineer quotes</div>
+        <h1 style="font-size:74px;"><span class="mono ac">p50</span> · <span class="mono ac">p99</span> · <span class="mono ac">qps</span> — what they actually mean.</h1>
+        <svg width="1620" height="380" viewBox="0 0 1620 380" style="overflow:visible; align-self:center; margin-top:22px;">
+          <!-- Card 1: QPS -->
+          <rect x="20" y="20" width="490" height="340" rx="18" fill="#0B1322" stroke="#3B7BFF" stroke-width="2"/>
+          <rect x="20" y="20" width="490" height="52" rx="18" fill="var(--accent-soft)"/>
+          <rect x="20" y="54" width="490" height="18" fill="var(--accent-soft)"/>
+          <text x="265" y="56" font-size="22" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">QPS</text>
+          <text x="265" y="210" font-size="80" text-anchor="middle" fill="#3B7BFF" font-family="JetBrains Mono">12,000</text>
+          <text x="265" y="264" font-size="24" text-anchor="middle" fill="var(--soft)" font-family="Inter">orders per second</text>
+          <text x="265" y="304" font-size="20" text-anchor="middle" fill="var(--muted)" font-family="Inter">throughput pulse</text>
+          <!-- Card 2: P50 -->
+          <rect x="565" y="20" width="490" height="340" rx="18" fill="#0B1322" stroke="#3B7BFF" stroke-width="2"/>
+          <rect x="565" y="20" width="490" height="52" rx="18" fill="var(--accent-soft)"/>
+          <rect x="565" y="54" width="490" height="18" fill="var(--accent-soft)"/>
+          <text x="810" y="56" font-size="22" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">P50 LATENCY</text>
+          <text x="810" y="210" font-size="72" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">45 ms</text>
+          <text x="810" y="264" font-size="24" text-anchor="middle" fill="var(--soft)" font-family="Inter">half your users are faster</text>
+          <text x="810" y="304" font-size="20" text-anchor="middle" fill="var(--muted)" font-family="Inter">the typical experience</text>
+          <!-- Card 3: P99 -->
+          <rect x="1110" y="20" width="490" height="340" rx="18" fill="#0B1322" stroke="#FF6B6B" stroke-width="2"/>
+          <rect x="1110" y="20" width="490" height="52" rx="18" fill="rgba(255,107,107,.15)"/>
+          <rect x="1110" y="54" width="490" height="18" fill="rgba(255,107,107,.15)"/>
+          <text x="1355" y="56" font-size="22" text-anchor="middle" fill="#FF6B6B" font-family="JetBrains Mono">P99 LATENCY</text>
+          <text x="1355" y="210" font-size="72" text-anchor="middle" fill="#FF6B6B" font-family="JetBrains Mono">820 ms</text>
+          <text x="1355" y="264" font-size="24" text-anchor="middle" fill="#FF6B6B" font-family="Inter">1 in 100 users waits this long</text>
+          <text x="1355" y="304" font-size="20" text-anchor="middle" fill="rgba(255,107,107,.7)" font-family="Inter">the tail that hurts</text>
+        </svg>
+        <div class="sub" style="font-size:33px; margin-top:18px;">p50 is the middle. p99 is the tail. qps is the speed. <span class="ac">Three numbers, full picture.</span></div>
+      </div>
+
+      <!-- S10: Why p99 matters -->
+      <div class="scene" id="s10" data-name="10 · Why p99 matters" data-chapter="THE NUMBERS" data-start="430" data-duration="45" data-track-index="0">
+        <div class="kick">the tail catches what the average hides</div>
+        <h1 style="font-size:80px;">The average is <span class="sp">lying to you.</span></h1>
+        <svg width="1620" height="440" viewBox="0 0 1620 440" style="overflow:visible; align-self:center; margin-top:18px;">
+          <!-- Axis -->
+          <line x1="80" y1="380" x2="1560" y2="380" stroke="var(--hair)" stroke-width="2"/>
+          <polygon points="1558,375 1570,380 1558,385" fill="var(--hair)"/>
+          <text x="1520" y="372" font-size="20" fill="var(--muted)" font-family="Inter">latency →</text>
+          <!-- Distribution - main hump (cobalt) -->
+          <path d="M80 380 Q 200 375, 350 300 Q 500 150, 650 300 Q 720 340, 800 370 L 800 380 Z" fill="rgba(59,123,255,.25)" stroke="#3B7BFF" stroke-width="2"/>
+          <!-- Tail (spike-red) -->
+          <path d="M800 370 Q 1000 360, 1300 378 L 1300 380 L 800 380 Z" fill="rgba(255,107,107,.2)" stroke="#FF6B6B" stroke-width="1.5"/>
+          <!-- Mean line (green) -->
+          <path d="M500 120 V380" stroke="#34D399" stroke-width="2" stroke-dasharray="6 4"/>
+          <text x="512" y="112" font-size="22" fill="#34D399" font-family="JetBrains Mono">mean: 52ms</text>
+          <!-- p99 line (red) -->
+          <path d="M1050 240 V380" stroke="#FF6B6B" stroke-width="2" stroke-dasharray="6 4"/>
+          <text x="1062" y="232" font-size="22" fill="#FF6B6B" font-family="JetBrains Mono">p99: 820ms</text>
+          <!-- Arrow + label pointing to tail -->
+          <path d="M1150 280 L1200 330" stroke="#FF6B6B" stroke-width="2"/>
+          <polygon points="1196,330 1204,330 1200,338" fill="#FF6B6B"/>
+          <text x="1062" y="272" font-size="24" fill="#FF6B6B" font-family="Inter">these are real customers</text>
+          <!-- X-axis labels -->
+          <text x="500" y="406" font-size="18" text-anchor="middle" fill="var(--muted)" font-family="Inter">50ms</text>
+          <text x="1050" y="406" font-size="18" text-anchor="middle" fill="var(--muted)" font-family="Inter">820ms</text>
+        </svg>
+        <div class="sub" style="font-size:34px; margin-top:14px;">If you only watch the average, the tail is invisible. <span class="ac">p99 is how you see it.</span></div>
+      </div>
+
+      <!-- S11: The food-rush spike -->
+      <div class="scene" id="s11" data-name="11 · The food-rush spike" data-chapter="BACK TO 8PM" data-start="475" data-duration="50" data-track-index="0">
+        <div class="kick">back to our friday night · now you understand it</div>
+        <h1 style="font-size:80px;">When demand &gt; throughput, <span class="ac">a queue forms.</span></h1>
+        <svg width="1620" height="460" viewBox="0 0 1620 460" style="overflow:visible; align-self:center; margin-top:10px;">
+          <!-- Sparkline axis -->
+          <line x1="100" y1="200" x2="1500" y2="200" stroke="var(--hair)" stroke-width="1"/>
+          <!-- Time labels -->
+          <text x="100" y="222" font-size="20" fill="var(--muted)" font-family="Inter">6am</text>
+          <text x="400" y="222" font-size="20" fill="var(--muted)" font-family="Inter">12pm</text>
+          <text x="700" y="222" font-size="20" fill="var(--muted)" font-family="Inter">6pm</text>
+          <text x="900" y="222" font-size="20" fill="var(--muted)" font-family="Inter">8pm</text>
+          <text x="1100" y="222" font-size="20" fill="var(--muted)" font-family="Inter">9pm</text>
+          <!-- Normal traffic line (flat, cobalt) -->
+          <path d="M100 200 L880 190" stroke="#3B7BFF" stroke-width="2.5" fill="none"/>
+          <!-- Spike (red) -->
+          <path d="M880 190 L920 80 L960 50 L1000 70 L1100 140 L1300 185" stroke="#FF6B6B" stroke-width="3" fill="none"/>
+          <!-- Ceiling dashed line -->
+          <path d="M100 110 L1500 110" stroke="#6AA0FF" stroke-width="1.5" stroke-dasharray="8 6" fill="none"/>
+          <text x="1200" y="102" font-size="22" fill="#6AA0FF" font-family="JetBrains Mono">5,000 qps ceiling</text>
+          <!-- Queue column -->
+          <text x="270" y="248" font-size="20" text-anchor="middle" fill="#FF6B6B" font-family="JetBrains Mono">QUEUE</text>
+          <rect x="200" y="254" width="140" height="28" rx="8" fill="var(--panel)" stroke="#FF6B6B"/>
+          <rect x="200" y="290" width="140" height="28" rx="8" fill="var(--panel)" stroke="#FF6B6B"/>
+          <rect x="200" y="326" width="140" height="28" rx="8" fill="var(--panel)" stroke="#FF6B6B"/>
+          <rect x="200" y="362" width="140" height="28" rx="8" fill="var(--panel)" stroke="rgba(255,107,107,.5)"/>
+          <rect x="200" y="398" width="140" height="28" rx="8" fill="var(--panel)" stroke="rgba(255,107,107,.3)"/>
+          <text x="270" y="448" font-size="20" text-anchor="middle" fill="#FF6B6B" font-family="Inter">4,200 orders</text>
+          <!-- Stat displays -->
+          <rect x="700" y="255" width="360" height="74" rx="12" fill="var(--panel)" stroke="#34D399"/>
+          <text x="720" y="285" font-size="18" fill="var(--soft)" font-family="JetBrains Mono">p99 before spike</text>
+          <text x="950" y="315" font-size="40" text-anchor="end" fill="#34D399" font-family="JetBrains Mono">45 ms</text>
+          <rect x="700" y="350" width="360" height="74" rx="12" fill="var(--panel)" stroke="#FF6B6B"/>
+          <text x="720" y="380" font-size="18" fill="var(--soft)" font-family="JetBrains Mono">p99 during spike</text>
+          <text x="1050" y="410" font-size="38" text-anchor="end" fill="#FF6B6B" font-family="JetBrains Mono">8,200 ms</text>
+        </svg>
+        <div class="sub" style="font-size:33px; margin-top:8px;">The kitchen didn't get slower. <span class="sp">There are just more orders than it can cook.</span></div>
+      </div>
+
+      <!-- S12: Hotstar IPL bandwidth -->
+      <div class="scene" id="s12" data-name="12 · Hotstar IPL bandwidth" data-chapter="BACK TO 8PM" data-start="525" data-duration="40" data-track-index="0">
+        <div class="kick">bandwidth at scale · hotstar ipl 2023</div>
+        <h1 style="font-size:80px;">IPL Final. <span class="ac">32 million streams. Simultaneously.</span></h1>
+        <svg width="1620" height="380" viewBox="0 0 1620 380" style="overflow:visible; align-self:center; margin-top:22px;">
+          <!-- Part 1: 32M viewers -->
+          <rect x="40" y="80" width="420" height="220" rx="18" fill="var(--panel)" stroke="#3B7BFF"/>
+          <text x="250" y="200" font-size="88" text-anchor="middle" fill="#3B7BFF" font-family="JetBrains Mono">32M</text>
+          <text x="250" y="248" font-size="26" text-anchor="middle" fill="var(--soft)" font-family="Inter">viewers</text>
+          <!-- Operator × -->
+          <text x="490" y="212" font-size="60" fill="var(--muted)" text-anchor="middle" font-family="JetBrains Mono">×</text>
+          <!-- Part 2: 4 Mbps per stream -->
+          <rect x="530" y="80" width="420" height="220" rx="18" fill="var(--panel)" stroke="#6AA0FF"/>
+          <text x="740" y="196" font-size="72" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">4 Mbps</text>
+          <text x="740" y="248" font-size="26" text-anchor="middle" fill="var(--soft)" font-family="Inter">per stream</text>
+          <!-- Operator = -->
+          <text x="980" y="212" font-size="60" fill="var(--muted)" text-anchor="middle" font-family="JetBrains Mono">=</text>
+          <!-- Part 3: 128 Tbps result -->
+          <rect x="1020" y="60" width="560" height="260" rx="18" fill="var(--accent-soft)" stroke="#3B7BFF" stroke-width="3"/>
+          <text x="1300" y="196" font-size="80" text-anchor="middle" fill="#3B7BFF" font-family="JetBrains Mono">128 Tbps</text>
+          <text x="1300" y="262" font-size="26" text-anchor="middle" fill="var(--soft)" font-family="Inter">total bandwidth</text>
+          <!-- CDN note below -->
+          <text x="810" y="360" font-size="28" text-anchor="middle" fill="#6AA0FF" font-family="Inter">→ pre-positioned in CDN nodes across India</text>
+        </svg>
+        <div class="sub" style="font-size:33px; margin-top:14px;">You can't serve 128 Tbps from one building. <span class="ac">That's why the CDN exists.</span></div>
+      </div>
+
+      <!-- S13: The trade-off hero -->
+      <div class="scene" id="s13" data-name="13 · The trade-off (hero)" data-chapter="TRADE-OFF" data-start="565" data-duration="55" data-track-index="0">
+        <div class="kick">latency vs throughput · the engineer's decision</div>
+        <h1 style="font-size:76px;">You can trade <span class="ac">latency for throughput.</span> Engineers choose.</h1>
+        <svg width="1620" height="440" viewBox="0 0 1620 440" style="overflow:visible; align-self:center; margin-top:14px;">
+          <!-- Left: UPI payment (latency-first) -->
+          <rect x="20" y="20" width="750" height="400" rx="22" fill="url(#gcli)" stroke="#3B7BFF" stroke-width="2.5"/>
+          <text x="50" y="72" font-size="22" fill="#3B7BFF" font-family="JetBrains Mono">UPI PAYMENT</text>
+          <text x="50" y="104" font-size="22" fill="var(--soft)" font-family="Inter">latency-first · real-time money</text>
+          <!-- mini flow: phone → server -->
+          <use href="#i-phone" x="70" y="140" width="44" height="44"/>
+          <line x1="114" y1="162" x2="290" y2="162" stroke="#3B7BFF" stroke-width="2"/>
+          <rect x="290" y="132" width="160" height="70" rx="12" fill="var(--panel)" stroke="#3B7BFF"/>
+          <text x="370" y="172" font-size="20" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">BANK</text>
+          <line x1="450" y1="162" x2="540" y2="162" stroke="#3B7BFF" stroke-width="2"/>
+          <use href="#i-clock" x="514" y="138" width="44" height="44"/>
+          <!-- big stat -->
+          <text x="80" y="316" font-size="52" fill="#34D399" font-family="JetBrains Mono">&lt; 500 ms</text>
+          <text x="80" y="366" font-size="28" fill="#3B7BFF" font-family="Inter" font-weight="700">LOW LATENCY FIRST</text>
+          <!-- Divider -->
+          <path d="M810 20 V420" stroke="var(--hair)" stroke-width="1" stroke-dasharray="6 6"/>
+          <!-- Right: Swiggy analytics (throughput-first) -->
+          <rect x="850" y="20" width="750" height="400" rx="22" fill="url(#gsrv)" stroke="#34D399" stroke-width="2.5"/>
+          <text x="880" y="72" font-size="22" fill="#34D399" font-family="JetBrains Mono">SWIGGY ANALYTICS</text>
+          <text x="880" y="104" font-size="22" fill="var(--soft)" font-family="Inter">throughput-first · batch is fine</text>
+          <!-- queue of orders -->
+          <rect x="920" y="140" width="80" height="22" rx="4" fill="var(--panel)" stroke="var(--hair)"/>
+          <rect x="920" y="168" width="80" height="22" rx="4" fill="var(--panel)" stroke="var(--hair)"/>
+          <rect x="920" y="196" width="80" height="22" rx="4" fill="var(--panel)" stroke="var(--hair)"/>
+          <rect x="920" y="224" width="80" height="22" rx="4" fill="var(--panel)" stroke="var(--hair)"/>
+          <rect x="920" y="252" width="80" height="22" rx="4" fill="var(--panel)" stroke="var(--hair)"/>
+          <line x1="1000" y1="196" x2="1100" y2="196" stroke="#34D399" stroke-width="2"/>
+          <polygon points="1100,190 1112,196 1100,202" fill="#34D399"/>
+          <!-- batch process box -->
+          <rect x="1112" y="150" width="180" height="120" rx="12" fill="var(--panel)" stroke="#34D399"/>
+          <text x="1202" y="206" font-size="20" text-anchor="middle" fill="#34D399" font-family="JetBrains Mono">every 10 min</text>
+          <!-- big stat -->
+          <text x="880" y="316" font-size="42" fill="#34D399" font-family="JetBrains Mono">10M orders/day</text>
+          <text x="880" y="366" font-size="28" fill="#34D399" font-family="Inter" font-weight="700">HIGH THROUGHPUT FIRST</text>
+        </svg>
+        <div class="sub" style="font-size:32px; margin-top:14px;">Real-time money = latency first. Batch analytics = throughput first. <span class="ac">No universal winner.</span></div>
+      </div>
+
+      <!-- S14: Recap + cliffhanger -->
+      <div class="scene" id="s14" data-name="14 · Recap + cliffhanger" data-chapter="RECAP" data-start="620" data-duration="40" data-track-index="0">
+        <div class="kick">next episode · scale vocabulary</div>
+        <h1 style="font-size:80px;">Three numbers. <span class="ac">Now learn to talk about scale.</span></h1>
+        <svg width="1620" height="400" viewBox="0 0 1620 400" style="overflow:visible; align-self:center; margin-top:22px;">
+          <!-- Row 1: LATENCY -->
+          <rect x="20" y="20" width="1560" height="90" rx="16" fill="var(--panel)" stroke="var(--hair)"/>
+          <text x="60" y="74" font-size="32" fill="#6AA0FF" font-family="JetBrains Mono">LATENCY</text>
+          <line x1="260" y1="20" x2="260" y2="110" stroke="var(--hair)"/>
+          <text x="290" y="68" font-size="26" fill="var(--soft)" font-family="Inter">how long one request takes · </text>
+          <text x="900" y="68" font-size="26" fill="#6AA0FF" font-family="JetBrains Mono">p99: 820 ms</text>
+          <!-- Row 2: THROUGHPUT -->
+          <rect x="20" y="130" width="1560" height="90" rx="16" fill="var(--panel)" stroke="var(--hair)"/>
+          <text x="60" y="184" font-size="32" fill="#6AA0FF" font-family="JetBrains Mono">THROUGHPUT</text>
+          <line x1="320" y1="130" x2="320" y2="220" stroke="var(--hair)"/>
+          <text x="350" y="178" font-size="26" fill="var(--soft)" font-family="Inter">how many per second · </text>
+          <text x="900" y="178" font-size="26" fill="#6AA0FF" font-family="JetBrains Mono">12,000 qps</text>
+          <!-- Row 3: BANDWIDTH -->
+          <rect x="20" y="240" width="1560" height="90" rx="16" fill="var(--panel)" stroke="var(--hair)"/>
+          <text x="60" y="294" font-size="32" fill="#6AA0FF" font-family="JetBrains Mono">BANDWIDTH</text>
+          <line x1="310" y1="240" x2="310" y2="330" stroke="var(--hair)"/>
+          <text x="340" y="288" font-size="26" fill="var(--soft)" font-family="Inter">how wide the pipe · </text>
+          <text x="900" y="288" font-size="26" fill="#6AA0FF" font-family="JetBrains Mono">128 Tbps</text>
+          <!-- Cliffhanger bar -->
+          <rect x="20" y="358" width="1580" height="10" rx="5" fill="var(--accent-soft)"/>
+          <text x="810" y="392" font-size="26" text-anchor="middle" fill="var(--muted)" font-family="Inter">→ Ep04: scale vocabulary — qps · nines of availability · 99.9% uptime = 9 hours down/year</text>
+        </svg>
+      </div>
+
+    </div>
+
+    <div class="progress-dots" id="progress-dots"></div>
+    <div id="title"></div>
+    <div id="counter"></div>
+    <div id="hintbar">← → / space: navigate · F: fullscreen · 1–9: jump</div>
+    <script>
+      const slides = Array.from(document.querySelectorAll('.scene'));
+      let cur = 0;
+      function clamp(n){ return Math.max(0, Math.min(slides.length - 1, n)); }
+
+      // update chapter tag
+      function updateChapter() {
+        const s = slides[cur];
+        const ch = s ? s.dataset.chapter : '';
+        let tag = document.getElementById('chapter-tag');
+        if (!tag) { tag = document.createElement('div'); tag.id='chapter-tag'; tag.className='chapter-tag'; document.body.appendChild(tag); }
+        tag.textContent = ch ? '// '+ch : '';
+      }
+
+      // update progress dots
+      function updateDots() {
+        document.querySelectorAll('.progress-dots .dot').forEach((d,i) => d.classList.toggle('active', i===cur));
+      }
+
+      function showSlide(n){
+        cur = clamp(n);
+        slides.forEach((s, k) => s.classList.toggle('active', k === cur));
+        document.getElementById('counter').textContent = (cur + 1) + ' / ' + slides.length;
+        document.getElementById('title').textContent = slides[cur].dataset.name || '';
+        if (location.hash !== '#' + (cur + 1)) history.replaceState(null, '', '#' + (cur + 1));
+        updateChapter();
+        updateDots();
+      }
+
+      function fit(){ const pad = 40; const s = Math.min((window.innerWidth - pad) / 1920, (window.innerHeight - pad) / 1080); document.getElementById('root').style.transform = 'scale(' + s + ')'; }
+      window.addEventListener('resize', fit);
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { showSlide(cur + 1); e.preventDefault(); }
+        else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { showSlide(cur - 1); e.preventDefault(); }
+        else if (e.key === 'Home') showSlide(0);
+        else if (e.key === 'End') showSlide(slides.length - 1);
+        else if (e.key.toLowerCase() === 'f') { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+        else if (/^[1-9]$/.test(e.key)) showSlide(parseInt(e.key, 10) - 1);
+      });
+      document.addEventListener('click', (e) => { if (e.target.closest('#hintbar')) return; showSlide(cur + 1); });
+
+      // build progress dots
+      const dotsEl = document.getElementById('progress-dots');
+      for (let i=0; i<slides.length; i++) { const d=document.createElement('div'); d.className='dot'+(i===0?' active':''); dotsEl.appendChild(d); }
+
+      const start = parseInt((location.hash || '#1').slice(1), 10);
+      fit();
+      showSlide(isNaN(start) ? 0 : start - 1);
+    </script>
+  </body>
+</html>

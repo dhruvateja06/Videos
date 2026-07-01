@@ -1,0 +1,859 @@
+1
+00:00:00,000 --> 00:00:02,086
+It's 8pm on a Friday,
+
+2
+00:00:02,136 --> 00:00:05,650
+and half of Mumbai just opened Swiggy at
+the same time,
+
+3
+00:00:05,700 --> 00:00:09,412
+You tap order — so does a lakh of other
+people,
+
+4
+00:00:09,462 --> 00:00:11,990
+right now, simultaneously,
+
+5
+00:00:12,040 --> 00:00:14,741
+And somewhere in a data centre,
+
+6
+00:00:14,791 --> 00:00:17,075
+one poor server starts sweating,
+
+7
+00:00:17,125 --> 00:00:18,515
+The app slows down,
+
+8
+00:00:18,565 --> 00:00:23,681
+some orders fail — and every engineer on
+call gets a message,
+
+9
+00:00:23,731 --> 00:00:29,405
+But here's the thing — it's slow or it's
+down doesn't actually tell you what broke,
+
+10
+00:00:29,455 --> 00:00:32,992
+because slowness has three completely
+different causes,
+
+11
+00:00:33,042 --> 00:00:35,383
+and you need to know which one you're
+dealing with,
+
+12
+00:00:35,433 --> 00:00:38,541
+When an engineer says the system's
+struggling,
+
+13
+00:00:38,591 --> 00:00:41,142
+they're really asking one of three
+questions,
+
+14
+00:00:41,192 --> 00:00:43,487
+How long does a single order take,
+
+15
+00:00:43,537 --> 00:00:47,330
+end to end, How many orders can we handle
+per second,
+
+16
+00:00:47,380 --> 00:00:50,267
+And how much data can we actually move at
+once,
+
+17
+00:00:50,317 --> 00:00:51,567
+Three different questions,
+
+18
+00:00:51,617 --> 00:00:53,158
+three different problems,
+
+19
+00:00:53,208 --> 00:00:58,788
+three different fixes — and mixing them up
+is how you spend a weekend firefighting the wrong thing,
+
+20
+00:00:58,838 --> 00:01:02,329
+Let's start with the first one — latency,
+
+21
+00:01:02,379 --> 00:01:05,545
+which just means how long one single
+request takes,
+
+22
+00:01:05,595 --> 00:01:08,831
+You tap order on your phone — that's the
+client,
+
+23
+00:01:08,881 --> 00:01:10,793
+the thing making the request,
+
+24
+00:01:10,843 --> 00:01:16,667
+The request travels to Swiggy's server —
+maybe 12 milliseconds over the network,
+
+25
+00:01:16,717 --> 00:01:18,804
+The server needs to check the restaurant,
+
+26
+00:01:18,854 --> 00:01:20,255
+fetch your address,
+
+27
+00:01:20,305 --> 00:01:23,982
+calculate the delivery fee — so it hits
+the database,
+
+28
+00:01:24,032 --> 00:01:26,907
+and that query takes around 40
+milliseconds,
+
+29
+00:01:26,957 --> 00:01:31,539
+Then the answer comes back — another 8
+milliseconds to process,
+
+30
+00:01:31,589 --> 00:01:33,885
+5 milliseconds back to your phone,
+
+31
+00:01:33,935 --> 00:01:36,044
+Total: 65 milliseconds,
+
+32
+00:01:36,094 --> 00:01:39,283
+that's latency — the time for one round
+trip,
+
+33
+00:01:39,333 --> 00:01:42,906
+door to door, when latency is low the app
+feels instant,
+
+34
+00:01:42,956 --> 00:01:45,738
+when it's high you sit there watching a
+spinner,
+
+35
+00:01:45,788 --> 00:01:47,979
+So what makes latency go up,
+
+36
+00:01:48,029 --> 00:01:49,918
+there are three main culprits,
+
+37
+00:01:49,968 --> 00:01:53,865
+and they show up in almost every slowness
+investigation,
+
+38
+00:01:53,915 --> 00:01:56,222
+First: physical distance,
+
+39
+00:01:56,272 --> 00:01:59,844
+if you're ordering from Leh and the server
+is in Mumbai,
+
+40
+00:01:59,894 --> 00:02:07,449
+the signal is literally travelling
+hundreds of kilometres — that adds latency you cannot code your way out of,
+
+41
+00:02:07,499 --> 00:02:09,399
+Second: server processing,
+
+42
+00:02:09,449 --> 00:02:14,136
+if your order triggers ten different
+calculations — discount codes,
+
+43
+00:02:14,186 --> 00:02:15,703
+surge pricing,
+
+44
+00:02:15,753 --> 00:02:20,231
+restaurant availability — each one adds
+time,
+
+45
+00:02:20,281 --> 00:02:26,153
+And third — almost always the sneaky one —
+the database,
+
+46
+00:02:26,203 --> 00:02:29,415
+a query without the right index doesn't
+find one row,
+
+47
+00:02:29,465 --> 00:02:32,433
+it scans every single row in the table,
+
+48
+00:02:32,483 --> 00:02:33,978
+distance is physics,
+
+49
+00:02:34,028 --> 00:02:38,497
+processing is code, but the database is
+usually where the real time goes,
+
+50
+00:02:38,497 --> 00:02:44,809
+Now latency answers how long does one
+request take — but that's only half the picture,
+
+51
+00:02:44,859 --> 00:02:49,558
+the other question is: how many requests
+can we handle at the same time,
+
+52
+00:02:49,608 --> 00:02:52,878
+that's throughput, Imagine a pipe,
+
+53
+00:02:52,928 --> 00:02:57,545
+one order travels through it per second —
+one qps,
+
+54
+00:02:57,595 --> 00:03:01,551
+queries per second, which is the unit
+engineers use,
+
+55
+00:03:01,601 --> 00:03:05,533
+Now imagine we make the pipe wider — or
+better,
+
+56
+00:03:05,583 --> 00:03:07,808
+add more pipes side by side,
+
+57
+00:03:07,858 --> 00:03:11,059
+now a hundred orders a second can flow
+through,
+
+58
+00:03:11,109 --> 00:03:16,748
+And a well-engineered system at scale
+might handle ten thousand qps or more,
+
+59
+00:03:16,798 --> 00:03:26,794
+Throughput isn't about making one request
+faster — it's about how many requests you can serve simultaneously before the system starts refusing or slowing down,
+
+60
+00:03:26,794 --> 00:03:28,741
+Here's the analogy that makes this stick,
+
+61
+00:03:28,791 --> 00:03:31,980
+and we'll keep coming back to it all
+season,
+
+62
+00:03:32,030 --> 00:03:34,232
+Imagine a kitchen with one cook,
+
+63
+00:03:34,282 --> 00:03:38,273
+that cook can make one dish at a time —
+one order per minute,
+
+64
+00:03:38,323 --> 00:03:42,673
+let's say, that's your throughput: one
+qps,
+
+65
+00:03:42,723 --> 00:03:44,473
+Now you hire four cooks,
+
+66
+00:03:44,523 --> 00:03:53,900
+each one still takes the same amount of
+time per dish — the latency per order hasn't changed — but now you're serving four orders simultaneously,
+
+67
+00:03:53,950 --> 00:03:55,955
+throughput just quadrupled,
+
+68
+00:03:56,005 --> 00:03:58,706
+But the kitchen itself — the physical
+space,
+
+69
+00:03:58,756 --> 00:04:00,297
+the number of burners,
+
+70
+00:04:00,347 --> 00:04:03,513
+the gas supply — that's bandwidth,
+
+71
+00:04:03,563 --> 00:04:07,042
+each cook's speed is latency,
+
+72
+00:04:07,092 --> 00:04:09,283
+the number of cooks is throughput,
+
+73
+00:04:09,333 --> 00:04:11,140
+the kitchen size is bandwidth,
+
+74
+00:04:11,190 --> 00:04:14,646
+So: bandwidth — the width of the pipe,
+
+75
+00:04:14,696 --> 00:04:16,585
+If you're on a standard Jio connection,
+
+76
+00:04:16,635 --> 00:04:20,056
+you've got maybe 25 megabits per second of
+bandwidth,
+
+77
+00:04:20,106 --> 00:04:25,908
+a text-based order request — a few
+kilobytes — flies through with room to spare,
+
+78
+00:04:25,958 --> 00:04:29,692
+But a 4K YouTube stream needs around 15
+megabits per second,
+
+79
+00:04:29,742 --> 00:04:33,175
+just for one video, and your connection is
+25,
+
+80
+00:04:33,225 --> 00:04:35,973
+so if two people in your house are
+streaming 4K,
+
+81
+00:04:36,023 --> 00:04:37,401
+you've hit the ceiling,
+
+82
+00:04:37,451 --> 00:04:43,868
+Scale that up: 32 million people streaming
+the IPL final simultaneously,
+
+83
+00:04:43,918 --> 00:04:51,918
+each needing 15 megabits — that's 480
+terabits per second of bandwidth that has to exist somewhere in the world,
+
+84
+00:04:51,918 --> 00:04:56,849
+Here's where a lot of people trip up —
+latency and throughput are independent,
+
+85
+00:04:56,899 --> 00:05:00,030
+you can have high throughput and high
+latency at the same time,
+
+86
+00:05:00,080 --> 00:05:02,305
+they're not opposites,
+
+87
+00:05:02,355 --> 00:05:06,091
+Think about the Western Express Highway on
+a Friday at 8pm,
+
+88
+00:05:06,141 --> 00:05:13,916
+thousands of cars are on the road — that's
+high throughput — but each car is stuck in traffic — high latency,
+
+89
+00:05:13,966 --> 00:05:15,297
+Many requests being handled,
+
+90
+00:05:15,347 --> 00:05:17,190
+but each one taking forever,
+
+91
+00:05:17,240 --> 00:05:19,918
+that's not a contradiction — that's
+congestion,
+
+92
+00:05:19,968 --> 00:05:23,215
+Now picture the same highway at 3am,
+
+93
+00:05:23,265 --> 00:05:25,224
+one car, no traffic,
+
+94
+00:05:25,274 --> 00:05:28,254
+doing a hundred and twenty — low latency,
+
+95
+00:05:28,304 --> 00:05:29,113
+you're flying,
+
+96
+00:05:29,163 --> 00:05:32,805
+but only one car is moving — very low
+throughput,
+
+97
+00:05:32,855 --> 00:05:42,360
+This is exactly what IRCTC looks like at
+10am on Tatkal booking day — thousands of requests hammering the server simultaneously,
+
+98
+00:05:42,410 --> 00:05:44,427
+each one taking twenty seconds,
+
+99
+00:05:44,477 --> 00:05:47,713
+high load, terrible latency,
+
+100
+00:05:47,763 --> 00:05:52,797
+Understanding which one is your problem
+completely changes what you do next,
+
+101
+00:05:52,847 --> 00:05:57,186
+Okay, so how do engineers actually measure
+this stuff in the real world,
+
+102
+00:05:57,236 --> 00:05:59,496
+three numbers come up constantly,
+
+103
+00:05:59,546 --> 00:06:00,529
+and once you know them,
+
+104
+00:06:00,579 --> 00:06:02,851
+you'll spot them everywhere,
+
+105
+00:06:02,901 --> 00:06:06,009
+First: qps — queries per second,
+
+106
+00:06:06,059 --> 00:06:09,318
+how many requests is the system handling
+right now,
+
+107
+00:06:09,368 --> 00:06:13,231
+12,000 qps means 12,000 orders every
+second,
+
+108
+00:06:13,281 --> 00:06:14,868
+that's the throughput number,
+
+109
+00:06:14,918 --> 00:06:16,957
+the live pulse of the system,
+
+110
+00:06:17,007 --> 00:06:19,558
+Second: p50 latency,
+
+111
+00:06:19,608 --> 00:06:21,625
+the 50th percentile,
+
+112
+00:06:21,675 --> 00:06:24,713
+half your users got a response faster than
+this,
+
+113
+00:06:24,763 --> 00:06:26,269
+half slower,
+
+114
+00:06:26,319 --> 00:06:29,345
+if p50 is 45 milliseconds,
+
+115
+00:06:29,395 --> 00:06:31,621
+the typical experience is pretty snappy,
+
+116
+00:06:31,671 --> 00:06:37,844
+Third — and this is the one engineers
+actually care about most — p99 latency,
+
+117
+00:06:37,894 --> 00:06:42,023
+one percent of requests took this long or
+longer,
+
+118
+00:06:42,073 --> 00:06:45,320
+if p99 is 820 milliseconds,
+
+119
+00:06:45,370 --> 00:06:49,082
+that's one in every hundred users sitting
+there for nearly a second,
+
+120
+00:06:49,132 --> 00:06:56,423
+on a system doing 12,000 qps that's 120
+people every single second having a bad experience,
+
+121
+00:06:56,423 --> 00:07:03,258
+Here's why p99 matters more than the
+average — and why the average is actually a bit of a liar,
+
+122
+00:07:03,308 --> 00:07:08,262
+Imagine you plot every request's response
+time as a curve,
+
+123
+00:07:08,312 --> 00:07:12,302
+most requests are fast — that's the big
+hump in the middle,
+
+124
+00:07:12,352 --> 00:07:14,473
+The average, or mean,
+
+125
+00:07:14,523 --> 00:07:16,563
+sits somewhere in that hump,
+
+126
+00:07:16,613 --> 00:07:19,244
+52 milliseconds — looks great,
+
+127
+00:07:19,294 --> 00:07:21,984
+right, But there's a long tail to the
+right,
+
+128
+00:07:22,034 --> 00:07:26,001
+where a small fraction of requests took
+much longer,
+
+129
+00:07:26,051 --> 00:07:29,659
+p99 is out here at 820 milliseconds,
+
+130
+00:07:29,709 --> 00:07:33,839
+That tail isn't a statistical artefact —
+those are real users,
+
+131
+00:07:33,889 --> 00:07:35,429
+real people,
+
+132
+00:07:35,479 --> 00:07:38,483
+and they're the ones who leave the
+one-star reviews,
+
+133
+00:07:38,533 --> 00:07:40,201
+if you only watch the average,
+
+134
+00:07:40,251 --> 00:07:43,846
+the tail is completely invisible to you,
+
+135
+00:07:43,896 --> 00:07:45,645
+p99 is how you see it,
+
+136
+00:07:45,695 --> 00:07:48,292
+Let's go back to our 8pm Swiggy rush,
+
+137
+00:07:48,342 --> 00:07:53,087
+because now you have the vocabulary to
+understand exactly what's happening,
+
+138
+00:07:53,137 --> 00:07:56,686
+Here's the traffic pattern over the day —
+flat in the morning,
+
+139
+00:07:56,736 --> 00:07:57,940
+picking up at lunch,
+
+140
+00:07:57,990 --> 00:08:01,039
+then at 8pm it spikes hard,
+
+141
+00:08:01,089 --> 00:08:06,960
+The system's throughput ceiling — the
+maximum it can handle — is 5,000 qps,
+
+142
+00:08:07,010 --> 00:08:09,515
+that's a line, the spike crosses it,
+
+143
+00:08:09,565 --> 00:08:11,094
+When demand exceeds throughput,
+
+144
+00:08:11,144 --> 00:08:14,031
+requests don't disappear — they wait,
+
+145
+00:08:14,081 --> 00:08:16,492
+a queue forms, orders are stacking up,
+
+146
+00:08:16,542 --> 00:08:26,047
+And watch what happens to p99 latency as
+that queue grows — it goes from a healthy 45 milliseconds all the way to over 8 seconds,
+
+147
+00:08:26,097 --> 00:08:27,917
+the kitchen didn't get slower,
+
+148
+00:08:27,967 --> 00:08:30,230
+there are just more orders than it can
+cook,
+
+149
+00:08:30,231 --> 00:08:33,594
+Let me give you a real-world example of
+bandwidth at scale,
+
+150
+00:08:33,644 --> 00:08:35,684
+because the numbers are genuinely wild,
+
+151
+00:08:35,734 --> 00:08:42,139
+The IPL Final on Hotstar in 2023 — 32
+million concurrent streams at its peak,
+
+152
+00:08:42,189 --> 00:08:46,005
+Each stream needs roughly 4 megabits per
+second of bandwidth,
+
+153
+00:08:46,055 --> 00:08:55,398
+That's 128 terabits per second of total
+bandwidth that has to flow — from servers to every viewer's screen,
+
+154
+00:08:55,448 --> 00:08:56,803
+simultaneously,
+
+155
+00:08:56,853 --> 00:09:00,436
+You cannot serve that from one building in
+Mumbai,
+
+156
+00:09:00,486 --> 00:09:06,160
+this is why Hotstar pre-positions the
+video in CDN nodes scattered across India,
+
+157
+00:09:06,210 --> 00:09:09,167
+each viewer pulls the stream from a nearby
+node,
+
+158
+00:09:09,217 --> 00:09:11,512
+bandwidth is why the CDN exists,
+
+159
+00:09:11,562 --> 00:09:16,597
+Now here's the engineer's decision — the
+trade-off at the heart of this episode,
+
+160
+00:09:16,647 --> 00:09:19,906
+latency and throughput are often in
+tension,
+
+161
+00:09:19,956 --> 00:09:23,761
+and you frequently have to choose which
+one you're optimising for,
+
+162
+00:09:23,811 --> 00:09:25,270
+Take a UPI payment,
+
+163
+00:09:25,320 --> 00:09:29,206
+when you tap Pay and send 500 rupees to
+someone,
+
+164
+00:09:29,256 --> 00:09:32,352
+that money needs to move — right now,
+
+165
+00:09:32,402 --> 00:09:39,086
+you need a response in under 500
+milliseconds or the UX feels broken and the user panics,
+
+166
+00:09:39,136 --> 00:09:41,396
+this is a latency-first system,
+
+167
+00:09:41,446 --> 00:09:43,242
+To guarantee that latency,
+
+168
+00:09:43,292 --> 00:09:46,691
+you actually end up handling fewer
+requests at once,
+
+169
+00:09:46,741 --> 00:09:50,441
+you trade some throughput to protect the
+latency,
+
+170
+00:09:50,491 --> 00:09:57,801
+Now contrast that with Swiggy's internal
+analytics pipeline — the system can collect ten million events through the day,
+
+171
+00:09:57,851 --> 00:10:01,667
+batch them up, and process the whole lot
+every ten minutes,
+
+172
+00:10:01,717 --> 00:10:07,600
+That's a throughput-first design — you get
+massive efficiency by processing in batches,
+
+173
+00:10:07,650 --> 00:10:13,033
+and the latency is perfectly acceptable
+because nobody needs the answer instantly,
+
+174
+00:10:13,083 --> 00:10:14,322
+The same data,
+
+175
+00:10:14,372 --> 00:10:20,196
+the same infrastructure — and completely
+different priorities depending on what the system is actually for,
+
+176
+00:10:20,246 --> 00:10:23,215
+So here's what you now have — three
+numbers that,
+
+177
+00:10:23,265 --> 00:10:26,860
+together, tell you almost everything about
+a system's health,
+
+178
+00:10:26,910 --> 00:10:30,064
+Latency: how long one request takes,
+
+179
+00:10:30,114 --> 00:10:33,199
+end to end, measured in milliseconds,
+
+180
+00:10:33,249 --> 00:10:35,742
+tracked at p50 and p99,
+
+181
+00:10:35,792 --> 00:10:40,339
+Throughput: how many requests the system
+handles per second,
+
+182
+00:10:40,389 --> 00:10:41,488
+measured in qps,
+
+183
+00:10:41,538 --> 00:10:46,376
+And bandwidth: the physical ceiling on how
+much data can flow at once,
+
+184
+00:10:46,426 --> 00:10:49,302
+measured in megabits or terabits per
+second,
+
+185
+00:10:49,352 --> 00:10:50,683
+In the next episode,
+
+186
+00:10:50,733 --> 00:10:55,873
+we go one level deeper — into the full
+vocabulary engineers use to talk about scale,
+
+187
+00:10:55,923 --> 00:10:59,286
+what does four nines of availability
+actually mean,
+
+188
+00:10:59,336 --> 00:11:06,182
+why does 99.9% uptime still leave you with
+nine hours of downtime every year,
+
+189
+00:11:06,232 --> 00:11:11,051
+that's Ep04 — and it builds directly on
+everything you just learned,

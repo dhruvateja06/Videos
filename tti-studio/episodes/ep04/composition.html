@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="../../assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face { font-family:"Fraunces"; font-weight:400; src:url("../../assets/fonts/fraunces-latin-400-normal.woff2") format("woff2"); }
+      @font-face { font-family:"Fraunces"; font-weight:400; font-style:italic; src:url("../../assets/fonts/fraunces-latin-400-italic.woff2") format("woff2"); }
+      @font-face { font-family:"Fraunces"; font-weight:600; src:url("../../assets/fonts/fraunces-latin-600-normal.woff2") format("woff2"); }
+      @font-face { font-family:"Inter"; font-weight:400; src:url("../../assets/fonts/inter-latin-400-normal.woff2") format("woff2"); }
+      @font-face { font-family:"Inter"; font-weight:600; src:url("../../assets/fonts/inter-latin-600-normal.woff2") format("woff2"); }
+      @font-face { font-family:"Inter"; font-weight:700; src:url("../../assets/fonts/inter-latin-700-normal.woff2") format("woff2"); }
+      @font-face { font-family:"JetBrains Mono"; font-weight:400; src:url("../../assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); }
+      :root{ --paper:#0F1729; --panel:#16223C; --panel2:#1B2A47; --ink:#E6ECF5; --soft:#B7C2D6; --muted:#7B8AA5; --hair:rgba(123,138,165,.22); --accent:#3B7BFF; --accent-bright:#6AA0FF; --accent-soft:rgba(59,123,255,.14); --spike:#FF6B6B; --ok:#34D399; }
+      *{ margin:0; padding:0; box-sizing:border-box; }
+      html,body{ width:1920px; height:1080px; overflow:hidden; }
+      body{ font-family:"Inter",sans-serif; background:var(--paper); }
+      #root{ position:relative; width:1920px; height:1080px; background:var(--paper); color:var(--ink); }
+      #bg{ position:absolute; inset:0; overflow:hidden; z-index:0; }
+      #bggrid{ position:absolute; left:-140px; top:-140px; width:2300px; height:1400px; background-image:linear-gradient(rgba(123,138,165,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(123,138,165,.06) 1px,transparent 1px); background-size:72px 72px; }
+      .glow{ position:absolute; border-radius:50%; filter:blur(80px); }
+      #glow1{ width:1100px; height:1100px; left:900px; top:-340px; background:radial-gradient(circle,rgba(59,123,255,.20),rgba(59,123,255,0) 70%); }
+      #glow2{ width:820px; height:820px; left:-320px; top:600px; background:radial-gradient(circle,rgba(106,160,255,.13),rgba(106,160,255,0) 70%); }
+      .hud{ position:absolute; left:64px; right:64px; top:52px; display:flex; justify-content:space-between; align-items:center; z-index:7; font-family:"JetBrains Mono"; font-size:22px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
+      .hud .l span{ color:var(--accent); }
+      #hudline{ position:absolute; left:64px; right:64px; top:94px; height:1px; background:var(--hair); z-index:7; transform-origin:left; }
+      .bracket{ position:absolute; width:34px; height:34px; z-index:7; }
+      #brTL{ left:30px; top:30px; border-left:2px solid var(--hair); border-top:2px solid var(--hair);} #brTR{ right:30px; top:30px; border-right:2px solid var(--hair); border-top:2px solid var(--hair);}
+      #brBL{ left:30px; bottom:30px; border-left:2px solid var(--hair); border-bottom:2px solid var(--hair);} #brBR{ right:30px; bottom:30px; border-right:2px solid var(--hair); border-bottom:2px solid var(--hair);}
+      #sweep{ position:absolute; top:-60px; bottom:-60px; left:0; width:340px; opacity:0; z-index:20; pointer-events:none; background:linear-gradient(90deg, rgba(59,123,255,0) 0%, rgba(106,160,255,.5) 50%, rgba(59,123,255,0) 100%); transform:skewX(-10deg); }
+      .scene{ position:absolute; inset:0; opacity:0; z-index:2; padding:158px 110px 92px 110px; display:flex; flex-direction:column; justify-content:center; }
+      .kick{ font-family:"JetBrains Mono"; font-size:26px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:18px; }
+      .kick:before{ content:"// "; color:var(--muted); }
+      h1{ font-family:"Fraunces"; font-weight:600; color:var(--ink); line-height:1.05; letter-spacing:-.012em; }
+      .sub{ color:var(--soft); font-family:"Inter"; }
+      .ac{ color:var(--accent); } .acb{ color:var(--accent-bright); } .sp{ color:var(--spike); } .ok{ color:var(--ok); }
+      .mono{ font-family:"JetBrains Mono"; } .it{ font-style:italic; }
+      svg text{ font-family:"JetBrains Mono"; fill:var(--soft); }
+      svg .ttl{ font-family:"Inter"; font-weight:700; fill:var(--ink); }
+      svg .cap{ font-family:"Inter"; font-weight:400; fill:var(--soft); }
+      svg .code{ font-family:"JetBrains Mono"; fill:var(--accent); }
+      svg .edge{ stroke:var(--hair); stroke-width:3; fill:none; opacity:0; } svg .edge.live{ stroke:var(--accent); }
+      svg .nbox{ fill:var(--panel); stroke:var(--hair); stroke-width:2; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="sdep04full" data-start="0" data-duration="570" data-width="1920" data-height="1080">
+      <svg width="0" height="0" style="position:absolute"><defs>
+        <filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+        <linearGradient id="gcli" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B2A47"/><stop offset="1" stop-color="#16223C"/></linearGradient>
+        <linearGradient id="gsrv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16223C"/><stop offset="1" stop-color="#111c33"/></linearGradient>
+        <linearGradient id="ggreen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#34D399"/></linearGradient>
+        <linearGradient id="gamber" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F5C542"/><stop offset="1" stop-color="#F5C542"/></linearGradient>
+        <linearGradient id="gred" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF6B6B"/><stop offset="1" stop-color="#FF6B6B"/></linearGradient>
+        <symbol id="i-phone" viewBox="0 0 48 48"><rect x="15" y="6" width="18" height="36" rx="4" fill="none" stroke="#6AA0FF" stroke-width="3.5"/><line x1="21" y1="37" x2="27" y2="37" stroke="#6AA0FF" stroke-width="3.5"/></symbol>
+        <symbol id="i-globe" viewBox="0 0 48 48"><circle cx="24" cy="24" r="16" fill="none" stroke="#6AA0FF" stroke-width="3.5"/><ellipse cx="24" cy="24" rx="7" ry="16" fill="none" stroke="#6AA0FF" stroke-width="3"/><line x1="8" y1="24" x2="40" y2="24" stroke="#6AA0FF" stroke-width="3"/></symbol>
+        <symbol id="i-clock" viewBox="0 0 48 48"><circle cx="24" cy="24" r="18" fill="none" stroke="#6AA0FF" stroke-width="3"/><line x1="24" y1="24" x2="15" y2="14" stroke="#6AA0FF" stroke-width="3" stroke-linecap="round"/><line x1="24" y1="24" x2="24" y2="12" stroke="#6AA0FF" stroke-width="3" stroke-linecap="round"/></symbol>
+        <symbol id="i-person" viewBox="0 0 48 48"><circle cx="24" cy="14" r="10" fill="none" stroke="#6AA0FF" stroke-width="3"/><path d="M6 44 C 6 28, 42 28, 42 44" fill="none" stroke="#6AA0FF" stroke-width="3" stroke-linecap="round"/></symbol>
+        <symbol id="i-bank" viewBox="0 0 48 48"><path d="M6 18 L24 6 L42 18 Z" fill="none" stroke="#6AA0FF" stroke-width="3" stroke-linejoin="round"/><line x1="6" y1="18" x2="42" y2="18" stroke="#6AA0FF" stroke-width="3"/><line x1="10" y1="18" x2="10" y2="38" stroke="#6AA0FF" stroke-width="3"/><line x1="20" y1="18" x2="20" y2="38" stroke="#6AA0FF" stroke-width="3"/><line x1="28" y1="18" x2="28" y2="38" stroke="#6AA0FF" stroke-width="3"/><line x1="38" y1="18" x2="38" y2="38" stroke="#6AA0FF" stroke-width="3"/><line x1="6" y1="42" x2="42" y2="42" stroke="#6AA0FF" stroke-width="3"/></symbol>
+        <symbol id="i-door" viewBox="0 0 48 48"><rect x="10" y="6" width="28" height="38" rx="2" fill="none" stroke="#6AA0FF" stroke-width="3"/><circle cx="30" cy="26" r="2" fill="#6AA0FF"/></symbol>
+      </defs></svg>
+
+      <div id="bg"><div id="bggrid"></div><div class="glow" id="glow1"></div><div class="glow" id="glow2"></div></div>
+      <div class="hud"><div class="l">THE TECH INTERN <span>// SYSTEM DESIGN</span></div><div class="r">S1 · E04</div></div>
+      <div id="hudline"></div>
+      <div class="bracket" id="brTL"></div><div class="bracket" id="brTR"></div><div class="bracket" id="brBL"></div><div class="bracket" id="brBR"></div>
+      <div id="sweep"></div>
+
+      <!-- S1: The dashboard nobody can read -->
+      <div class="scene clip" id="s1" data-name="1 · The dashboard nobody can read" data-chapter="HOOK" data-start="0" data-duration="35" data-track-index="0">
+        <div class="kick" id="s1k">the dashboard nobody can read</div>
+        <h1 id="s1t" style="font-size:78px; max-width:1500px;">A Swiggy engineer in Bangalore <span class="ac">stares at a dashboard.</span></h1>
+        <svg width="1620" height="420" viewBox="0 0 1620 420" style="overflow:visible; align-self:center; margin-top:24px;">
+          <g id="s1-frame">
+          <rect x="20" y="20" width="1580" height="340" rx="20" fill="#0B1322" stroke="var(--hair)" stroke-width="2"/>
+          <rect x="20" y="20" width="1580" height="46" rx="20" fill="var(--panel2)"/>
+          <rect x="20" y="46" width="1580" height="20" fill="var(--panel2)"/>
+          <text x="50" y="50" font-size="20" fill="var(--muted)" font-family="JetBrains Mono">// LIVE · SWIGGY-PROD-01</text>
+          </g>
+          <g id="s1-blocks">
+          <rect x="60" y="100" width="470" height="230" rx="16" fill="var(--panel)" stroke="#3B7BFF" stroke-width="2"/>
+          <text x="295" y="150" font-size="20" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">QPS</text>
+          <text x="295" y="235" font-size="64" text-anchor="middle" fill="#3B7BFF" font-family="JetBrains Mono">12,000</text>
+          <rect x="565" y="100" width="470" height="230" rx="16" fill="var(--panel)" stroke="#6AA0FF" stroke-width="2"/>
+          <text x="800" y="150" font-size="20" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">LATENCY</text>
+          <text x="800" y="235" font-size="46" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">45 / 820ms</text>
+          <rect x="1070" y="100" width="470" height="230" rx="16" fill="var(--panel)" stroke="#34D399" stroke-width="2"/>
+          <text x="1305" y="150" font-size="20" text-anchor="middle" fill="#34D399" font-family="JetBrains Mono">UPTIME</text>
+          <text x="1305" y="235" font-size="56" text-anchor="middle" fill="#34D399" font-family="JetBrains Mono">99.99%</text>
+          </g>
+          <g id="s1-person">
+          <use href="#i-person" x="1500" y="330" width="70" height="70"/>
+          </g>
+        </svg>
+        <div class="sub" id="s1sub" style="font-size:32px; margin-top:16px;">To this engineer, it's the entire health of the system. <span class="sp">To you? Noise.</span></div>
+      </div>
+
+      <!-- S2: A number alone lies -->
+      <div class="scene clip" id="s2" data-name="2 · A number alone lies" data-chapter="HOOK" data-start="35" data-duration="28" data-track-index="0">
+        <div class="kick" id="s2k">a number alone lies</div>
+        <h1 id="s2t" style="font-size:80px;">A single number <span class="sp">tells you nothing.</span></h1>
+        <svg width="1000" height="380" viewBox="0 0 1000 380" style="overflow:visible; align-self:center; margin-top:20px;">
+          <g id="s2-num">
+          <text x="500" y="220" font-size="180" text-anchor="middle" fill="#E6ECF5" font-family="JetBrains Mono" font-weight="700">820</text>
+          </g>
+          <g id="s2-q">
+          <text x="220" y="120" font-size="46" fill="var(--muted)" font-family="Inter" font-weight="700">?</text>
+          <text x="760" y="150" font-size="60" fill="var(--muted)" font-family="Inter" font-weight="700">?</text>
+          <text x="260" y="320" font-size="38" fill="var(--muted)" font-family="Inter" font-weight="700">?</text>
+          <text x="740" y="330" font-size="50" fill="var(--muted)" font-family="Inter" font-weight="700">?</text>
+          </g>
+        </svg>
+        <div class="sub" id="s2sub" style="font-size:34px; margin-top:10px; text-align:center;">Good? Bad? Milliseconds? Requests? <span class="ac">Vocabulary is the difference.</span></div>
+      </div>
+
+      <!-- S3: Quick callback -->
+      <div class="scene clip" id="s3" data-name="3 · Quick callback" data-chapter="CALLBACK" data-start="63" data-duration="32" data-track-index="0">
+        <div class="kick" id="s3k">quick callback · not a re-teach</div>
+        <h1 id="s3t" style="font-size:76px;">You already met <span class="ac">two of these numbers.</span></h1>
+        <svg width="1620" height="320" viewBox="0 0 1620 320" style="overflow:visible; align-self:center; margin-top:26px;">
+          <g id="s3-qps">
+          <rect x="60" y="20" width="720" height="260" rx="20" fill="var(--panel)" stroke="#3B7BFF" stroke-width="2"/>
+          <text x="420" y="90" font-size="24" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">QPS</text>
+          <text x="420" y="180" font-size="46" text-anchor="middle" fill="var(--ink)" font-family="Inter" font-weight="700">requests handled</text>
+          <text x="420" y="230" font-size="46" text-anchor="middle" fill="var(--ink)" font-family="Inter" font-weight="700">per second</text>
+          </g>
+          <g id="s3-p">
+          <rect x="840" y="20" width="720" height="260" rx="20" fill="var(--panel)" stroke="#FF6B6B" stroke-width="2"/>
+          <text x="1200" y="90" font-size="24" text-anchor="middle" fill="#FF6B6B" font-family="JetBrains Mono">P50 / P99</text>
+          <text x="1200" y="180" font-size="46" text-anchor="middle" fill="var(--ink)" font-family="Inter" font-weight="700">how fast, for</text>
+          <text x="1200" y="230" font-size="46" text-anchor="middle" fill="var(--ink)" font-family="Inter" font-weight="700">how many people</text>
+          </g>
+        </svg>
+        <div class="sub" id="s3sub" style="font-size:32px; margin-top:18px;">Today: one level deeper on both — <span class="ac">plus a third number neither tells you.</span></div>
+      </div>
+
+      <!-- S4: Concurrent users ≠ qps -->
+      <div class="scene clip" id="s4" data-name="4 · Concurrent users vs qps" data-chapter="NEW VOCAB" data-start="95" data-duration="45" data-track-index="0">
+        <div class="kick" id="s4k">concurrent users ≠ qps</div>
+        <h1 id="s4t" style="font-size:72px;">"A lakh users online" <span class="ac">≠ "a lakh requests/sec."</span></h1>
+        <svg width="1620" height="420" viewBox="0 0 1620 420" style="overflow:visible; align-self:center; margin-top:14px;">
+          <g id="s4-grid"><circle class="s4dot" id="s4-dot0" cx="60" cy="60" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot1" cx="118" cy="60" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot2" cx="176" cy="60" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot3" cx="234" cy="60" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot4" cx="292" cy="60" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot5" cx="350" cy="60" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot6" cx="408" cy="60" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot7" cx="466" cy="60" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot8" cx="524" cy="60" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot9" cx="582" cy="60" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot10" cx="640" cy="60" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot11" cx="698" cy="60" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot12" cx="756" cy="60" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot13" cx="814" cy="60" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot14" cx="60" cy="100" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot15" cx="118" cy="100" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot16" cx="176" cy="100" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot17" cx="234" cy="100" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot18" cx="292" cy="100" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot19" cx="350" cy="100" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot20" cx="408" cy="100" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot21" cx="466" cy="100" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot22" cx="524" cy="100" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot23" cx="582" cy="100" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot24" cx="640" cy="100" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot25" cx="698" cy="100" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot26" cx="756" cy="100" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot27" cx="814" cy="100" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot28" cx="60" cy="140" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot29" cx="118" cy="140" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot30" cx="176" cy="140" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot31" cx="234" cy="140" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot32" cx="292" cy="140" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot33" cx="350" cy="140" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot34" cx="408" cy="140" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot35" cx="466" cy="140" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot36" cx="524" cy="140" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot37" cx="582" cy="140" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot38" cx="640" cy="140" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot39" cx="698" cy="140" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot40" cx="756" cy="140" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot41" cx="814" cy="140" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot42" cx="60" cy="180" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot43" cx="118" cy="180" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot44" cx="176" cy="180" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot45" cx="234" cy="180" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot46" cx="292" cy="180" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot47" cx="350" cy="180" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot48" cx="408" cy="180" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot49" cx="466" cy="180" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot50" cx="524" cy="180" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot51" cx="582" cy="180" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot52" cx="640" cy="180" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot53" cx="698" cy="180" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot54" cx="756" cy="180" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot55" cx="814" cy="180" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot56" cx="60" cy="220" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot57" cx="118" cy="220" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot58" cx="176" cy="220" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot59" cx="234" cy="220" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot60" cx="292" cy="220" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot61" cx="350" cy="220" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot62" cx="408" cy="220" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot63" cx="466" cy="220" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot64" cx="524" cy="220" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot65" cx="582" cy="220" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot66" cx="640" cy="220" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot67" cx="698" cy="220" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot68" cx="756" cy="220" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot69" cx="814" cy="220" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot70" cx="60" cy="260" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot71" cx="118" cy="260" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot72" cx="176" cy="260" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot73" cx="234" cy="260" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot74" cx="292" cy="260" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot75" cx="350" cy="260" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot76" cx="408" cy="260" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot77" cx="466" cy="260" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot78" cx="524" cy="260" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot79" cx="582" cy="260" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot80" cx="640" cy="260" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot81" cx="698" cy="260" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot82" cx="756" cy="260" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot83" cx="814" cy="260" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot84" cx="60" cy="300" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot85" cx="118" cy="300" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot86" cx="176" cy="300" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot87" cx="234" cy="300" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot88" cx="292" cy="300" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot89" cx="350" cy="300" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot90" cx="408" cy="300" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot91" cx="466" cy="300" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot92" cx="524" cy="300" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot93" cx="582" cy="300" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot94" cx="640" cy="300" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot95" cx="698" cy="300" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot96" cx="756" cy="300" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot97" cx="814" cy="300" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot98" cx="60" cy="340" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot99" cx="118" cy="340" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot100" cx="176" cy="340" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot101" cx="234" cy="340" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot102" cx="292" cy="340" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot103" cx="350" cy="340" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot104" cx="408" cy="340" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot105" cx="466" cy="340" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot106" cx="524" cy="340" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot107" cx="582" cy="340" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot108" cx="640" cy="340" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot109" cx="698" cy="340" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot110" cx="756" cy="340" r="9" fill="#6AA0FF" opacity="0"/><circle class="s4dot" id="s4-dot111" cx="814" cy="340" r="9" fill="#6AA0FF" opacity="0"/></g>
+          <text id="s4-label1" x="810" y="30" font-size="24" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono" opacity="0">1,00,000 USERS ONLINE</text>
+          <g id="s4-server">
+          <rect x="1420" y="150" width="160" height="120" rx="16" fill="var(--panel)" stroke="#3B7BFF" stroke-width="2"/>
+          <use href="#i-globe" x="1466" y="180" width="60" height="60"/>
+          </g>
+          <text id="s4-conv" x="1120" y="380" font-size="30" text-anchor="middle" fill="#34D399" font-family="JetBrains Mono" opacity="0">1,00,000 online → maybe 2,000 qps</text>
+        </svg>
+        <div class="sub" id="s4sub" style="font-size:31px; margin-top:10px;">Most are just <span class="ac">staring at the menu.</span> Only the tappers generate real load.</div>
+      </div>
+
+      <!-- S5: Headroom (HERO) -->
+      <div class="scene clip" id="s5" data-name="5 · Headroom (hero)" data-chapter="NEW VOCAB" data-start="140" data-duration="42" data-track-index="0">
+        <div class="kick" id="s5k">headroom · how close to the edge</div>
+        <h1 id="s5t" style="font-size:78px;">It's not the qps. <span class="ac">It's how close to the edge.</span></h1>
+        <svg width="1000" height="460" viewBox="0 0 1000 460" style="overflow:visible; align-self:center; margin-top:6px;">
+          <path d="M100 380 A 400 400 0 0 1 900 380" fill="none" stroke="var(--hair)" stroke-width="34" stroke-linecap="round"/>
+          <path id="s5-arc-green" d="M100 380 A 400 400 0 0 1 380 60" fill="none" stroke="#34D399" stroke-width="34" stroke-linecap="round" opacity="0"/>
+          <path id="s5-arc-amber" d="M100 380 A 400 400 0 0 1 620 60" fill="none" stroke="#F5C542" stroke-width="34" stroke-linecap="round" opacity="0"/>
+          <path id="s5-arc-red" d="M100 380 A 400 400 0 0 1 860 220" fill="none" stroke="#FF6B6B" stroke-width="34" stroke-linecap="round" opacity="0"/>
+          <line id="s5-needle" x1="500" y1="380" x2="230" y2="230" stroke="#E6ECF5" stroke-width="8" stroke-linecap="round"/>
+          <circle cx="500" cy="380" r="20" fill="#E6ECF5"/>
+          <text id="s5-readout" x="500" y="440" font-size="42" text-anchor="middle" fill="#E6ECF5" font-family="JetBrains Mono">2,000 / 10,000 qps</text>
+        </svg>
+        <div class="sub" id="s5sub" style="font-size:32px; margin-top:6px;">Cross the ceiling and it's not graceful — <span class="sp">queues form, ms become seconds.</span></div>
+      </div>
+
+      <!-- S6: Introducing nines -->
+      <div class="scene clip" id="s6" data-name="6 · Introducing nines" data-chapter="THE NINES" data-start="182" data-duration="35" data-track-index="0">
+        <div class="kick" id="s6k">the third number · "nines"</div>
+        <h1 id="s6t" style="font-size:80px;">Engineers promise reliability in <span class="ac">"nines."</span></h1>
+        <svg width="1200" height="400" viewBox="0 0 1200 400" style="overflow:visible; align-self:center; margin-top:14px;">
+          <g id="s6-r1"><rect x="60" y="300" width="1080" height="70" rx="14" fill="var(--panel)" stroke="var(--hair)"/><text x="100" y="345" font-size="34" fill="#6AA0FF" font-family="JetBrains Mono">99%</text></g>
+          <g id="s6-r2"><rect x="60" y="220" width="1080" height="70" rx="14" fill="var(--panel)" stroke="var(--hair)"/><text x="100" y="265" font-size="34" fill="#6AA0FF" font-family="JetBrains Mono">99.9%</text></g>
+          <g id="s6-r3"><rect x="60" y="140" width="1080" height="70" rx="14" fill="var(--panel)" stroke="var(--hair)"/><text x="100" y="185" font-size="34" fill="#6AA0FF" font-family="JetBrains Mono">99.99%</text></g>
+          <g id="s6-r4"><rect x="60" y="60" width="1080" height="70" rx="14" fill="var(--accent-soft)" stroke="#3B7BFF" stroke-width="2"/><text x="100" y="105" font-size="34" fill="#3B7BFF" font-family="JetBrains Mono">99.999%</text></g>
+        </svg>
+        <div class="sub" id="s6sub" style="font-size:33px; margin-top:8px;">Every extra nine sounds tiny. <span class="sp">It absolutely is not.</span></div>
+      </div>
+
+      <!-- S7: The downtime-budget math (HERO) -->
+      <div class="scene clip" id="s7" data-name="7 · Downtime-budget math (hero)" data-chapter="THE NINES" data-start="217" data-duration="50" data-track-index="0">
+        <div class="kick" id="s7k">what each nine actually costs you</div>
+        <h1 id="s7t" style="font-size:74px;">Translate percentages into <span class="ac">minutes a year.</span></h1>
+        <svg width="1620" height="400" viewBox="0 0 1620 400" style="overflow:visible; align-self:center; margin-top:20px;">
+          <g id="s7-row1"><rect x="20" y="20" width="1580" height="80" rx="16" fill="var(--panel)" stroke="var(--hair)"/><text x="60" y="70" font-size="30" fill="#6AA0FF" font-family="JetBrains Mono">99%</text><text x="900" y="70" font-size="30" text-anchor="end" fill="var(--soft)" font-family="Inter">3.65 days / year</text></g>
+          <g id="s7-row2"><rect x="20" y="120" width="1580" height="80" rx="16" fill="var(--panel)" stroke="var(--hair)"/><text x="60" y="170" font-size="30" fill="#6AA0FF" font-family="JetBrains Mono">99.9%</text><text x="900" y="170" font-size="30" text-anchor="end" fill="var(--soft)" font-family="Inter">8.76 hours / year</text></g>
+          <g id="s7-row3"><rect x="20" y="220" width="1580" height="80" rx="16" fill="var(--panel)" stroke="var(--hair)"/><text x="60" y="270" font-size="30" fill="#6AA0FF" font-family="JetBrains Mono">99.99%</text><text x="900" y="270" font-size="30" text-anchor="end" fill="var(--soft)" font-family="Inter">52 minutes / year</text></g>
+          <g id="s7-row4"><rect x="20" y="320" width="1580" height="80" rx="16" fill="var(--accent-soft)" stroke="#3B7BFF" stroke-width="2"/><text x="60" y="370" font-size="30" fill="#3B7BFF" font-family="JetBrains Mono">99.999%</text><text x="900" y="370" font-size="30" text-anchor="end" fill="#3B7BFF" font-family="Inter" font-weight="700">5 minutes / year</text></g>
+        </svg>
+        <div class="sub" id="s7sub" style="font-size:31px; margin-top:8px;">Each nine is roughly a <span class="ac">10× cut in allowed downtime.</span></div>
+      </div>
+
+      <!-- S8: Why UPI can't afford fewer nines -->
+      <div class="scene clip" id="s8" data-name="8 · Why UPI can't afford fewer nines" data-chapter="UPI" data-start="267" data-duration="42" data-track-index="0">
+        <div class="kick" id="s8k">why upi can't afford fewer nines</div>
+        <h1 id="s8t" style="font-size:74px;">Some systems <span class="sp">can't tolerate</span> a lower nine.</h1>
+        <svg width="1700" height="340" viewBox="0 0 1700 340" style="overflow:visible; align-self:center; margin-top:20px;">
+          <g id="s8-flow">
+          <use href="#i-phone" x="30" y="120" width="60" height="60"/>
+          <path id="s8-e1" class="edge live" d="M110 150 H 350"/>
+          <rect class="nbox" x="350" y="100" width="260" height="120" rx="16"/>
+          <use href="#i-bank" x="440" y="120" width="60" height="60"/>
+          <text class="code" x="480" y="205" font-size="20" text-anchor="middle">BANK A</text>
+          <path id="s8-e2" class="edge live" d="M610 150 H 850"/>
+          <rect class="nbox" x="850" y="100" width="260" height="120" rx="16" stroke="#3B7BFF"/>
+          <text class="code" x="980" y="150" font-size="22" text-anchor="middle">NPCI</text>
+          <text class="cap" x="980" y="185" font-size="18" text-anchor="middle">UPI switch</text>
+          <path id="s8-e3" class="edge live" d="M1110 150 H 1350"/>
+          <rect class="nbox" x="1350" y="100" width="260" height="120" rx="16"/>
+          <use href="#i-bank" x="1440" y="120" width="60" height="60"/>
+          <text class="code" x="1480" y="205" font-size="20" text-anchor="middle">BANK B</text>
+          </g>
+          <circle id="s8-coin" r="16" fill="#F5C542" cx="110" cy="150" opacity="0"/>
+          <g id="s8-badge">
+          <rect x="620" y="250" width="480" height="70" rx="14" fill="var(--accent-soft)" stroke="#3B7BFF"/>
+          <text x="860" y="296" font-size="28" text-anchor="middle" fill="#3B7BFF" font-family="JetBrains Mono">99.99% mandated</text>
+          </g>
+        </svg>
+        <div class="sub" id="s8sub" style="font-size:30px; margin-top:10px;">3.65 days stuck = a national story. <span class="ac">52 minutes = survivable.</span></div>
+      </div>
+
+      <!-- S9: Why each nine costs exponentially more -->
+      <div class="scene clip" id="s9" data-name="9 · Why each nine costs more" data-chapter="COST CURVE" data-start="309" data-duration="38" data-track-index="0">
+        <div class="kick" id="s9k">why nobody just builds for five nines</div>
+        <h1 id="s9t" style="font-size:78px;">Each extra nine gets <span class="sp">brutally more expensive.</span></h1>
+        <svg width="1620" height="400" viewBox="0 0 1620 400" style="overflow:visible; align-self:center; margin-top:16px;">
+          <line x1="80" y1="350" x2="1560" y2="350" stroke="var(--hair)" stroke-width="2"/>
+          <line x1="80" y1="350" x2="80" y2="40" stroke="var(--hair)" stroke-width="2"/>
+          <text x="1500" y="380" font-size="20" fill="var(--muted)" font-family="Inter">nines →</text>
+          <path id="s9-curve" d="M80 340 Q 500 330, 900 260 Q 1200 180, 1450 60" fill="none" stroke="#3B7BFF" stroke-width="4" opacity="0"/>
+          <text x="200" y="330" font-size="22" fill="var(--muted)" font-family="JetBrains Mono">99%</text>
+          <text x="1420" y="100" font-size="22" fill="#3B7BFF" font-family="JetBrains Mono">99.999%</text>
+          <text id="s9-label" x="810" y="420" font-size="26" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono" opacity="0">diminishing returns, escalating cost</text>
+        </svg>
+        <div class="sub" id="s9sub" style="font-size:32px; margin-top:6px;">Chasing the last nine is <span class="ac">often the most expensive work a company does.</span></div>
+      </div>
+
+      <!-- S10: SLA, SLO, SLI -->
+      <div class="scene clip" id="s10" data-name="10 · SLA, SLO, SLI" data-chapter="SLA/SLO/SLI" data-start="347" data-duration="42" data-track-index="0">
+        <div class="kick" id="s10k">the vocabulary of promises</div>
+        <h1 id="s10t" style="font-size:76px;"><span class="mono ac">SLA</span> · <span class="mono ac">SLO</span> · <span class="mono ac">SLI</span> — three promises, nested.</h1>
+        <svg width="1200" height="380" viewBox="0 0 1200 380" style="overflow:visible; align-self:center; margin-top:16px;">
+          <g id="s10-sla"><rect x="20" y="20" width="1160" height="340" rx="24" fill="none" stroke="#3B7BFF" stroke-width="2"/><text x="60" y="60" font-size="22" fill="#3B7BFF" font-family="JetBrains Mono">SLA — the promise to the customer</text></g>
+          <g id="s10-slo"><rect x="90" y="100" width="1020" height="230" rx="20" fill="none" stroke="#6AA0FF" stroke-width="2"/><text x="130" y="140" font-size="22" fill="#6AA0FF" font-family="JetBrains Mono">SLO — the internal target</text></g>
+          <g id="s10-sli"><rect x="170" y="180" width="860" height="110" rx="16" fill="var(--accent-soft)" stroke="#34D399" stroke-width="2"/><text x="600" y="245" font-size="24" text-anchor="middle" fill="#34D399" font-family="JetBrains Mono">SLI — the actual measurement</text></g>
+        </svg>
+        <div class="sub" id="s10sub" style="font-size:31px; margin-top:10px;">SLI is reality. SLO is the internal goal. <span class="ac">SLA is the world's promise.</span></div>
+      </div>
+
+      <!-- S11: Reading the dashboard now (HERO) -->
+      <div class="scene clip" id="s11" data-name="11 · Reading the dashboard now (hero)" data-chapter="PUTTING IT TOGETHER" data-start="389" data-duration="38" data-track-index="0">
+        <div class="kick" id="s11k">same dashboard · now you can read it</div>
+        <h1 id="s11t" style="font-size:78px;">Same dashboard. <span class="ac">Now it makes sense.</span></h1>
+        <svg width="1620" height="360" viewBox="0 0 1620 360" style="overflow:visible; align-self:center; margin-top:24px;">
+          <rect x="20" y="20" width="1580" height="300" rx="20" fill="#0B1322" stroke="var(--hair)" stroke-width="2"/>
+          <g id="s11-qps"><rect x="60" y="60" width="470" height="220" rx="16" fill="var(--panel)" stroke="#3B7BFF" stroke-width="2"/><text x="295" y="100" font-size="20" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">QPS · the load</text><text x="295" y="200" font-size="60" text-anchor="middle" fill="#3B7BFF" font-family="JetBrains Mono">12,000</text></g>
+          <g id="s11-lat"><rect x="565" y="60" width="470" height="220" rx="16" fill="var(--panel)" stroke="#6AA0FF" stroke-width="2"/><text x="800" y="100" font-size="20" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">P50/P99 · the feel</text><text x="800" y="200" font-size="44" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">45 / 820ms</text></g>
+          <g id="s11-nines"><rect x="1070" y="60" width="470" height="220" rx="16" fill="var(--panel)" stroke="#34D399" stroke-width="2"/><text x="1305" y="100" font-size="20" text-anchor="middle" fill="#34D399" font-family="JetBrains Mono">NINES · the promise</text><text x="1305" y="200" font-size="52" text-anchor="middle" fill="#34D399" font-family="JetBrains Mono">99.99%</text></g>
+        </svg>
+        <div class="sub" id="s11sub" style="font-size:33px; margin-top:14px;">Three numbers. <span class="ac">Five seconds. The entire health of the system.</span></div>
+      </div>
+
+      <!-- S12: The 8pm spike, diagnosed -->
+      <div class="scene clip" id="s12" data-name="12 · The 8pm spike, diagnosed" data-chapter="PUTTING IT TOGETHER" data-start="427" data-duration="48" data-track-index="0">
+        <div class="kick" id="s12k">back to 8pm · now watch the numbers</div>
+        <h1 id="s12t" style="font-size:76px;">Same rush. <span class="ac">Now you can diagnose it.</span></h1>
+        <svg width="1620" height="380" viewBox="0 0 1620 380" style="overflow:visible; align-self:center; margin-top:20px;">
+          <g id="s12-qps"><rect x="40" y="30" width="480" height="200" rx="16" fill="var(--panel)" stroke="#FF6B6B" stroke-width="2"/><text x="280" y="70" font-size="20" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono">QPS</text><text id="s12-qps-num" x="280" y="150" font-size="52" text-anchor="middle" fill="#FF6B6B" font-family="JetBrains Mono">9,800</text></g>
+          <g id="s12-p99"><rect x="570" y="30" width="480" height="200" rx="16" fill="var(--panel)" stroke="#FF6B6B" stroke-width="2"/><text x="810" y="70" font-size="20" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono">P99</text><text id="s12-p99-num" x="810" y="150" font-size="52" text-anchor="middle" fill="#FF6B6B" font-family="JetBrains Mono">4,200ms</text></g>
+          <g id="s12-nines"><rect x="1100" y="30" width="480" height="200" rx="16" fill="var(--panel)" stroke="#FF6B6B" stroke-width="2"/><text x="1340" y="70" font-size="20" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono">UPTIME (MONTH)</text><text id="s12-nines-num" x="1340" y="150" font-size="46" text-anchor="middle" fill="#FF6B6B" font-family="JetBrains Mono">99.2%</text></g>
+          <g id="s12-oncall">
+          <use href="#i-person" x="740" y="260" width="70" height="70"/>
+          <text x="810" y="360" font-size="24" text-anchor="middle" fill="var(--soft)" font-family="JetBrains Mono">diagnosing: load vs ceiling</text>
+          </g>
+        </svg>
+        <div class="sub" id="s12sub" style="font-size:31px; margin-top:8px;">No guessing. <span class="ac">The vocabulary tells you exactly what's wrong.</span></div>
+      </div>
+
+      <!-- S13: The cost of chasing more nines (trade-off) -->
+      <div class="scene clip" id="s13" data-name="13 · The cost of chasing nines" data-chapter="TRADE-OFF" data-start="475" data-duration="35" data-track-index="0">
+        <div class="kick" id="s13k">more nines isn't free · the trade-off</div>
+        <h1 id="s13t" style="font-size:76px;">More nines <span class="ac">isn't always worth it.</span></h1>
+        <svg width="1620" height="360" viewBox="0 0 1620 360" style="overflow:visible; align-self:center; margin-top:16px;">
+          <g id="s13-left">
+          <rect x="20" y="20" width="770" height="320" rx="22" fill="url(#gcli)" stroke="var(--hair)" stroke-width="2"/>
+          <text x="50" y="72" font-size="22" fill="var(--soft)" font-family="JetBrains Mono">INTERNAL ANALYTICS TOOL</text>
+          <text x="50" y="230" font-size="46" fill="#6AA0FF" font-family="JetBrains Mono">99% is fine</text>
+          <text x="50" y="270" font-size="24" fill="var(--soft)" font-family="Inter">nobody's paying for outages</text>
+          </g>
+          <g id="s13-right">
+          <rect x="830" y="20" width="770" height="320" rx="22" fill="url(#gsrv)" stroke="#3B7BFF" stroke-width="2.5"/>
+          <text x="860" y="72" font-size="22" fill="#3B7BFF" font-family="JetBrains Mono">PAYMENT RAIL</text>
+          <text x="860" y="230" font-size="46" fill="#3B7BFF" font-family="JetBrains Mono">99.99% is minimum</text>
+          <text x="860" y="270" font-size="24" fill="var(--soft)" font-family="Inter">the same 20 min is a headline</text>
+          </g>
+        </svg>
+        <div class="sub" id="s13sub" style="font-size:31px; margin-top:8px;">The right number of nines depends on <span class="ac">what breaks if you don't have them.</span></div>
+      </div>
+
+      <!-- S14: Recap -->
+      <div class="scene clip" id="s14" data-name="14 · Recap" data-chapter="RECAP" data-start="510" data-duration="30" data-track-index="0">
+        <div class="kick" id="s14k">three numbers, one vocabulary</div>
+        <h1 id="s14t" style="font-size:80px;">Three numbers. <span class="ac">One vocabulary.</span></h1>
+        <svg width="1620" height="300" viewBox="0 0 1620 300" style="overflow:visible; align-self:center; margin-top:26px;">
+          <g id="s14-qps"><rect x="20" y="20" width="500" height="260" rx="20" fill="var(--panel)" stroke="#3B7BFF" stroke-width="2"/><text x="270" y="70" font-size="24" text-anchor="middle" fill="#6AA0FF" font-family="JetBrains Mono">QPS</text><text x="270" y="170" font-size="30" text-anchor="middle" fill="var(--ink)" font-family="Inter">how much load,</text><text x="270" y="205" font-size="30" text-anchor="middle" fill="var(--ink)" font-family="Inter">right now</text></g>
+          <g id="s14-p"><rect x="560" y="20" width="500" height="260" rx="20" fill="var(--panel)" stroke="#FF6B6B" stroke-width="2"/><text x="810" y="70" font-size="24" text-anchor="middle" fill="#FF6B6B" font-family="JetBrains Mono">P50 / P99</text><text x="810" y="170" font-size="30" text-anchor="middle" fill="var(--ink)" font-family="Inter">how it feels —</text><text x="810" y="205" font-size="30" text-anchor="middle" fill="var(--ink)" font-family="Inter">typical vs unlucky</text></g>
+          <g id="s14-nines"><rect x="1100" y="20" width="500" height="260" rx="20" fill="var(--panel)" stroke="#34D399" stroke-width="2"/><text x="1350" y="70" font-size="24" text-anchor="middle" fill="#34D399" font-family="JetBrains Mono">NINES</text><text x="1350" y="170" font-size="30" text-anchor="middle" fill="var(--ink)" font-family="Inter">the promise</text><text x="1350" y="205" font-size="30" text-anchor="middle" fill="var(--ink)" font-family="Inter">being kept</text></g>
+        </svg>
+      </div>
+
+      <!-- S15: Cliffhanger to Ep05 -->
+      <div class="scene clip" id="s15" data-name="15 · Cliffhanger to Ep05" data-chapter="CLIFFHANGER" data-start="540" data-duration="30" data-track-index="0">
+        <div class="kick" id="s15k">next episode · the load balancer</div>
+        <h1 id="s15t" style="font-size:78px;">Knowing the numbers <span class="sp">doesn't fix anything.</span></h1>
+        <svg width="1620" height="400" viewBox="0 0 1620 400" style="overflow:visible; align-self:center; margin-top:14px;">
+          <g id="s15-alert">
+          <rect x="20" y="20" width="1580" height="130" rx="18" fill="rgba(255,107,107,.12)" stroke="#FF6B6B" stroke-width="2"/>
+          <text x="60" y="90" font-size="30" fill="#FF6B6B" font-family="JetBrains Mono">9,800 qps — no headroom left</text>
+          </g>
+          <g id="s15-fork">
+          <use href="#i-person" x="740" y="180" width="80" height="80"/>
+          <use href="#i-door" x="420" y="280" width="90" height="90"/>
+          <text x="465" y="400" font-size="24" text-anchor="middle" fill="var(--soft)" font-family="Inter">one kitchen</text>
+          <use href="#i-door" x="1110" y="280" width="90" height="90"/>
+          <text x="1155" y="400" font-size="24" text-anchor="middle" fill="var(--soft)" font-family="Inter">many kitchens</text>
+          </g>
+        </svg>
+        <div class="sub" id="s15sub" style="font-size:32px; margin-top:8px;">Next: <span class="ac">the load balancer</span> — the waiter who picks the kitchen.</div>
+      </div>
+
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      tl.from("#hudline", { scaleX:0, duration:1.0, ease:"power2.out" }, 0);
+      tl.fromTo(".hud", { opacity:0 }, { opacity:1, duration:1.0 }, 0.2);
+      tl.fromTo(".bracket", { opacity:0 }, { opacity:1, duration:1.2, stagger:0.1 }, 0.3);
+      tl.to("#bggrid", { x:-72, y:-50, duration:120, ease:"sine.inOut", repeat:9, yoyo:true }, 0);
+      tl.to("#glow1", { x:-180, y:140, scale:1.2, duration:80, ease:"sine.inOut", repeat:12, yoyo:true }, 0);
+      tl.to("#glow2", { x:160, y:-120, scale:1.2, duration:90, ease:"sine.inOut", repeat:12, yoyo:true }, 0);
+
+      function scene(sel, t, dur){ tl.fromTo(sel, { opacity:0, y:40, scale:0.992 }, { opacity:1, y:0, scale:1, duration:0.9, ease:"power3.out" }, t); tl.to(sel, { opacity:0, y:-46, scale:0.992, duration:0.6, ease:"power2.in" }, t+dur-0.6); tl.set(sel, { opacity:0 }, t+dur); }
+      function head(sel, t, d){ tl.fromTo(sel, { opacity:0, y:60, scale:0.95 }, { opacity:1, y:0, scale:1, duration:(d||0.9), ease:"back.out(1.25)" }, t); }
+      function kick(sel, t){ tl.fromTo(sel, { opacity:0, x:-26 }, { opacity:1, x:0, duration:0.6, ease:"power2.out" }, t); }
+      function rise(sel, t, dy, d){ tl.fromTo(sel, { opacity:0, y:(dy==null?24:dy) }, { opacity:1, y:0, duration:(d||0.6), ease:"power3.out" }, t); }
+      function pop(sel, t, d){ tl.fromTo(sel, { opacity:0, y:24, scale:0.9 }, { opacity:1, y:0, scale:1, duration:(d||0.55), ease:"back.out(1.5)", transformOrigin:"center" }, t); }
+      function slideL(sel, t, d){ tl.fromTo(sel, { opacity:0, x:-70 }, { opacity:1, x:0, duration:(d||0.6), ease:"power3.out" }, t); }
+      function slideR(sel, t, d){ tl.fromTo(sel, { opacity:0, x:70 }, { opacity:1, x:0, duration:(d||0.6), ease:"power3.out" }, t); }
+      function fade(sel, t, d){ tl.fromTo(sel, { opacity:0 }, { opacity:1, duration:(d||0.5), ease:"power2.out" }, t); }
+      function breathe(sel, t, to, dur, n){ tl.to(sel, { scale:to, duration:dur, ease:"sine.inOut", repeat:n, yoyo:true, transformOrigin:"center" }, t); }
+      function sweep(t){ tl.set("#sweep", { opacity:1 }, t-0.4); tl.fromTo("#sweep", { x:-380 }, { x:2000, duration:0.7, ease:"power2.inOut" }, t-0.4); tl.set("#sweep", { opacity:0 }, t+0.4); }
+
+      // 1: The dashboard nobody can read (0-35)
+      scene("#s1",0,35); kick("#s1k",0.6); head("#s1t",1.4,1.0);
+      pop("#s1-frame",8,0.6);
+      tl.fromTo("#s1-blocks rect",{opacity:0,scale:0.85},{opacity:1,scale:1,stagger:0.25,duration:0.4,ease:"back.out(1.5)"},12);
+      tl.fromTo("#s1-blocks text",{opacity:0},{opacity:1,stagger:0.25,duration:0.4},12.1);
+      pop("#s1-person",17,0.6); breathe("#s1-blocks",20,1.02,1.6,5);
+      rise("#s1sub",26,18);
+
+      // 2: A number alone lies (35-63)
+      scene("#s2",35,28); kick("#s2k",35.7); head("#s2t",36.6,0.9);
+      pop("#s2-num",44,0.6);
+      fade("#s2-q",49,0.6);
+      rise("#s2sub",54,18);
+
+      // 3: Quick callback (63-95)
+      sweep(63); scene("#s3",63,32); kick("#s3k",63.7); head("#s3t",64.6,0.9);
+      slideL("#s3-qps",72,0.6); slideR("#s3-p",78,0.6);
+      rise("#s3sub",86,18);
+
+      // 4: Concurrent users ≠ qps (95-140)
+      sweep(95); scene("#s4",95,45); kick("#s4k",95.7); head("#s4t",96.6,0.9);
+      tl.fromTo(".s4dot",{opacity:0,scale:0},{opacity:0.35,scale:1,stagger:0.006,duration:0.3,ease:"back.out(1.4)"},104);
+      fade("#s4-label1",110,0.5);
+      tl.to(".s4dot",{opacity:0.2,duration:0.4},113);
+      (function(){
+        const active = [3,17,44,58,71,85,99,102];
+        active.forEach((i,idx)=>{ tl.to("#s4-dot"+i,{opacity:1,scale:1.3,duration:0.3,ease:"back.out(2)"},116+idx*0.25); });
+      })();
+      pop("#s4-server",117,0.6);
+      rise("#s4-conv",128,16); tl.fromTo("#s4-conv",{opacity:0},{opacity:1,duration:0.6},128);
+      rise("#s4sub",134,18);
+
+      // 5: Headroom (140-182)
+      sweep(140); scene("#s5",140,42); kick("#s5k",140.7); head("#s5t",141.6,0.9);
+      tl.to("#s5-arc-green",{opacity:1,duration:0.5},149);
+      tl.to("#s5-needle",{rotation:0,svgOrigin:"500 380",duration:0.6,ease:"power2.out"},149);
+      tl.to("#s5-arc-amber",{opacity:1,duration:0.5},159);
+      tl.to("#s5-needle",{rotation:55,svgOrigin:"500 380",duration:0.8,ease:"power2.inOut"},159);
+      tl.call(()=>{ document.getElementById("s5-readout").textContent = "7,500 / 10,000 qps"; },null,159.4);
+      tl.to("#s5-arc-red",{opacity:1,duration:0.5},170);
+      tl.to("#s5-needle",{rotation:82,svgOrigin:"500 380",duration:0.8,ease:"power2.inOut"},170);
+      tl.call(()=>{ document.getElementById("s5-readout").textContent = "10,200 / 10,000 qps"; },null,170.4);
+      rise("#s5sub",176,18);
+
+      // 6: Introducing nines (182-217)
+      sweep(182); scene("#s6",182,35); kick("#s6k",182.7); head("#s6t",183.6,0.9);
+      rise("#s6-r1",191,20); rise("#s6-r2",194.5,20); rise("#s6-r3",198,20); rise("#s6-r4",201.5,20);
+      rise("#s6sub",210,18);
+
+      // 7: Downtime-budget math (217-267)
+      sweep(217); scene("#s7",217,50); kick("#s7k",217.7); head("#s7t",218.6,0.9);
+      rise("#s7-row1",227,20); rise("#s7-row2",235,20); rise("#s7-row3",243,20); pop("#s7-row4",251,0.6); breathe("#s7-row4",254,1.02,1.6,4);
+      rise("#s7sub",260,18);
+
+      // 8: Why UPI can't afford fewer nines (267-309)
+      sweep(267); scene("#s8",267,42); kick("#s8k",267.7); head("#s8t",268.6,0.9);
+      fade("#s8-flow",277,0.6);
+      fade("#s8-e1",278,0.4); fade("#s8-e2",278.3,0.4); fade("#s8-e3",278.6,0.4);
+      tl.set("#s8-coin",{opacity:1},281);
+      tl.to("#s8-coin",{attr:{cx:610},duration:0.7,ease:"power1.inOut"},281);
+      tl.to("#s8-coin",{attr:{cx:1110},duration:0.7,ease:"power1.inOut"},282);
+      pop("#s8-badge",289,0.6);
+      rise("#s8sub",298,18);
+
+      // 9: Why nines cost exponentially more (309-347)
+      sweep(309); scene("#s9",309,38); kick("#s9k",309.7); head("#s9t",310.6,0.9);
+      tl.to("#s9-curve",{opacity:1,duration:1.0,ease:"power2.out"},319);
+      fade("#s9-label",325,0.6);
+      rise("#s9sub",332,18);
+
+      // 10: SLA, SLO, SLI (347-389)
+      sweep(347); scene("#s10",347,42); kick("#s10k",347.7); head("#s10t",348.6,0.9);
+      pop("#s10-sla",357,0.6); pop("#s10-slo",363,0.6); pop("#s10-sli",369,0.6);
+      rise("#s10sub",378,18);
+
+      // 11: Reading the dashboard now (389-427)
+      sweep(389); scene("#s11",389,38); kick("#s11k",389.7); head("#s11t",390.6,0.9);
+      pop("#s11-qps",399,0.6); pop("#s11-lat",405,0.6); pop("#s11-nines",411,0.6);
+      breathe("#s11-qps",417,1.03,1.2,2); breathe("#s11-lat",417,1.03,1.2,2); breathe("#s11-nines",417,1.03,1.2,2);
+      rise("#s11sub",420,18);
+
+      // 12: The 8pm spike, diagnosed (427-475)
+      sweep(427); scene("#s12",427,48); kick("#s12k",427.7); head("#s12t",428.6,0.9);
+      pop("#s12-qps",437,0.6);
+      pop("#s12-p99",444,0.6);
+      pop("#s12-nines",451,0.6);
+      pop("#s12-oncall",460,0.6);
+      rise("#s12sub",467,18);
+
+      // 13: The cost of chasing more nines (475-510)
+      sweep(475); scene("#s13",475,35); kick("#s13k",475.7); head("#s13t",476.6,0.9);
+      slideL("#s13-left",485,0.7); slideR("#s13-right",492,0.7);
+      rise("#s13sub",501,18);
+
+      // 14: Recap (510-540)
+      sweep(510); scene("#s14",510,30); kick("#s14k",510.7); head("#s14t",511.6,0.9);
+      pop("#s14-qps",519,0.6); pop("#s14-p",524,0.6); pop("#s14-nines",529,0.6);
+
+      // 15: Cliffhanger to Ep05 (540-570)
+      sweep(540); scene("#s15",540,30); kick("#s15k",540.7); head("#s15t",541.6,0.9);
+      pop("#s15-alert",549,0.6); breathe("#s15-alert",551,1.01,1.2,4);
+      fade("#s15-fork",557,0.7);
+      rise("#s15sub",564,18);
+
+      window.__timelines["sdep04full"] = tl;
+    </script>
+  </body>
+</html>

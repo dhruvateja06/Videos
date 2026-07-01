@@ -22,14 +22,49 @@ and pin every reveal to the exact moment its words are spoken.
 | `voice_id` | `7hshzsnMFQgQHNhu6yYM` |
 | `model_id` | `eleven_multilingual_v2` |
 | Tone | **joyful, conversational, "delighted lecturer"** — never strict/formal |
-| `voice_settings` | `stability 0.40, similarity_boost 0.75, style 0.45, use_speaker_boost true` |
+| `voice_settings` | `stability 0.30, similarity_boost 0.75, style 0.65, use_speaker_boost true, speed 1.02` |
 
-> The old strict-sounding settings (stability 0.55 / style 0.20) were explicitly
-> rejected. Lower stability = more emotional range; higher style = more expressive.
+> **Why these exact settings:** stability 0.30 (not 0.40) gives genuine emotional range — higher values flatten delivery into monotone. style 0.65 (not 0.45) adds expressive variation without going theatrical. The old settings (stability 0.55 / style 0.20) were explicitly rejected for sounding robotic.
+
+---
+
+## ⚠️ Script writing rules for TTS — read this before writing any narration
+
+**The single biggest cause of robotic-sounding VO is script structure, not voice settings.**
+
+ElevenLabs reads every period as a hard full stop. Short bullet-point fragments — even ones that look punchy in text — come out as cold, isolated statements. The voice has no room to carry meaning between them.
+
+### The rule: periods = breath, commas/dashes = flow
+
+| ❌ Sounds robotic (fragment bullets) | ✅ Sounds natural (connected flow) |
+|---|---|
+| "Not the app. The machine underneath it." | "not just the app, but the machine underneath it" |
+| "All talking to each other. In real time. Simultaneously." | "all talking to each other in real time, simultaneously" |
+| "How it works. What breaks. What the tradeoffs are." | "how it actually works, where it breaks, and what the real tradeoffs are" |
+| "That is not a web app problem. That is a distributed systems problem." | "this isn't a web app problem, this is a distributed systems problem" |
+
+### Practical rules
+1. **Use commas** to connect related clauses within one flowing thought.
+2. **Use em-dashes** (`—`) for a breath before a pivot or reveal, not a full stop.
+3. **Only use a period** where a genuine sentence break (natural breath/pause) is intended.
+4. **Contractions** (`isn't`, `you're`, `it's`, `there's`) always sound warmer than full forms.
+5. **SSML breaks** (`<break time="0.4s"/>`) are available for specific dramatic pauses, but let sentence structure do most of the work — overuse makes it sound mechanical again.
+6. **Write for the ear, not the eye.** Read it aloud before submitting to TTS. If you stop at a comma, the voice probably will too. If you stop at a period, the voice definitely will.
 
 **API key:** provided per session as the `ELEVENLABS_API_KEY` env var. It **must
 have the `text_to_speech` permission** enabled (a key that can only list voices
 will 401 on synthesis).
+
+## Production order (updated from workflow experience)
+
+**Script first, visuals second.** Write and approve the narration script before
+building the composition or deck. The script defines what each scene actually says,
+which determines the timing, what's on screen, and how long each scene needs to be.
+Building visuals before the script leads to mismatched scene lengths and wording
+rewrites after the composition is already built.
+
+Updated phase order:
+1. Topic → outline → **script** → deck + composition → validate deck → render
 
 ## How word-sync works
 
@@ -80,11 +115,11 @@ npx --yes hyperframes@0.7.5 render . -c episodes/epNN/composition-outro_synced.h
 # 3. Mux voice + compress near-lossless to the voiced deliverables
 ffmpeg -y -i renders/epNN-v2.mp4 -i episodes/epNN/audio_v2/main.aac \
    -c:v libx264 -profile:v high -pix_fmt yuv420p -crf 20 -preset medium \
-   -movflags +faststart -c:a aac -b:a 192k -map 0:v:0 -map 1:a:0 -shortest \
+   -c:a aac -b:a 192k -map 0:v:0 -map 1:a:0 -shortest \
    episodes/epNN/video-voiced.mp4
 ffmpeg -y -i renders/epNN-outro-v2.mp4 -i episodes/epNN/audio_v2/outro.aac \
    -c:v libx264 -profile:v high -pix_fmt yuv420p -crf 20 -preset medium \
-   -movflags +faststart -c:a aac -b:a 192k -map 0:v:0 -map 1:a:0 -shortest \
+   -c:a aac -b:a 192k -map 0:v:0 -map 1:a:0 -shortest \
    episodes/epNN/outro-voiced.mp4
 ```
 
