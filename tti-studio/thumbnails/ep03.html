@@ -1,0 +1,162 @@
+<!doctype html>
+<!--
+  THE TECH INTERN — System Design · Ep03 thumbnail (1280×720, render @2x).
+  Right-side diagram: three metric cards — LATENCY / THROUGHPUT / BANDWIDTH
+  Render: node thumbnails/render.mjs --file thumbnails/ep03.html --out assets/thumbnails/sd-ep03-latency-throughput.png
+-->
+<html><head><meta charset="UTF-8"/>
+<style>
+  @font-face { font-family:"Inter"; font-weight:700; src:url("../assets/fonts/inter-latin-700-normal.woff2") format("woff2"); }
+  @font-face { font-family:"Inter"; font-weight:600; src:url("../assets/fonts/inter-latin-600-normal.woff2") format("woff2"); }
+  @font-face { font-family:"Inter"; font-weight:400; src:url("../assets/fonts/inter-latin-400-normal.woff2") format("woff2"); }
+  @font-face { font-family:"JetBrains Mono"; font-weight:400; src:url("../assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  :root{ --bg:#0E1420; --ink:#E8EFF7; --soft:#AEBFD4; --muted:#7186A4; --hair:rgba(125,170,210,.22);
+         --cyan:#2DD4BF; --cyanb:#5EEAD4; --o:#FF6B2C; --ob:#FF8A55; }
+  body{ margin:0; }
+  #tb{ position:relative; width:1280px; height:720px; overflow:hidden; font-family:"Inter",sans-serif;
+       background:radial-gradient(130% 110% at 16% 8%, #1A2C4D 0%, #101B30 42%, #0A1018 78%, #070B12 100%); }
+
+  #grid{ position:absolute; inset:-40px; background-image:linear-gradient(rgba(125,170,210,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(125,170,210,.06) 1px, transparent 1px); background-size:50px 50px;
+         -webkit-mask-image:radial-gradient(120% 100% at 60% 40%, #000 35%, transparent 85%); }
+  .glow{ position:absolute; border-radius:50%; filter:blur(75px); }
+  #gc{ width:680px; height:680px; right:-150px; top:-200px; background:radial-gradient(circle, rgba(45,212,191,.40), rgba(45,212,191,0) 70%); }
+  #gc2{ width:520px; height:520px; right:120px; bottom:-220px; background:radial-gradient(circle, rgba(56,189,248,.20), rgba(56,189,248,0) 70%); }
+  #go{ width:520px; height:520px; left:-200px; bottom:-230px; background:radial-gradient(circle, rgba(255,107,44,.26), rgba(255,107,44,0) 70%); }
+  #vig{ position:absolute; inset:0; box-shadow:inset 0 0 240px 60px rgba(2,5,10,.85); pointer-events:none; }
+  .pt{ position:absolute; width:7px; height:7px; border-radius:50%; background:var(--cyanb); box-shadow:0 0 14px var(--cyanb); opacity:.8; }
+  #p1{ left:520px; top:120px; } #p2{ left:600px; top:560px; opacity:.5; } #p3{ left:120px; top:470px; opacity:.45; }
+  #p4{ left:760px; top:90px; width:5px; height:5px; opacity:.6; } #p5{ left:1180px; top:520px; opacity:.5; }
+  #bignum{ position:absolute; right:24px; bottom:-110px; font-family:"Inter"; font-weight:700; font-size:600px; line-height:1; letter-spacing:-.05em;
+          color:transparent; -webkit-text-stroke:2px rgba(94,234,212,.07); }
+
+  .corner{ position:absolute; width:44px; height:44px; border:3px solid var(--hair); }
+  .tl{ left:34px; top:34px; border-right:0; border-bottom:0; } .tr{ right:34px; top:34px; border-left:0; border-bottom:0; }
+  .bl{ left:34px; bottom:34px; border-right:0; border-top:0; } .br{ right:34px; bottom:34px; border-left:0; border-top:0; }
+
+  .left{ position:absolute; left:76px; top:0; height:720px; width:700px; display:flex; flex-direction:column; justify-content:center; }
+  .ep{ display:inline-flex; align-items:center; gap:12px; align-self:flex-start; background:linear-gradient(180deg,#FF7A3C,#F2540E); color:#fff;
+       font-family:"JetBrains Mono"; font-size:25px; letter-spacing:.22em; padding:12px 26px; border-radius:9px;
+       box-shadow:0 8px 34px rgba(255,107,44,.5), inset 0 1px 0 rgba(255,255,255,.3); }
+  h1{ font-family:"Inter"; font-weight:700; font-size:106px; line-height:.9; letter-spacing:-.04em; margin-top:20px; }
+  h1 .w{ color:#fff; text-shadow:0 6px 40px rgba(0,0,0,.55); display:block; }
+  h1 .cy{ display:block; background:linear-gradient(100deg,#5EEAD4 0%, #2DD4BF 55%, #22B8E6 100%); -webkit-background-clip:text; background-clip:text; color:transparent;
+          filter:drop-shadow(0 0 36px rgba(45,212,191,.5)); }
+  .topic{ display:flex; align-items:center; gap:14px; margin-top:28px; font-family:"Inter"; font-weight:600; font-size:42px; color:var(--soft); letter-spacing:-.01em; }
+  .topic b{ color:#fff; font-weight:700; }
+  .topic .bar{ width:10px; height:42px; background:linear-gradient(180deg,#FF8A55,#FF6B2C); border-radius:5px; box-shadow:0 0 20px rgba(255,107,44,.7); flex:none; }
+  .micro{ font-family:"JetBrains Mono"; font-size:22px; color:var(--muted); margin-top:14px; letter-spacing:.02em; }
+
+  /* diagram: three metric cards */
+  .diagram{ position:absolute; right:60px; top:50%; transform:translateY(-50%); width:340px; height:500px; filter:drop-shadow(0 24px 50px rgba(0,0,0,.5)); }
+
+  /* metric card */
+  .mcard{ position:absolute; width:340px; border-radius:20px; display:flex; flex-direction:column; padding:20px 24px 18px;
+          background:linear-gradient(160deg,#22344F 0%, #16243B 55%, #0F1B2E 100%);
+          border:2px solid rgba(125,170,210,.28);
+          box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 12px 36px rgba(0,0,0,.45); }
+  .mcard.cyan{ border-color:rgba(45,212,191,.65); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 0 46px rgba(45,212,191,.25), 0 12px 36px rgba(0,0,0,.45); }
+  .mcard.orange{ border-color:rgba(255,107,44,.7); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 0 46px rgba(255,107,44,.25), 0 12px 36px rgba(0,0,0,.45); }
+
+  .mcard .header{ display:flex; align-items:center; gap:12px; }
+  .mcard .icw{ width:40px; height:40px; flex:none; border-radius:10px; display:flex; align-items:center; justify-content:center;
+               background:rgba(45,212,191,.1); border:1px solid rgba(45,212,191,.3); }
+  .mcard.orange .icw{ background:rgba(255,107,44,.1); border-color:rgba(255,107,44,.35); }
+  .mcard .ic{ width:26px; height:26px; }
+  .mcard .label{ font-family:"JetBrains Mono"; font-size:15px; letter-spacing:.18em; color:var(--cyan); text-transform:uppercase; }
+  .mcard.orange .label{ color:var(--ob); }
+  .mcard .value{ font-family:"Inter"; font-weight:700; font-size:42px; color:#fff; letter-spacing:-.02em; margin-top:8px; line-height:1; }
+  .mcard .sub{ font-family:"JetBrains Mono"; font-size:14px; color:var(--muted); margin-top:5px; letter-spacing:.04em; }
+
+  #mc1{ top:0; }
+  #mc2{ top:172px; }
+  #mc3{ top:344px; }
+
+  /* connectors */
+  .wire{ position:absolute; left:169px; width:4px; background:linear-gradient(180deg, var(--cyanb), rgba(45,212,191,.3)); border-radius:3px; box-shadow:0 0 14px rgba(45,212,191,.6); }
+  #w1{ top:120px; height:52px; }
+  #w2{ top:292px; height:52px; }
+  .arrow{ position:absolute; left:161px; width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent; border-top:13px solid var(--cyanb); filter:drop-shadow(0 0 7px rgba(94,234,212,.8)); }
+  #a1{ top:161px; } #a2{ top:333px; }
+
+  .brandtag{ position:absolute; left:76px; bottom:54px; font-family:"JetBrains Mono"; font-size:24px; letter-spacing:.2em; color:var(--muted); text-transform:uppercase; }
+  .brandtag span{ color:var(--cyan); }
+</style></head>
+<body>
+  <svg width="0" height="0" style="position:absolute"><defs>
+    <!-- clock / timer icon for LATENCY -->
+    <symbol id="ic-clock" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="32" fill="none" stroke="#5EEAD4" stroke-width="5"/>
+      <line x1="50" y1="50" x2="50" y2="26" stroke="#5EEAD4" stroke-width="5" stroke-linecap="round"/>
+      <line x1="50" y1="50" x2="68" y2="60" stroke="#5EEAD4" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="50" cy="50" r="3.5" fill="#5EEAD4"/>
+    </symbol>
+    <!-- lightning bolt for THROUGHPUT -->
+    <symbol id="ic-bolt" viewBox="0 0 100 100">
+      <polygon points="58,14 28,56 52,56 42,86 72,44 48,44" fill="none" stroke="#5EEAD4" stroke-width="5" stroke-linejoin="round"/>
+    </symbol>
+    <!-- pipe / waves for BANDWIDTH -->
+    <symbol id="ic-pipe" viewBox="0 0 100 100">
+      <rect x="18" y="38" width="64" height="24" rx="12" fill="none" stroke="#FF8A55" stroke-width="5"/>
+      <line x1="36" y1="38" x2="36" y2="62" stroke="#FF8A55" stroke-width="3" opacity=".5"/>
+      <line x1="64" y1="38" x2="64" y2="62" stroke="#FF8A55" stroke-width="3" opacity=".5"/>
+      <circle cx="50" cy="50" r="5" fill="#FF8A55"/>
+    </symbol>
+  </defs></svg>
+
+  <div id="tb">
+    <div id="grid"></div>
+    <div class="glow" id="gc"></div><div class="glow" id="gc2"></div><div class="glow" id="go"></div>
+    <div id="bignum">03</div>
+    <div class="pt" id="p1"></div><div class="pt" id="p2"></div><div class="pt" id="p3"></div><div class="pt" id="p4"></div><div class="pt" id="p5"></div>
+    <div id="vig"></div>
+    <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+
+    <div class="left">
+      <span class="ep">EPISODE 03</span>
+      <h1><span class="w">LATENCY vs</span><span class="cy">THROUGHPUT</span></h1>
+      <div class="topic"><span class="bar"></span><b>Bandwidth &amp; the 3 numbers</b></div>
+      <div class="micro">the numbers that rule every system</div>
+    </div>
+
+    <div class="diagram">
+      <!-- LATENCY -->
+      <div class="mcard cyan" id="mc1">
+        <div class="header">
+          <span class="icw"><svg class="ic"><use href="#ic-clock"/></svg></span>
+          <span class="label">Latency</span>
+        </div>
+        <div class="value">65 ms</div>
+        <div class="sub">one request · door to door</div>
+      </div>
+
+      <div class="wire" id="w1"></div>
+      <div class="arrow" id="a1"></div>
+
+      <!-- THROUGHPUT -->
+      <div class="mcard cyan" id="mc2">
+        <div class="header">
+          <span class="icw"><svg class="ic"><use href="#ic-bolt"/></svg></span>
+          <span class="label">Throughput</span>
+        </div>
+        <div class="value">10k qps</div>
+        <div class="sub">queries per second</div>
+      </div>
+
+      <div class="wire" id="w2"></div>
+      <div class="arrow" id="a2"></div>
+
+      <!-- BANDWIDTH -->
+      <div class="mcard orange" id="mc3">
+        <div class="header">
+          <span class="icw"><svg class="ic"><use href="#ic-pipe"/></svg></span>
+          <span class="label">Bandwidth</span>
+        </div>
+        <div class="value">128 Tbps</div>
+        <div class="sub">the physical ceiling</div>
+      </div>
+    </div>
+
+    <div class="brandtag">THE TECH INTERN <span>// SYSTEM DESIGN</span></div>
+  </div>
+</body></html>

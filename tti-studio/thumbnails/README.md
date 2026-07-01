@@ -47,6 +47,8 @@ Needs `puppeteer-core` (devDep) + Chrome.
 ## Done so far
 - Ep1: `assets/thumbnails/sd-ep01-introduction.png`
 - Ep2: `assets/thumbnails/sd-ep02-dns-http.png`
+- Ep3: `assets/thumbnails/sd-ep03-latency-throughput.png`
+- Ep4: `assets/thumbnails/sd-ep04-scale-vocabulary.png`
 
 > Palette note: thumbnails use the series teal/orange; the *videos* use the
 > cobalt/navy "Engineer's Terminal" palette. Consistent within each set, not
